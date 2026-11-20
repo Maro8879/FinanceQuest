@@ -53,6 +53,79 @@ namespace FinanceQuest
             return card;
         }
 
+        RectTransform bgLayer;
+
+        // Warstwa pod napisami, przycięta do zaokrąglonego kształtu karty – na grafiki w tle.
+        RectTransform BackgroundLayer(float radius)
+        {
+            if (bgLayer != null) return bgLayer;
+            var mask = Ui.Rounded("BgMask", Face, Color.white, radius);
+            Ui.Stretch(mask.rectTransform);
+            mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+            mask.transform.SetSiblingIndex(Content.GetSiblingIndex());   // pod treścią
+            bgLayer = mask.rectTransform;
+            return bgLayer;
+        }
+
+        // Duża, półprzezroczysta ikona w tle karty (karty kursów).
+        public Image AddBackgroundIcon(IconId icon, float radius, float size, float alpha)
+        {
+            var img = Ui.Icon("BgIcon", BackgroundLayer(radius), icon, new Color(1f, 1f, 1f, alpha), size);
+            var rt = img.rectTransform;
+            rt.anchorMin = rt.anchorMax = new Vector2(1f, 0.5f);
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition = new Vector2(-size * 0.22f, -size * 0.06f);
+            rt.localEulerAngles = new Vector3(0f, 0f, -14f);
+            return img;
+        }
+
+        // Ilustracja przy prawej krawędzi, wyśrodkowana w pionie, pod napisami (karty kursów w menu).
+        public Image AddIllustration(Sprite sprite, float w, float h, float rightMargin)
+        {
+            var img = Ui.Rect("Illustration", Face).gameObject.AddComponent<Image>();
+            img.sprite = sprite;
+            img.raycastTarget = false;
+            img.transform.SetSiblingIndex(Content.GetSiblingIndex());
+            var rt = img.rectTransform;
+            rt.anchorMin = rt.anchorMax = new Vector2(1f, 0.5f);
+            rt.pivot = new Vector2(1f, 0.5f);
+            rt.anchoredPosition = new Vector2(-rightMargin, 0f);
+            rt.sizeDelta = new Vector2(w, h);
+            return img;
+        }
+
+        // Wykres świecowy na całej szerokości karty, przy dolnej krawędzi (karty rozdziałów).
+        public Image AddBackgroundChart(float radius, Color color)
+        {
+            var img = Ui.Rect("BgChart", BackgroundLayer(radius)).gameObject.AddComponent<Image>();
+            img.sprite = ProceduralSprites.Candles;
+            img.color = color;
+            img.raycastTarget = false;
+            var rt = img.rectTransform;
+            rt.anchorMin = new Vector2(0f, 0f);
+            rt.anchorMax = new Vector2(1f, 0f);
+            rt.pivot = new Vector2(0.5f, 0f);
+            float w = ((RectTransform)transform).sizeDelta.x;
+            rt.sizeDelta = new Vector2(0f, w / 4f);   // proporcje tekstury 4:1, żeby świece się nie rozciągały
+            rt.anchoredPosition = new Vector2(0f, 2f);
+            return img;
+        }
+
+        // Żółta obwódka wokół karty = „tu jesteś”. Nie zapada się przy dotyku (siedzi na korzeniu karty).
+        public void AddFocusRing(Color color, float radius, float gap, float thickness)
+        {
+            var r = Ui.Rect("FocusRing", transform).gameObject.AddComponent<Image>();
+            r.sprite = ProceduralSprites.Ring;
+            r.type = Image.Type.Sliced;
+            float outer = radius + gap + thickness;
+            // Promień zewnętrzny decyduje o skali; grubość wychodzi z proporcji RingRatio (ok. 3 przy promieniu 26).
+            r.pixelsPerUnitMultiplier = ProceduralSprites.RoundTexRadius / outer;
+            r.color = color;
+            r.raycastTarget = false;
+            Ui.Stretch(r.rectTransform, -(gap + thickness), -(gap + thickness), -(gap + thickness), -(gap + thickness));
+            r.transform.SetSiblingIndex(0);
+        }
+
         // Klikalne karty łapią dotyk na całej powierzchni (razem z wargą).
         public void SetClickable(Action onClick)
         {

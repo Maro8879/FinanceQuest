@@ -11,61 +11,157 @@ namespace FinanceQuest
         public const float RoundTexRadius = 48f;
         const int IconSize = 96;
 
-        static Sprite rounded, band;
-        static readonly Dictionary<IconId, Sprite> icons = new Dictionary<IconId, Sprite>();
 
         // Jeden 9-slice na wszystkie karty, przyciski i paski – mniej tekstur = lepszy batching.
-        public static Sprite Rounded
+        public static Sprite Rounded { get { return DrawnPictures.Get("rounded", MakeRounded); } }
+
+        static Sprite MakeRounded()
         {
-            get
             {
-                if (rounded != null) return rounded;
                 int size = (int)RoundTexRadius * 2 + 5;
                 float half = size * 0.5f;
                 var c = new SdfCanvas(size, size, size);
                 c.Add(p => SdfCanvas.RoundRect(p, new Vector2(half, half), new Vector2(size - 2, size - 2), RoundTexRadius));
                 float b = Mathf.Floor(half);
-                rounded = Sprite.Create(c.ToTexture("fq_rounded"), new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f),
+                return Sprite.Create(c.ToTexture("fq_rounded"), new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f),
                     100f, 0, SpriteMeshType.FullRect, new Vector4(b, b, b, b));
-                return rounded;
             }
         }
 
-        // Miękki pionowy pas do przelatującego połysku na złotych kartach.
-        public static Sprite ShineBand
+        // Obwódka (sam kontur) zaokrąglonego prostokąta – 9-slice, do wyróżnienia aktualnego miejsca.
+        // Grubość względem promienia jest stała (RingRatio), bo w 9-slice skalują się razem.
+        public const float RingRatio = 3f / 26f;
+        public static Sprite Ring { get { return DrawnPictures.Get("ring", MakeRing); } }
+
+        static Sprite MakeRing()
         {
-            get
             {
-                if (band != null) return band;
-                const int w = 64, h = 4;
-                var tex = new Texture2D(w, h, TextureFormat.RGBA32, false);
-                tex.wrapMode = TextureWrapMode.Clamp;
-                var px = new Color32[w * h];
-                for (int x = 0; x < w; x++)
-                {
-                    float t = (x + 0.5f) / w * 2f - 1f;
-                    byte a = (byte)Mathf.RoundToInt(Mathf.Exp(-t * t * 4f) * 255f);
-                    for (int y = 0; y < h; y++) px[y * w + x] = new Color32(255, 255, 255, a);
-                }
-                tex.SetPixels32(px);
-                tex.Apply(false, true);
-                band = Sprite.Create(tex, new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f), 100f);
-                return band;
+                int size = (int)RoundTexRadius * 2 + 5;
+                float half = size * 0.5f;
+                float t = RoundTexRadius * RingRatio;
+                var c = new SdfCanvas(size, size, size);
+                c.Add(p => Mathf.Abs(SdfCanvas.RoundRect(p, new Vector2(half, half), new Vector2(size - 2 - t, size - 2 - t), RoundTexRadius - t * 0.5f)) - t * 0.5f);
+                float b = Mathf.Floor(half);
+                return Sprite.Create(c.ToTexture("fq_ring"), new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f),
+                    100f, 0, SpriteMeshType.FullRect, new Vector4(b, b, b, b));
             }
+        }
+
+        // Wykres świecowy w tle kart rozdziałów. Dane z prostego generatora o stałym ziarnie,
+        // więc wykres jest zawsze ten sam (nie „skacze” między uruchomieniami).
+        public static Sprite Candles { get { return DrawnPictures.Get("candles", MakeCandles); } }
+
+        static Sprite MakeCandles()
+        {
+            {
+                const int w = 512, h = 128, n = 14;
+                var c = new SdfCanvas(w, h, w);   // jednostka = piksel
+
+                // Delikatna siatka w tle.
+                for (int g = 1; g <= 3; g++)
+                {
+                    float gy = h * g / 4f;
+                    c.Add(p => SdfCanvas.Capsule(p, new Vector2(0, gy), new Vector2(w, gy), 0.8f), 0.35f);
+                }
+
+                // Błądzenie losowe z lekkim trendem w górę – „rynek, który rośnie”.
+                var open = new float[n]; var close = new float[n]; var hi = new float[n]; var lo = new float[n];
+                uint seed = 20261120u;
+                float price = 50f;
+                for (int i = 0; i < n; i++)
+                {
+                    open[i] = price;
+                    price += (Rand(ref seed) * 2f - 1f) * 24f + 1.2f;
+                    close[i] = price;
+                    hi[i] = Mathf.Max(open[i], close[i]) + Rand(ref seed) * 7f + 2f;
+                    lo[i] = Mathf.Min(open[i], close[i]) - Rand(ref seed) * 7f - 2f;
+                }
+                float min = float.MaxValue, max = float.MinValue;
+                for (int i = 0; i < n; i++) { min = Mathf.Min(min, lo[i]); max = Mathf.Max(max, hi[i]); }
+                // Cena -> wysokość (oś Y w dół): najwyższa cena przy górze, najniższa przy dole.
+                System.Func<float, float> Y = v => 12f + (1f - (v - min) / (max - min)) * (h - 24f);
+
+                float step = w / (float)n, body = step * 0.52f;
+                var avg = new Vector2[n];
+                for (int i = 0; i < n; i++)
+                {
+                    float x = step * (i + 0.5f);
+                    float top = Y(Mathf.Max(open[i], close[i])), bot = Y(Mathf.Min(open[i], close[i]));
+                    float bh = Mathf.Max(6f, bot - top), cy = (top + bot) * 0.5f;
+                    float yHi = Y(hi[i]), yLo = Y(lo[i]);
+                    bool up = close[i] >= open[i];
+                    // Knot nad i pod korpusem (nie przez środek, żeby puste świece były czytelne).
+                    c.Add(p => SdfCanvas.Capsule(p, new Vector2(x, yHi), new Vector2(x, cy - bh * 0.5f), 1.3f));
+                    c.Add(p => SdfCanvas.Capsule(p, new Vector2(x, cy + bh * 0.5f), new Vector2(x, yLo), 1.3f));
+                    // Wzrost = pełna świeca, spadek = pusta (sam kontur) – rozróżnienie bez drugiego koloru.
+                    if (up) c.Add(p => SdfCanvas.RoundRect(p, new Vector2(x, cy), new Vector2(body, bh), 2f));
+                    else c.Add(p => Mathf.Abs(SdfCanvas.RoundRect(p, new Vector2(x, cy), new Vector2(body - 2.6f, bh - 2.6f), 1.5f)) - 1.3f);
+
+                    // Średnia z 3 świec – gładka linia trendu.
+                    float sum = 0f; int cnt = 0;
+                    for (int k = Mathf.Max(0, i - 2); k <= i; k++) { sum += close[k]; cnt++; }
+                    avg[i] = new Vector2(x, Y(sum / cnt));
+                }
+                for (int i = 1; i < n; i++)
+                {
+                    Vector2 a = avg[i - 1], b = avg[i];
+                    c.Add(p => SdfCanvas.Capsule(p, a, b, 1.6f), 0.7f);
+                }
+
+                return Sprite.Create(c.ToTexture("fq_candles"), new Rect(0, 0, w, h), new Vector2(0.5f, 0.5f),
+                    100f, 0, SpriteMeshType.FullRect);
+            }
+        }
+
+        // Prosty generator liczb (0..1) o stałym ziarnie – ten sam wynik na każdym urządzeniu.
+        static float Rand(ref uint s)
+        {
+            s = s * 1664525u + 1013904223u;
+            return (s >> 8) / 16777216f;
         }
 
         public static Sprite Icon(IconId id)
         {
-            Sprite s;
-            if (icons.TryGetValue(id, out s)) return s;
-            var c = new SdfCanvas(IconSize, IconSize, 24f);
-            DrawIcon(c, id);
-            s = Sprite.Create(c.ToTexture("fq_icon_" + id), new Rect(0, 0, IconSize, IconSize), new Vector2(0.5f, 0.5f), 100f);
-            icons[id] = s;
-            return s;
+            return DrawnPictures.Get("icon_" + id, () =>
+            {
+                var c = new SdfCanvas(IconSize, IconSize, 24f);
+                DrawIcon(c, id);
+                // FullRect: siatka „Tight” wymaga czytelnej tekstury, a my zwalniamy jej kopię z RAM.
+                return Sprite.Create(c.ToTexture("fq_icon_" + id), new Rect(0, 0, IconSize, IconSize), new Vector2(0.5f, 0.5f),
+                    100f, 0, SpriteMeshType.FullRect);
+            });
         }
 
         static Vector2 V(float x, float y) { return new Vector2(x, y); }
+
+        static Vector2 Quad(Vector2 a, Vector2 b, Vector2 c, float t)
+        {
+            float u = 1f - t;
+            return a * (u * u) + b * (2f * u * t) + c * (t * t);
+        }
+
+        static void AddQuad(List<Vector2> l, Vector2 a, Vector2 b, Vector2 c)
+        {
+            for (int i = 1; i <= 10; i++) l.Add(Quad(a, b, c, i / 10f));
+        }
+
+        // Obrys dzwonka z krzywych: rozszerzony dół, proste boki, okrągła kopuła.
+        static Vector2[] BellBody(float cx, float top, float bottom, float half, float flare)
+        {
+            var l = new List<Vector2> { V(cx - half - flare, bottom) };
+            AddQuad(l, V(cx - half - flare, bottom), V(cx - half, bottom - 2.5f), V(cx - half, bottom - 6f));
+            AddQuad(l, V(cx - half, bottom - 6f), V(cx - half, top), V(cx, top));
+            AddQuad(l, V(cx, top), V(cx + half, top), V(cx + half, bottom - 6f));
+            AddQuad(l, V(cx + half, bottom - 6f), V(cx + half, bottom - 2.5f), V(cx + half + flare, bottom));
+            return l.ToArray();
+        }
+
+        // Ukośna kreska z „odstępem” po obu stronach (wycięcie), żeby była czytelna na ikonie pod spodem.
+        static void StrikeThrough(SdfCanvas c)
+        {
+            c.Cut(p => SdfCanvas.Capsule(p, V(3.5f, 3.5f), V(20.5f, 20.5f), 3f));
+            c.Add(p => SdfCanvas.Capsule(p, V(3.5f, 3.5f), V(20.5f, 20.5f), 1.4f));
+        }
 
         // Ikony projektowane na siatce 24x24 (oś Y w dół), rysowane na biało – kolor nadaje Image.
         static void DrawIcon(SdfCanvas c, IconId id)
@@ -79,6 +175,76 @@ namespace FinanceQuest
                     c.Cut(p => SdfCanvas.RoundRect(p, V(12, 17.5f), V(4.4f, 7f), 1.2f));
                     break;
                 }
+                case IconId.Back:
+                    // Strzałka „wróć”: trzon + dwa ramiona grotu.
+                    c.Add(p => SdfCanvas.Capsule(p, V(5.5f, 12), V(19, 12), 1.9f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(5.5f, 12), V(11.5f, 6), 1.9f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(5.5f, 12), V(11.5f, 18), 1.9f));
+                    break;
+                case IconId.Sound:
+                {
+                    var spk = new[] { V(3.5f, 9), V(8, 9), V(13, 4.5f), V(13, 19.5f), V(8, 15), V(3.5f, 15) };
+                    c.Add(p => SdfCanvas.Polygon(p, spk) - 0.4f);
+                    // Fala dźwięku: prawa połówka pierścienia.
+                    c.Add(p => Mathf.Max(Mathf.Abs((p - V(12, 12)).magnitude - 7f) - 1.1f, 15.5f - p.x));
+                    break;
+                }
+                case IconId.Bell:
+                {
+                    // Klasyczny dzwonek: kopuła z rozszerzonym dołem, kulka na górze, serce pod spodem.
+                    var bell = BellBody(12f, 4.5f, 18f, 6.2f, 2.2f);
+                    c.Add(p => SdfCanvas.Polygon(p, bell) - 0.5f);
+                    c.Add(p => SdfCanvas.Circle(p, V(12, 3.6f), 1.7f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(10.6f, 20.6f), V(13.4f, 20.6f), 1.6f));
+                    break;
+                }
+                case IconId.Language:
+                {
+                    // Dymek z literami „Aa” – symbol języka. Litery wycięte, odpowiednio grube, żeby były czytelne w małym rozmiarze.
+                    c.Add(p => SdfCanvas.RoundRect(p, V(12, 10.5f), V(21, 15.5f), 4.5f));
+                    var tail = new[] { V(6.5f, 17), V(12, 17), V(6.8f, 22.5f) };
+                    c.Add(p => SdfCanvas.Polygon(p, tail));
+                    c.Cut(p => SdfCanvas.Capsule(p, V(5.7f, 14.6f), V(8.6f, 6.2f), 1.3f));
+                    c.Cut(p => SdfCanvas.Capsule(p, V(8.6f, 6.2f), V(11.5f, 14.6f), 1.3f));
+                    c.Cut(p => SdfCanvas.Capsule(p, V(7f, 11.7f), V(10.2f, 11.7f), 1.15f));
+                    c.Cut(p => Mathf.Abs((p - V(16.2f, 11.5f)).magnitude - 2.3f) - 1.25f);
+                    c.Cut(p => SdfCanvas.Capsule(p, V(18.6f, 8.6f), V(18.6f, 14.6f), 1.25f));
+                    break;
+                }
+                case IconId.Sun:
+                    c.Add(p => SdfCanvas.Circle(p, V(12, 12), 4.6f));
+                    for (int i = 0; i < 8; i++)
+                    {
+                        float ang = i * Mathf.PI / 4f;
+                        Vector2 d = V(Mathf.Cos(ang), Mathf.Sin(ang));
+                        Vector2 r0 = V(12, 12) + d * 7.4f, r1 = V(12, 12) + d * 9.8f;
+                        c.Add(p => SdfCanvas.Capsule(p, r0, r1, 1.3f));
+                    }
+                    break;
+                case IconId.Gear:
+                    // Zębatka: koło z 8 zębami i otworem w środku.
+                    c.Add(p => SdfCanvas.Circle(p, V(12, 12), 7.6f));
+                    for (int i = 0; i < 8; i++)
+                    {
+                        // Zęby jako krótkie, szerokie prostokąty obrócone wokół środka.
+                        float deg = i * 45f, rad = deg * Mathf.Deg2Rad;
+                        Vector2 ctr = V(12, 12) + V(Mathf.Cos(rad), Mathf.Sin(rad)) * 8.6f;
+                        float cs = Mathf.Cos(-rad), sn = Mathf.Sin(-rad);
+                        c.Add(p =>
+                        {
+                            Vector2 q = p - ctr;
+                            q = V(q.x * cs - q.y * sn, q.x * sn + q.y * cs);
+                            return SdfCanvas.RoundRect(q, V(0, 0), V(4.2f, 5f), 1.2f);
+                        });
+                    }
+                    c.Cut(p => SdfCanvas.Circle(p, V(12, 12), 3.2f));
+                    break;
+                case IconId.SoundOff:
+                case IconId.BellOff:
+                    // Wersja „wyłączona” = ta sama ikona przekreślona ukośną kreską.
+                    DrawIcon(c, id == IconId.SoundOff ? IconId.Sound : IconId.Bell);
+                    StrikeThrough(c);
+                    break;
                 case IconId.Lock:
                     c.Add(p => SdfCanvas.RoundRect(p, V(12, 15.5f), V(15, 10.5f), 3f));
                     // Kabłąk = górna połowa pierścienia + dwie nóżki.

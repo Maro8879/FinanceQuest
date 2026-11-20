@@ -21,10 +21,12 @@ namespace FinanceQuest
             alpha = new float[width * height];
         }
 
-        public void Add(Sdf f) { Paint(f, false); }
-        public void Cut(Sdf f) { Paint(f, true); }
+        public void Add(Sdf f) { Paint(f, false, 1f); }
+        public void Cut(Sdf f) { Paint(f, true, 1f); }
+        // Słabsze krycie – do drugoplanowych detali (siatka, linia trendu), choć cała grafika jest jednym kolorem.
+        public void Add(Sdf f, float strength) { Paint(f, false, strength); }
 
-        void Paint(Sdf f, bool cut)
+        void Paint(Sdf f, bool cut, float strength)
         {
             for (int y = 0; y < Height; y++)
             {
@@ -35,7 +37,7 @@ namespace FinanceQuest
                 {
                     float d = f(new Vector2((x + 0.5f) / scale, py)) * scale;
                     // Pokrycie liczone z odległości w pikselach daje wygładzoną krawędź szerokości ~1 px.
-                    float c = Mathf.Clamp01(0.5f - d);
+                    float c = Mathf.Clamp01(0.5f - d) * strength;
                     if (c <= 0f) continue;
                     int i = row + x;
                     alpha[i] = cut ? alpha[i] * (1f - c) : alpha[i] + c * (1f - alpha[i]);
@@ -54,8 +56,8 @@ namespace FinanceQuest
             for (int i = 0; i < px.Length; i++)
                 px[i] = new Color32(255, 255, 255, (byte)Mathf.RoundToInt(alpha[i] * 255f));
             tex.SetPixels32(px);
-            // false = bez mipmap, true = zwalniamy kopię w RAM, bo już jej nie ruszamy.
-            tex.Apply(false, true);
+            // Bez mipmap; kopię w RAM zwalniamy, chyba że narzędzie Bake chce zapisać PNG.
+            tex.Apply(false, !DrawnPictures.KeepReadable);
             return tex;
         }
 

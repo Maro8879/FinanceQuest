@@ -5,7 +5,7 @@ namespace FinanceQuest
 {
     public enum LevelKind { Lesson, MiniGame, Task, Test }
 
-    public enum IconId { Home, Lock, Check, Book, Gamepad, Task, Star, Moon, Chart, Phone, Wallet, Card, Spark }
+    public enum IconId { Home, Back, Sound, SoundOff, Bell, BellOff, Language, Sun, Gear, Lock, Check, Book, Gamepad, Task, Star, Moon, Chart, Phone, Wallet, Card, Spark }
 
     // Stan widoczny na mapie: decyduje o kolorze (złoto / pomarańcz / szarość).
     public enum ItemState { Done, Current, Locked }
@@ -29,8 +29,10 @@ namespace FinanceQuest
     {
         public string Id;
         public string Title;
+        public string ShortName;   // podpis pucharu na półce
         public Color Color;
         public IconId Icon;
+        public CourseArt Art;   // ilustracja na karcie w menu
         public List<ChapterData> Chapters = new List<ChapterData>();
 
         public int LevelCount

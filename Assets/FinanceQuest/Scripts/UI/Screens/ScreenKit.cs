@@ -5,40 +5,12 @@ using UnityEngine.UI;
 
 namespace FinanceQuest
 {
-    // Wspólne części ekranów: nagłówek i przewijana lista.
+    // Wspólne części ekranów: przewijana lista, bloki tytułów, paski.
     public static class ScreenKit
     {
-        public const float HeaderHeight = 68f;
         public const float Margin = 16f;
         public const float Lip = 5f;
         public const float CardRadius = 20f;
-
-        // Nagłówek: „Finance Quest” po lewej, tytuł / hasło na środku, przycisk ikony po prawej.
-        public static void Header(RectTransform screen, float width, string center, bool isTagline,
-            IconId rightIcon, Color rightIconColor, Action onRight)
-        {
-            var bar = Ui.Rect("Header", screen);
-            Ui.Place(bar, 0, 0, width, HeaderHeight);
-
-            var logo = Ui.Text("Logo", bar, "Finance\nQuest", 15f, Palette.Brand, true, TextAlignmentOptions.MidlineLeft);
-            logo.lineSpacing = -12f;
-            Ui.Place(logo.rectTransform, Margin, 8, 90, 52);
-
-            const float btn = 40f;
-            float sideW = 92f;
-            var title = Ui.Text("Title", bar, center,
-                isTagline ? 12f : 17f, isTagline ? Palette.TextMuted : Palette.Text, true, TextAlignmentOptions.Center);
-            Ui.Place(title.rectTransform, Margin + sideW - 6, 8, width - 2 * (Margin + sideW - 6), 52);
-            title.enableAutoSizing = !isTagline;   // długi tytuł kursu ma się zmieścić w dwóch liniach
-            title.fontSizeMin = 13f;
-            title.fontSizeMax = 17f;
-
-            var b = LipCard.Create(bar, "RightButton", width - Margin - btn, 12, btn, btn + 3,
-                Palette.CardFill, Palette.CardEdge, Palette.CardLip, 12f, 3f, 2f);
-            var ic = Ui.Icon("Icon", b.Content, rightIcon, rightIconColor, 20f);
-            Ui.Center(ic.rectTransform, 20, 20);
-            b.SetClickable(onRight);
-        }
 
         // Przewijana lista pod nagłówkiem. Zwraca Content, do którego wkładamy elementy (współrzędne od góry).
         public static RectTransform Scroll(RectTransform screen, float width, float top)
@@ -87,7 +59,7 @@ namespace FinanceQuest
             float used = th;
             if (!string.IsNullOrEmpty(subtitle))
             {
-                var s = Ui.Text("Subtitle", parent, subtitle, 12.5f, subColor);
+                var s = Ui.Text("Subtitle", parent, subtitle, 12.5f, subColor, FontWeight.SemiBold);
                 Ui.Place(s.rectTransform, x, y + th + 1, w, 18);
                 used += 19;
             }
@@ -97,10 +69,13 @@ namespace FinanceQuest
         // Pasek z procentem po prawej.
         public static void BarRow(Transform parent, float x, float y, float w, float value, Color track, Color pctColor, string label)
         {
-            const float labelW = 44f;
-            ProgressBar.Create(parent, x, y, w - labelW - 8f, 16f, track, value);
-            var p = Ui.Text("Pct", parent, label, 13f, pctColor, true, TextAlignmentOptions.MidlineRight);
-            Ui.Place(p.rectTransform, x + w - labelW, y - 2, labelW, 20);
+            // Procent stoi tuż za paskiem (wyrównany do lewej), więc odstęp jest zawsze taki sam.
+            const float labelW = 40f, gap = 6f;
+            ProgressBar.Create(parent, x, y, w - labelW - gap, 16f, track, value);
+            // Capline = środek między linią bazową a wysokością wielkich liter. Cyfry nie mają ogonków,
+            // więc tak wyrównane stoją dokładnie na wysokości środka paska (Midline brał pod uwagę ogonki i podnosił je).
+            var p = Ui.Text("Pct", parent, label, 13f, pctColor, FontWeight.ExtraBold, TextAlignmentOptions.CaplineLeft);
+            Ui.Place(p.rectTransform, x + w - labelW, y, labelW, 16f);
         }
 
         public static string Pct(float v) { return Mathf.RoundToInt(v * 100f) + "%"; }

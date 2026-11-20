@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace FinanceQuest
 {
-    // Pasek postępu: szary tor + pomarańczowe wypełnienie z jasnym „odblaskiem” u góry.
+    // Pasek postępu: tor + żółte wypełnienie z jasnym „odblaskiem” u góry.
     public class ProgressBar : MonoBehaviour
     {
         RectTransform fill;
@@ -17,7 +17,7 @@ namespace FinanceQuest
             bar.width = w;
             bar.height = h;
 
-            var f = Ui.Rounded("Fill", bg.transform, Palette.Orange, h * 0.5f);
+            var f = Ui.Rounded("Fill", bg.transform, Palette.Accent, h * 0.5f);
             bar.fill = f.rectTransform;
             bar.fill.anchorMin = new Vector2(0f, 0f);
             bar.fill.anchorMax = new Vector2(0f, 1f);

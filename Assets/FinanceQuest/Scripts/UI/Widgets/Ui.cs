@@ -64,13 +64,15 @@ namespace FinanceQuest
         }
 
         public static TextMeshProUGUI Text(string name, Transform parent, string text, float size, Color color,
-            bool bold = true, TextAlignmentOptions align = TextAlignmentOptions.TopLeft)
+            FontWeight weight = FontWeight.ExtraBold, TextAlignmentOptions align = TextAlignmentOptions.TopLeft)
         {
             var t = Rect(name, parent).gameObject.AddComponent<TextMeshProUGUI>();
+            var font = Fonts.Get(weight);
+            if (font != null) { t.font = font; t.fontStyle = FontStyles.Normal; }
+            else t.fontStyle = weight == FontWeight.Regular ? FontStyles.Normal : FontStyles.Bold;
             t.text = text;
             t.fontSize = size;
             t.color = color;
-            t.fontStyle = bold ? FontStyles.Bold : FontStyles.Normal;
             t.alignment = align;
             t.textWrappingMode = TextWrappingModes.Normal;
             t.raycastTarget = false;   // napisy nie łapią dotyku – mniej pracy dla raycastera

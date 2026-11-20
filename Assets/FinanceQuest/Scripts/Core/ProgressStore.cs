@@ -27,6 +27,9 @@ namespace FinanceQuest
 
         public bool IsDone(LevelData l) { return done.Contains(l.Id); }
 
+        // Trofeum „Start”: przyznawane za pierwszy ukończony level (rozpoczęcie edukacji finansowej).
+        public bool Started { get { return done.Count > 0; } }
+
         public void Complete(LevelData l)
         {
             if (done.Add(l.Id)) Save();
@@ -45,6 +48,8 @@ namespace FinanceQuest
         {
             return ch.Levels.Count == 0 ? 0f : (float)DoneCount(ch) / ch.Levels.Count;
         }
+
+        public bool IsCourseComplete(CourseData c) { return CourseProgress(c) >= 0.9999f; }
 
         public float CourseProgress(CourseData c)
         {

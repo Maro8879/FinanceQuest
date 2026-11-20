@@ -22,7 +22,15 @@ namespace FinanceQuest
         public ProgressStore Progress { get; private set; }
 
         Canvas canvas;
-        RectTransform safeRoot, screenHost, currentScreen;
+        RectTransform safeRoot, screenHost, body, currentScreen;
+        public AppHeader Header { get; private set; }
+        CascadeTransition transition;
+        SwipeInput swipe;
+
+        // Dokąd prowadzi swipe w lewo z bieżącego ekranu (ustawia ekran przy budowaniu; null = nigdzie).
+        public Action SwipeForward;
+        // Ostatnio oglądany kurs – cel swipe'a w lewo w menu.
+        public CourseData LastCourse;
         readonly List<Action<RectTransform>> stack = new List<Action<RectTransform>>();
         float navLockUntil;
         int lastW, lastH;
@@ -43,6 +51,7 @@ namespace FinanceQuest
             Application.targetFrameRate = 60;
 
             Courses = DemoContent.Build();
+            swipe = new SwipeInput();
             Progress = ProgressStore.Load();
             BuildCanvas();
             EnsureEventSystem();
@@ -60,64 +69,89 @@ namespace FinanceQuest
             if (Screen.width != lastW || Screen.height != lastH || Screen.safeArea != lastSafe)
             {
                 ApplyScale();
-                Rebuild();
+                Rebuild(Nav.None);
             }
+            if (transition != null && transition.Step(Time.unscaledDeltaTime, Header)) EndTransition();
             if (BackPressed()) Back();
+
+            if (transition == null)
+            {
+                int s = swipe.Poll(canvas.scaleFactor);
+                if (s > 0) BackSwipe();
+                else if (s < 0 && SwipeForward != null) SwipeForward();
+            }
         }
 
         // ---------------- nawigacja ----------------
 
-        public void Push(Action<RectTransform> build)
+        public void Push(Action<RectTransform> build) { Push(build, false); }
+
+        // horizontal = przejście po swipie: karty wjeżdżają z boku, zgodnie z ruchem palca.
+        public void Push(Action<RectTransform> build, bool horizontal)
         {
             if (Time.unscaledTime < navLockUntil) return;   // chroni przed podwójnym tapnięciem
             stack.Add(build);
-            Rebuild();
+            Rebuild(Nav.Forward, horizontal);
+        }
+
+        void BackSwipe()
+        {
+            if (stack.Count <= 1 || Time.unscaledTime < navLockUntil) return;
+            stack.RemoveAt(stack.Count - 1);
+            Rebuild(Nav.Back, true);
         }
 
         public void Back()
         {
             if (stack.Count <= 1 || Time.unscaledTime < navLockUntil) return;
             stack.RemoveAt(stack.Count - 1);
-            Rebuild();
+            Rebuild(Nav.Back);
         }
 
         public void Home()
         {
             if (stack.Count <= 1 || Time.unscaledTime < navLockUntil) return;
             stack.RemoveRange(1, stack.Count - 1);
-            Rebuild();
+            Rebuild(Nav.Back);
         }
+
+        enum Nav { None, Forward, Back }
 
         // Ekran zawsze budujemy od zera – po powrocie widać świeży postęp i nie trzeba nic synchronizować.
-        void Rebuild()
+        // Stary ekran żyje jeszcze chwilę, żeby mógł płynnie zniknąć.
+        void Rebuild(Nav nav, bool horizontal = false)
         {
             if (stack.Count == 0) return;
-            navLockUntil = Time.unscaledTime + 0.15f;
-            if (currentScreen != null)
-            {
-                currentScreen.gameObject.SetActive(false);
-                Destroy(currentScreen.gameObject);
-            }
-            currentScreen = Ui.Rect("Screen", screenHost);
+            navLockUntil = Time.unscaledTime + 0.25f;
+            EndTransition();   // poprzednie przejście (jeśli trwa) kończymy od razu
+
+            var old = currentScreen;
+            bool animate = nav != Nav.None || old == null;
+            if (!animate && old != null) { old.gameObject.SetActive(false); Destroy(old.gameObject); old = null; }
+
+            if (animate && old != null) Header.BeginSwap();
+            SwipeForward = null;   // nowy ekran sam ustawi, dokąd prowadzi swipe w lewo
+            currentScreen = Ui.Rect("Screen", body);
             Ui.Stretch(currentScreen);
-            var group = currentScreen.gameObject.AddComponent<CanvasGroup>();
+            currentScreen.gameObject.AddComponent<CanvasGroup>();
             stack[stack.Count - 1](currentScreen);
-            StartCoroutine(FadeIn(group));
+
+            if (animate)
+                transition = new CascadeTransition(old, currentScreen, nav == Nav.Back, horizontal, ScreenHeight - AppHeader.Height);
+            if (animate && old != null) Header.Tick(0f);
         }
 
-        // Krótkie pojawienie się ekranu. Zmiana alfy CanvasGroup nie przebudowuje siatek, więc jest tania.
-        static IEnumerator FadeIn(CanvasGroup g)
+        void EndTransition()
         {
-            const float time = 0.14f;
-            float t = 0f;
-            g.alpha = 0f;
-            while (g != null && t < time)
+            if (transition == null) return;
+            transition.Finish();
+            if (transition.OldScreen != null)
             {
-                t += Time.unscaledDeltaTime;
-                g.alpha = Mathf.Clamp01(t / time);
-                yield return null;
+                transition.OldScreen.gameObject.SetActive(false);
+                Destroy(transition.OldScreen.gameObject);
             }
-            if (g != null) g.alpha = 1f;
+            Header.EndSwap();
+            transition = null;
         }
 
         public static void RunLater(float delay, Action action)
@@ -150,6 +184,9 @@ namespace FinanceQuest
 
             safeRoot = Ui.Rect("SafeArea", go.transform);
             screenHost = Ui.Rect("ScreenHost", safeRoot);
+            // Ekrany siedzą pod nagłówkiem; nagłówek jest wspólny i nie znika przy przejściach.
+            body = Ui.Rect("Body", screenHost);
+            Ui.Stretch(body, 0, AppHeader.Height, 0, 0);
         }
 
         void ApplyScale()
@@ -173,6 +210,14 @@ namespace FinanceQuest
             screenHost.pivot = new Vector2(0.5f, 0.5f);
             screenHost.anchoredPosition = Vector2.zero;
             screenHost.sizeDelta = new Vector2(w, 0f);
+
+            // Nagłówek budujemy na nowo tylko, gdy zmieniła się szerokość.
+            if (Header == null || Mathf.Abs(Header.Root.sizeDelta.x - w) > 0.5f)
+            {
+                EndTransition();
+                if (Header != null) Destroy(Header.Root.gameObject);
+                Header = AppHeader.Create(screenHost, w);
+            }
         }
 
         // Ekrany pytają o szerokość, żeby ręcznie rozłożyć elementy.

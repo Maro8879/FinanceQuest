@@ -9,29 +9,34 @@ namespace FinanceQuest
         {
             var list = new List<CourseData>();
 
-            list.Add(Course("invest", "Podstawy inwestowania", "1CB0F6", IconId.Chart,
-                Ch("basics", "Czym jest inwestowanie", "1CB0F6", 5),
-                Ch("risk", "Zarządzanie ryzykiem", "1CB0F6", 5),
-                Ch("divers", "Dywersyfikacja", "2EB872", 4),
-                Ch("compound", "Procent składany", "CE82FF", 4)));
+            list.Add(Course("invest", "Podstawy", "Podstawy inwestowania", Palette.Petrol, IconId.Chart, CourseArt.Portfolio,
+                Ch("basics", "Czym jest inwestowanie", Palette.Petrol, 5),
+                Ch("risk", "Zarządzanie ryzykiem", Palette.Petrol, 5),
+                Ch("divers", "Dywersyfikacja", Palette.Moss, 4),
+                Ch("compound", "Procent składany", Palette.Mustard, 4)));
 
-            list.Add(Course("platform", "Obsługa platformy inwestycyjnej", "CE82FF", IconId.Phone,
-                Ch("account", "Zakładanie konta", "CE82FF", 4),
-                Ch("orders", "Rodzaje zleceń", "1CB0F6", 4),
-                Ch("fees", "Opłaty i podatki", "FF4B4B", 4)));
+            list.Add(Course("short", "Trading", "Inwestowanie krótkoterminowe", Palette.Slate, IconId.Chart, CourseArt.Magnifier,
+                Ch("trading", "Czym jest trading", Palette.Slate, 4),
+                Ch("ta", "Analiza techniczna", Palette.Petrol, 4),
+                Ch("position", "Zarządzanie pozycją", Palette.Brick, 4)));
 
-            list.Add(Course("budget", "Budżet domowy", "2EB872", IconId.Wallet,
-                Ch("income", "Przychody i wydatki", "2EB872", 4),
-                Ch("plan", "Plan na miesiąc", "1CB0F6", 4),
-                Ch("save", "Poduszka finansowa", "CE82FF", 4),
-                Ch("goals", "Cele oszczędnościowe", "FF4B4B", 4),
-                Ch("habits", "Dobre nawyki", "00C2A8", 4)));
+            list.Add(Course("platform", "Platforma", "Obsługa platformy inwestycyjnej", Palette.Moss, IconId.Phone, CourseArt.Laptop,
+                Ch("account", "Zakładanie konta", Palette.Moss, 4),
+                Ch("orders", "Rodzaje zleceń", Palette.Petrol, 4),
+                Ch("fees", "Opłaty i podatki", Palette.Brick, 4)));
 
-            list.Add(Course("credit", "Karty i kredyty", "FF4B4B", IconId.Card,
-                Ch("cards", "Karta debetowa i kredytowa", "FF4B4B", 4),
-                Ch("rrso", "RRSO i koszt kredytu", "1CB0F6", 4),
-                Ch("bik", "Historia kredytowa", "CE82FF", 4),
-                Ch("debt", "Wychodzenie z długu", "2EB872", 4)));
+            list.Add(Course("budget", "Budżet", "Budżet domowy", Palette.Mustard, IconId.Wallet, CourseArt.Wallet,
+                Ch("income", "Przychody i wydatki", Palette.Mustard, 4),
+                Ch("plan", "Plan na miesiąc", Palette.Petrol, 4),
+                Ch("save", "Poduszka finansowa", Palette.Moss, 4),
+                Ch("goals", "Cele oszczędnościowe", Palette.Brick, 4),
+                Ch("habits", "Dobre nawyki", Palette.Slate, 4)));
+
+            list.Add(Course("credit", "Kredyty", "Karty i kredyty", Palette.Brick, IconId.Card, CourseArt.Cards,
+                Ch("cards", "Karta debetowa i kredytowa", Palette.Brick, 4),
+                Ch("rrso", "RRSO i koszt kredytu", Palette.Petrol, 4),
+                Ch("bik", "Historia kredytowa", Palette.Slate, 4),
+                Ch("debt", "Wychodzenie z długu", Palette.Moss, 4)));
 
             // Id leveli dostają prefiks kursu i rozdziału, żeby były unikalne.
             foreach (var c in list)
@@ -43,16 +48,16 @@ namespace FinanceQuest
             return list;
         }
 
-        static CourseData Course(string id, string title, string hex, IconId icon, params ChapterData[] chapters)
+        static CourseData Course(string id, string shortName, string title, UnityEngine.Color color, IconId icon, CourseArt art, params ChapterData[] chapters)
         {
-            var c = new CourseData { Id = id, Title = title, Color = Palette.Hex(hex), Icon = icon };
+            var c = new CourseData { Id = id, ShortName = shortName, Title = title, Color = color, Icon = icon, Art = art };
             c.Chapters.AddRange(chapters);
             return c;
         }
 
-        static ChapterData Ch(string id, string title, string hex, int levels)
+        static ChapterData Ch(string id, string title, UnityEngine.Color color, int levels)
         {
-            var ch = new ChapterData { Id = id, Title = title, Color = Palette.Hex(hex) };
+            var ch = new ChapterData { Id = id, Title = title, Color = color };
             // Powtarzalny wzór typów, żeby było widać wszystkie ikony; ostatni level to test.
             var pattern = new[] { LevelKind.Lesson, LevelKind.MiniGame, LevelKind.Task };
             for (int i = 0; i < levels; i++)

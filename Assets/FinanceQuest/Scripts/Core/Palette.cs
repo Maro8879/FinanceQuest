@@ -5,35 +5,40 @@ namespace FinanceQuest
     // Wszystkie kolory w jednym miejscu, żeby tryb ciemny (później) podmieniał je w jednym punkcie.
     public static class Palette
     {
-        public static readonly Color Background = Hex("FFFFFF");
-        public static readonly Color Text = Hex("3C3C3C");
-        public static readonly Color TextMuted = Hex("8A8A8A");
-        public static readonly Color TextLocked = Hex("AFAFAF");
-        public static readonly Color Brand = Hex("2EB872");
+        // Paleta „petrol + żółć” (inspirowana Commerzbankiem): stonowane, ciepłe kolory.
+        public static readonly Color Background = Hex("F5F3EE");   // ciepła złamana biel
+        public static readonly Color Text = Hex("1D2B2F");
+        public static readonly Color TextMuted = Hex("6F7A7C");
+        public static readonly Color TextLocked = Hex("A39E93");
+        public static readonly Color Brand = Hex("0E4A55");        // petrol
 
-        // Zwykła biała karta: szara ramka i szara warga.
+        // Kolory kursów i rozdziałów – jeden zestaw, żeby całość była spójna.
+        public static readonly Color Petrol = Hex("0E4A55");
+        public static readonly Color Moss = Hex("3F6B5C");
+        public static readonly Color Mustard = Hex("9C7A2E");
+        public static readonly Color Brick = Hex("8E4A36");
+        public static readonly Color Slate = Hex("4A5D73");
+
+        // Zwykła biała karta: ciepła szara ramka i warga.
         public static readonly Color CardFill = Hex("FFFFFF");
-        public static readonly Color CardEdge = Hex("E5E5E5");
-        public static readonly Color CardLip = Hex("E5E5E5");
+        public static readonly Color CardEdge = Hex("DAD5CA");
+        public static readonly Color CardLip = Hex("DAD5CA");
 
-        // Zablokowane = szare.
-        public static readonly Color LockedFill = Hex("F2F2F2");
-        public static readonly Color LockedEdge = Hex("E0E0E0");
-        public static readonly Color LockedLip = Hex("E0E0E0");
-        public static readonly Color LockedIcon = Hex("C8C8C8");
+        // Zablokowane = szare (ciepła szarość pasująca do tła).
+        public static readonly Color LockedFill = Hex("E7E3DA");
+        public static readonly Color LockedEdge = Hex("DAD5CA");
+        public static readonly Color LockedLip = Hex("DAD5CA");
+        public static readonly Color LockedIcon = Hex("A39E93");
 
-        // Złoto = ukończone.
-        public static readonly Color Gold = Hex("FFC800");
-        public static readonly Color GoldEdge = Hex("F0B400");
-        public static readonly Color GoldLip = Hex("D99E00");
+        // Żółć = aktualne miejsce i postęp. Na żółtym piszemy ciemno, bo biały byłby nieczytelny.
+        public static readonly Color Accent = Hex("F2C200");
+        public static readonly Color AccentLip = Hex("B59100");
+        public static readonly Color AccentDark = Hex("CDA400");   // ikony na białym tle
+        public static readonly Color OnAccent = Hex("1D2B2F");
 
-        // Pomarańczowy = aktualne miejsce i postęp.
-        public static readonly Color Orange = Hex("FF9600");
-        public static readonly Color OrangeLip = Hex("CC7700");
-
-        public static readonly Color Track = Hex("E5E5E5");
-        // Tor paska na kolorowej karcie: przyciemnienie zamiast szarości, żeby pasował do każdego koloru rozdziału.
-        public static readonly Color TrackOnColor = new Color(0f, 0f, 0f, 0.18f);
+        public static readonly Color Track = Hex("DAD5CA");
+        // Tor paska na kolorowej karcie: przyciemnienie zamiast szarości, żeby pasował do każdego koloru.
+        public static readonly Color TrackOnColor = new Color(0f, 0f, 0f, 0.22f);
         public static readonly Color WhiteSoft = new Color(1f, 1f, 1f, 0.8f);
 
         public static Color Hex(string hex)
