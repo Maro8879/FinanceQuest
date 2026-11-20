@@ -16,6 +16,24 @@ namespace FinanceQuest
             return list;
         }
 
+        // Ścieżka obrazka zawsze w postaci „obrazki/nazwa.png” (z ukośnikami /).
+        // Pełne ścieżki z czyjegoś dysku (C:\Users\...\Content\kurs\obrazki\x.png) przycinamy do części po folderze kursu,
+        // a stare ścieżki do Resources (…\Resources\Images\x.png) – do części po „Resources/”.
+        public static string NormalizeImagePath(string path, string courseId)
+        {
+            if (string.IsNullOrEmpty(path)) return "";
+            string p = path.Trim().Trim('"').Replace('\\', '/');
+            if (!string.IsNullOrEmpty(courseId))
+            {
+                string marker = "/Content/" + courseId + "/";
+                int i = p.IndexOf(marker, System.StringComparison.OrdinalIgnoreCase);
+                if (i >= 0) return p.Substring(i + marker.Length);
+            }
+            int r = p.IndexOf("/Resources/", System.StringComparison.OrdinalIgnoreCase);
+            if (r >= 0) return p.Substring(r + 1);
+            return p.TrimStart('.', '/');
+        }
+
         // **tekst** -> <b>tekst</b>. Pogrubienie rysuje prawdziwy Rubik ExtraBold (patrz Fonts), nie sztuczne pogrubienie.
         // Niesparowane ** zostawiamy jak jest, żeby literówka w treści nie pogrubiła całej reszty strony.
         public static string Rich(string s)

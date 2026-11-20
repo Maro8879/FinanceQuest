@@ -25,7 +25,7 @@
             },
             {
               "type": "image",
-              "image": "Images/wahania",
+              "image": "obrazki/wahania.png",
               "width": 1,
               "maxHeight": 200,
               "caption": "Cena akcji w ciągu roku – w górę i w dół"

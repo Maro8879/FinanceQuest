@@ -135,6 +135,14 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .bli{display:flex;gap:9px;align-items:center;background:var(--pcard);border:2px solid var(--pedge);box-shadow:0 3px 0 var(--pedge);border-radius:11px;padding:6px 9px;font-size:13.5px}
 .blc{width:20px;height:20px;border-radius:10px;background:var(--pet);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
 .bd{width:70%;margin:6px auto 18px;border-top:3px dotted var(--pedge)}
+.drop{border:2px dashed var(--edge);border-radius:12px;background:#fff;padding:10px;display:flex;gap:12px;align-items:center;cursor:pointer;min-height:70px}
+.drop:hover{border-color:var(--pet)}
+.drop.over,.card.over{border-color:var(--y);background:#FFF8D6}
+.drop img{width:96px;height:60px;object-fit:cover;border-radius:8px;border:2px solid var(--edge);flex:none}
+.drop .dt{font-size:13px;font-weight:600;color:var(--mut);line-height:1.4}
+.drop .dt b{color:var(--txt)}
+.bimg img{width:100%;height:100%;object-fit:cover;border-radius:11px;display:block}
+.bimg.has{padding:0;background:var(--pcard)}
 .modal{position:fixed;inset:0;background:rgba(15,25,28,.45);display:flex;align-items:center;justify-content:center;z-index:10}
 .modal .box{background:#fff;border-radius:16px;padding:20px 22px;width:560px;max-height:80vh;overflow:auto}
 .modal h3{font-size:18px;margin-bottom:8px}
@@ -153,6 +161,7 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
   </div>
 </div>
 <input type="file" id="pick" webkitdirectory multiple style="display:none">
+<input type="file" id="imgpick" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
 <script>
 "use strict";
 // ======================= stałe =======================
@@ -198,6 +207,17 @@ function ago(iso){
 function serialize(data){ return JSON.stringify(data, null, 2) + "\n"; }
 function getPath(o, p){ return p.split(".").reduce((a,k)=>a==null?a:a[k], o); }
 function setPath(o, p, v){ const ks=p.split("."); let a=o; for(let i=0;i<ks.length-1;i++){ if(a[ks[i]]==null) a[ks[i]] = isNaN(ks[i+1])?{}:[]; a=a[ks[i]]; } a[ks[ks.length-1]] = v; }
+
+// ======================= przeglądarka =======================
+// Zapis prosto do plików w repo umie tylko Chrome i Edge (File System Access API).
+// W Brave ta funkcja jest wyłączona, w Firefoksie i Safari jej nie ma – wtedy edytor może tylko pobierać pliki.
+const CAN_WRITE = !!window.showDirectoryPicker;
+function browserHelp(){
+  if (navigator.brave) return `To jest <b>Brave</b> – zapis do folderu jest w nim domyślnie wyłączony. Otwórz ten plik w <b>Google Chrome</b> lub <b>Microsoft Edge</b>
+    (albo w Brave wpisz w pasek adresu <code>brave://flags/#file-system-access-api</code>, ustaw <b>Enabled</b> i uruchom Brave ponownie).`;
+  return `Ta przeglądarka nie umie zapisywać do folderu, więc zmiany trzeba by pobierać ręcznie. Otwórz ten plik w <b>Google Chrome</b> lub <b>Microsoft Edge</b>:
+    prawy przycisk na <code>ContentEditor.html</code> → <b>Otwórz za pomocą</b> → Chrome / Edge.`;
+}
 
 // ======================= wczytywanie =======================
 async function openFolder(){
@@ -308,7 +328,7 @@ $("pick").addEventListener("change", async e => {
   for (const f of e.target.files) if (f.name.endsWith(".json")) map[f.webkitRelativePath] = await f.text();
   S.readOnly = true; S.dir = null;
   loadFromMap(map);
-  toast("Tryb tylko do odczytu – „Zapisz” pobierze pliki. Do zapisu w folderze użyj Chrome lub Edge.");
+  renderBanner();
 });
 
 // ======================= zapis =======================
@@ -346,6 +366,97 @@ async function ensureHandle(course, file){
   if (!course.dir || file.handle) return;
   file.handle = await course.dir.getFileHandle(file.name, {create:true});
 }
+
+// ======================= obrazki =======================
+// Obrazki leżą w repo obok treści: Content/<kurs>/obrazki/<nazwa>. W JSON zapisujemy tylko „obrazki/<nazwa>”,
+// więc ścieżka jest taka sama u każdego (bez C:\Users\...). Unity podpina je samo przy imporcie.
+const IMG_DIR = "obrazki", IMG_MAX = 1600;
+const imageCache = {}, imageSize = {}, imageLoading = {};
+
+// Pełne ścieżki wpisane ręcznie (z czyjegoś dysku) przycinamy do części po folderze kursu.
+function normImagePath(p, courseId){
+  p = String(p || "").trim().replace(/^"|"$/g, "").replace(/\\/g, "/");
+  const m = p.toLowerCase().indexOf("/content/" + String(courseId).toLowerCase() + "/");
+  if (m >= 0) return p.slice(m + 10 + String(courseId).length);   // "/content/" + id + "/"
+  const r = p.toLowerCase().indexOf("/resources/");
+  if (r >= 0) return p.slice(r + 1);
+  return p.replace(/^[.\/]+/, "");
+}
+
+// Adres do podglądu obrazka (czytany z folderu repo). Pierwsze wywołanie zaczyna wczytywanie i zwraca null.
+function imageUrl(course, path){
+  if (!course || !course.dir || !path) return null;
+  const key = course.id + "/" + path;
+  if (imageCache[key]) return imageCache[key];
+  if (!imageLoading[key]){
+    imageLoading[key] = true;
+    (async () => {
+      try {
+        let d = course.dir; const parts = path.split("/");
+        for (const seg of parts.slice(0, -1)) d = await d.getDirectoryHandle(seg);
+        const file = await (await d.getFileHandle(parts[parts.length-1])).getFile();
+        const url = URL.createObjectURL(file);
+        const bmp = await createImageBitmap(file); imageSize[url] = {w: bmp.width, h: bmp.height}; bmp.close?.();
+        imageCache[key] = url; renderForm(); renderPreview();
+      } catch(e){ /* brak pliku – zostaje zaślepka */ }
+    })();
+  }
+  return null;
+}
+
+// Duże zdjęcia zmniejszamy (dłuższy bok maks. 1600 px) – telefon nie potrzebuje więcej, a repo i gra są lżejsze.
+async function prepareImage(file){
+  const bmp = await createImageBitmap(file);
+  const big = Math.max(bmp.width, bmp.height) > IMG_MAX, keep = !big && (file.type === "image/png" || file.type === "image/jpeg");
+  const ext = file.type === "image/jpeg" ? ".jpg" : ".png";
+  if (keep){ bmp.close?.(); return {blob: file, ext}; }
+  const k = Math.min(1, IMG_MAX / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); bmp.close?.();
+  const blob = await new Promise(r => c.toBlob(r, ext === ".jpg" ? "image/jpeg" : "image/png", 0.9));
+  return {blob, ext};
+}
+
+// Kopiuje obrazek do Content/<kurs>/obrazki i wpisuje ścieżkę do bloku (albo dodaje nowy blok na końcu strony).
+async function addImage(file, pageIdx, blockIdx){
+  const course = curCourse(), l = curLevel(), f = curChapterFile();
+  if (!file || !file.type.startsWith("image/")) { toast("To nie jest obrazek (PNG lub JPG)."); return; }
+  if (!course?.dir){ alert("Obrazki można dodawać tylko z zapisem do folderu (Chrome lub Edge, „Otwórz folder Content”)."); return; }
+  const {blob, ext} = await prepareImage(file);
+  const dir = await course.dir.getDirectoryHandle(IMG_DIR, {create:true});
+  const base = slug(file.name.replace(/\.[^.]+$/, "")) || "obrazek";
+  let name = base + ext, n = 2;
+  while (true){   // ta sama nazwa i ten sam rozmiar = ten sam obrazek, nie kopiujemy drugi raz
+    try { const ex = await (await dir.getFileHandle(name)).getFile(); if (ex.size === blob.size) break; name = base + "-" + (n++) + ext; }
+    catch(e){ const w = await (await dir.getFileHandle(name, {create:true})).createWritable(); await w.write(blob); await w.close(); break; }
+  }
+  const path = IMG_DIR + "/" + name;
+  const page = l.pages[pageIdx];
+  if (blockIdx === "new" || blockIdx == null) page.blocks.push(Object.assign(newBlock("image"), {image: path}));
+  else page.blocks[blockIdx].image = path;
+  S.page = pageIdx; markDirty(f); renderForm(); renderPreview(); renderTree();
+  toast("Dodano obrazek " + path);
+}
+
+let pickTarget = null;
+$("imgpick").addEventListener("change", e => { const file = e.target.files[0]; e.target.value = ""; if (file && pickTarget) addImage(file, pickTarget.p, pickTarget.b); });
+
+// Przeciąganie plików z Eksploratora. Bez tego przeglądarka otworzyłaby obrazek zamiast edytora.
+function dropTarget(e){ return e.target.closest?.("[data-drop]"); }
+document.addEventListener("dragover", e => {
+  e.preventDefault();
+  document.querySelectorAll(".over").forEach(x => x.classList.remove("over"));
+  const t = dropTarget(e); if (t) t.classList.add("over");
+});
+document.addEventListener("dragleave", e => { if (!e.relatedTarget) document.querySelectorAll(".over").forEach(x => x.classList.remove("over")); });
+document.addEventListener("drop", e => {
+  e.preventDefault();
+  document.querySelectorAll(".over").forEach(x => x.classList.remove("over"));
+  const t = dropTarget(e), file = e.dataTransfer?.files?.[0];
+  if (!t || !file) return;
+  const [p, b] = t.dataset.drop.split(":");
+  addImage(file, Number(p), b === "new" ? "new" : Number(b));
+});
 
 // ======================= współpraca: zmiany na dysku =======================
 async function poll(){
@@ -492,13 +603,14 @@ function renderTop(){
     <div class="folder" title="Folder Content">${S.loaded ? (S.readOnly ? "📄 tylko odczyt" : "📁 " + esc(S.dir?.name || "")) : ""}</div>
     <button class="btn" data-act="open">📁 Otwórz folder Content</button>
     ${S.dir ? '<button class="btn" data-act="reload-all">↻ Wczytaj z dysku</button>' : ""}
-    <button class="btn main" data-act="save" ${n ? "" : "disabled"}>Zapisz zmiany${n ? " (" + n + ")" : ""}</button>
+    <button class="btn main" data-act="save" ${n ? "" : "disabled"}>${S.readOnly ? "Pobierz zmienione pliki" : "Zapisz zmiany"}${n ? " (" + n + ")" : ""}</button>
     <div class="who" data-act="me" title="Kliknij, żeby zmienić">Ty: <b>${esc(S.me || "—")}</b> ▾</div>`;
 }
 
 function renderBanner(){
   const f = fileOfSel();
   let h = "";
+  if (S.loaded && S.readOnly) h += `<div class="ban red"><div>⚠ Tryb tylko do odczytu – zmiany nie zapiszą się w repo, przycisk tylko pobierze pliki. ${browserHelp()}</div></div>`;
   if (f && f.disk) h += `<div class="ban ${f.dirty ? "red" : ""}">⚠ Plik <b>${esc(f.path)}</b> zmienił się na dysku (np. po „Pull” w GitHub Desktop)${f.dirty ? " – a Ty masz w nim niezapisane zmiany" : ""}.
       <a data-act="disk-reload">Wczytaj nową wersję</a> · <a data-act="disk-compare">Porównaj</a></div>`;
   const others = allFiles().filter(x => x.disk && x !== f);
@@ -566,6 +678,7 @@ function renderForm(){
       <p>Kliknij <b>„Otwórz folder Content”</b> i wskaż folder <code>Assets/FinKit/Content</code> w Twoim repo.</p>
       <p>Edytor zapisuje pliki JSON prosto do tego folderu (Chrome lub Edge). Potem w GitHub Desktop robisz Commit + Push, a kolega – Pull.</p>
       <p>Jeden rozdział = jeden plik, więc możecie pracować równolegle nad różnymi rozdziałami.</p>
+      ${CAN_WRITE ? "" : `<div class="warnbox" style="text-align:left">⚠ ${browserHelp()}</div>`}
       <div class="btns" style="justify-content:center;margin-top:16px"><button class="btn main" data-act="open">📁 Otwórz folder Content</button></div></div>`;
     return;
   }
@@ -611,8 +724,9 @@ function levelForm(){
   const l = curLevel(), b = `levels.${S.sel.lv}`, f = curChapterFile();
   let body = "";
   if (l.kind === "lesson"){
-    body = `<label>Strony lekcji <span class="hint">**słowo** albo Ctrl+B = pogrubienie</span></label>` + l.pages.map((p,i) => `<div class="card"><div class="ct"><b>Strona ${i+1}</b><span class="sub">· ${p.blocks.length} bl.</span><span style="flex:1"></span>${ctrl("page", i)}</div>
+    body = `<label>Strony lekcji <span class="hint">**słowo** albo Ctrl+B = pogrubienie</span></label>` + l.pages.map((p,i) => `<div class="card" data-drop="${i}:new"><div class="ct"><b>Strona ${i+1}</b><span class="sub">· ${p.blocks.length} bl.</span><span style="flex:1"></span>${ctrl("page", i)}</div>
       ${p.blocks.map((bl,j) => blockForm(bl, `${b}.pages.${i}.blocks.${j}`, i, j)).join("")}
+      <div class="sub" style="margin-top:8px">Możesz też przeciągnąć obrazek na tę stronę – doda się jako nowy blok.</div>
       <div class="btns">${Object.entries(BLOCKS).map(([k,v]) => `<button class="btn small" data-act="add-block" data-p="${i}" data-type="${k}">+ ${v}</button>`).join("")}</div></div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-page">+ strona</button></div>`
       + `<label>Zadania na koniec lekcji <span class="hint">opcjonalnie – po stronach; trzeba odpowiedzieć poprawnie, żeby przejść dalej</span></label>`
@@ -644,7 +758,14 @@ function blockForm(bl, bind, p, j){
   if (bl.type === "text") f = multi(`${bind}.text`, bl.text, "Tekst… **pogrubienie**");
   if (bl.type === "callout") f = multi(`${bind}.text`, bl.text, "Najważniejsza informacja");
   if (bl.type === "list") f = `<textarea class="multi" data-lines="${bind}.items" placeholder="Jeden punkt w linii">${esc(bl.items.join("\n"))}</textarea><div class="sub" style="margin-top:3px">Każda linia = jeden punkt</div>`;
-  if (bl.type === "image") f = `${one(`${bind}.image`, bl.image, "Ścieżka w Resources, np. Images/wahania")}
+  if (bl.type === "image"){
+    const url = bl.image ? imageUrl(curCourse(), bl.image) : null;
+    f = `<div class="drop" data-act="pick-image" data-p="${p}" data-b="${j}" data-drop="${p}:${j}">
+      ${url ? `<img src="${url}" alt="">` : `<div style="font-size:28px;flex:none">🖼</div>`}
+      <div class="dt">${bl.image ? `<b>${esc(bl.image)}</b><br>` : ""}Przeciągnij tu obrazek z folderu albo kliknij, żeby wybrać.<br><span style="font-weight:600">Edytor skopiuje go do repo (<code>${esc(curCourse()?.id || "")}/obrazki</code>).</span></div></div>
+    <details style="margin-top:6px"><summary class="sub" style="cursor:pointer">ścieżka ręcznie</summary>${one(`${bind}.image`, bl.image, "obrazki/nazwa.png")}</details>`;
+  }
+  if (bl.type === "image") f += `
     <div class="grid2" style="margin-top:6px"><div><span class="sub">Szerokość (0.3–1)</span><input type="number" step="0.1" min="0.3" max="1" data-bind="${bind}.width" data-num="1" value="${esc(bl.width)}"></div>
     <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
     <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
@@ -742,7 +863,14 @@ function blockPreview(b){
     case "space": return `<div style="height:${Math.min(200, Number(b.size)||0)}px"></div>`;
     case "image": {
       const w = Math.max(30, Math.min(100, (Number(b.width)||1)*100)), mh = Number(b.maxHeight) || 220;
-      return `<div class="bimg" style="width:${w}%;height:${Math.min(mh, 140)}px">🖼 ${esc(b.image || "brak ścieżki")}</div>${b.caption ? `<div class="bcap">${rich(b.caption)}</div>` : ""}`;
+      const url = b.image ? imageUrl(curCourse(), b.image) : null, size = url ? imageSize[url] : null;
+      // Jak w aplikacji: szerokość z bloku, wysokość z proporcji obrazka, ale nie więcej niż maks. wysokość (ekran ~0.77 skali).
+      let h = Math.min(mh, 140), width = w + "%";
+      if (size){
+        const pw = 298 * w / 100; h = pw * size.h / size.w;
+        if (h > mh * 0.77){ h = mh * 0.77; width = Math.round(h * size.w / size.h) + "px"; }   // za wysoki – węższy, proporcje zostają
+      }
+      return `<div class="bimg ${url ? "has" : ""}" style="width:${width};height:${Math.round(h)}px">${url ? `<img src="${url}" alt="">` : "🖼 " + esc(b.image || "brak obrazka")}</div>${b.caption ? `<div class="bcap">${rich(b.caption)}</div>` : ""}`;
     }
   }
   return "";
@@ -796,7 +924,12 @@ document.addEventListener("input", e => {
 // Podgląd pokazuje stronę, którą właśnie edytujesz.
 function trackPage(bind){ const m = /\.pages\.(\d+)\./.exec(bind || ""); if (m) S.page = Number(m[1]); }
 document.addEventListener("focusin", e => { const b = e.target.dataset?.bind || e.target.dataset?.lines; if (b && /\.pages\./.test(b)){ const old = S.page; trackPage(b); if (old !== S.page) renderPreview(); } });
-document.addEventListener("change", e => { if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", {bubbles:true})); });
+document.addEventListener("change", e => {
+  const bd = e.target.dataset?.bind;
+  if (bd && /\.blocks\.\d+\.image$/.test(bd) && curCourse()){
+    const v = normImagePath(e.target.value, curCourse().id);
+    if (v !== e.target.value){ e.target.value = v; e.target.dispatchEvent(new Event("input", {bubbles:true})); renderForm(); }
+  } if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", {bubbles:true})); });
 
 // Pola jednolinijkowe: Enter nie dodaje linii (zatwierdza), Shift+Enter = nowa linia.
 document.addEventListener("keydown", e => {
@@ -860,6 +993,7 @@ document.addEventListener("click", async e => {
     case "add-block": { const pi = Number(a.dataset.p); l.pages[pi].blocks.push(newBlock(a.dataset.type)); S.page = pi; return changed(); }
     case "block": { const pi = Number(a.dataset.p); S.page = pi; if (moveIn(l.pages[pi].blocks, i, dir)) changed(); return; }
     case "ppage": S.page = i; return renderPreview();
+    case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
     case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();

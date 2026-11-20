@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace FinanceQuest
 {
@@ -47,12 +48,15 @@ namespace FinanceQuest
     {
         public string type;                                   // heading | text | image | callout | list | divider | space
         public string text;                                   // heading, text, callout
-        public string image;                                  // image: ścieżka w Resources bez rozszerzenia, np. Images/ryzyko
+        public string image;                                  // image: ścieżka względem folderu kursu, np. obrazki/ryzyko.png
         public float width = 1f;                              // image: szerokość jako ułamek szerokości strony (0.3–1)
         public float maxHeight = 220f;                        // image: obrazek nie będzie wyższy niż tyle
         public string caption;                                // image: podpis pod obrazkiem
         public List<string> items = new List<string>();       // list: punkty listy
         public float size = 16f;                              // space: wysokość odstępu
+        // Obrazek podpięty przez importer (nie ma go w JSON). Dzięki temu obrazki leżą obok treści,
+        // a do gry trafiają razem z bazą treści – bez kopiowania do Resources.
+        public Sprite sprite;
     }
 
     [Serializable]

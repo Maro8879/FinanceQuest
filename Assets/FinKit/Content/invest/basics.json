@@ -40,7 +40,7 @@
             },
             {
               "type": "image",
-              "image": "C:\\Users\\HP\\Documents\\GitHub\\FinanceQuest\\Assets\\FinKit\\Resources\\Images\\wahania.png",
+              "image": "obrazki/wahania.png",
               "width": 1,
               "maxHeight": 220,
               "caption": ""

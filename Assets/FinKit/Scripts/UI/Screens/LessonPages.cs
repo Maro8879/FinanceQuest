@@ -157,7 +157,8 @@ namespace FinanceQuest
         static float Picture(RectTransform parent, BlockDef b, float x, float y, float cw)
         {
             const float lip = 4f, border = 2f, radius = 16f;
-            var sprite = LoadSprite(b.image);
+            // Obrazek z folderu kursu podpina importer; stare ścieżki do Resources wczytujemy tutaj.
+            var sprite = b.sprite != null ? b.sprite : LoadSprite(b.image);
             float w = cw * Mathf.Clamp(b.width <= 0f ? 1f : b.width, 0.3f, 1f);
             float maxH = b.maxHeight <= 0f ? 220f : b.maxHeight;
             float h;
@@ -205,6 +206,10 @@ namespace FinanceQuest
         static Sprite LoadSprite(string path)
         {
             if (string.IsNullOrEmpty(path)) return null;
+            path = ContentBlocks.NormalizeImagePath(path, null);
+            if (path.StartsWith("Resources/")) path = path.Substring("Resources/".Length);
+            string ext = System.IO.Path.GetExtension(path);
+            if (!string.IsNullOrEmpty(ext)) path = path.Substring(0, path.Length - ext.Length);
             Sprite s;
             if (sprites.TryGetValue(path, out s)) return s;
             s = Resources.Load<Sprite>(path);

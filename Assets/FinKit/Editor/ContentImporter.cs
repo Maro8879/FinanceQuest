@@ -19,16 +19,20 @@ namespace FinanceQuest.EditorTools
 
         static void OnPostprocessAllAssets(string[] imported, string[] deleted, string[] moved, string[] movedFrom)
         {
-            bool touched = imported.Concat(deleted).Concat(moved).Concat(movedFrom).Any(IsContentJson);
+            bool touched = imported.Concat(deleted).Concat(moved).Concat(movedFrom).Any(IsContentFile);
             if (!touched || scheduled) return;
             // Przebudowa po zakończeniu importu – tworzenie assetów w trakcie importu bywa zawodne.
             scheduled = true;
             EditorApplication.delayCall += () => { scheduled = false; Rebuild(); };
         }
 
-        static bool IsContentJson(string p)
+        // JSON-y i obrazki w Content – nowy obrazek też musi przebudować bazę, żeby się podpiął.
+        static bool IsContentFile(string p)
         {
-            return p.Replace('\\', '/').StartsWith(ContentDir + "/") && p.EndsWith(".json");
+            p = p.Replace('\\', '/');
+            if (!p.StartsWith(ContentDir + "/")) return false;
+            string ext = Path.GetExtension(p).ToLowerInvariant();
+            return ext == ".json" || ext == ".png" || ext == ".jpg" || ext == ".jpeg";
         }
 
         [MenuItem("Finance Quest/Import Content")]
@@ -59,6 +63,7 @@ namespace FinanceQuest.EditorTools
                     var ch = Read<ChapterDef>(f);
                     if (ch == null) { warnings++; continue; }
                     if (string.IsNullOrEmpty(ch.id)) ch.id = id;
+                    warnings += AttachImages(ch, dir.Replace('\\', '/'), b.course.id, f);
                     warnings += Validate(ch, f);
                     b.chapters.Add(ch);
                 }
@@ -78,6 +83,52 @@ namespace FinanceQuest.EditorTools
             AssetDatabase.SaveAssets();
             Debug.Log("Finance Quest: zaimportowano " + bundles.Count + " kursów, " + bundles.Sum(x => x.chapters.Count) +
                       " rozdziałów" + (warnings > 0 ? " – ostrzeżeń: " + warnings + " (szczegóły wyżej)" : "") + ".");
+        }
+
+        // Podpina obrazki z folderu kursu (np. Content/invest/obrazki/x.png) jako Sprite do bloków.
+        // Stare ścieżki do Resources (Images/x) zostają – gra wczyta je sama.
+        static int AttachImages(ChapterDef ch, string courseDir, string courseId, string file)
+        {
+            int w = 0;
+            foreach (var l in ch.levels)
+                foreach (var page in l.pages)
+                    foreach (var b in ContentBlocks.Of(page))
+                    {
+                        if (b.type != "image") continue;
+                        b.sprite = null;
+                        b.image = ContentBlocks.NormalizeImagePath(b.image, courseId);
+                        if (string.IsNullOrEmpty(b.image)) continue;
+                        string assetPath = courseDir + "/" + b.image;
+                        if (!File.Exists(assetPath))
+                        {
+                            if (Resources.Load<Sprite>(StripExt(b.image)) == null && Resources.Load<Texture2D>(StripExt(b.image)) == null)
+                            { Debug.LogWarning("Finance Quest: " + file + ": nie ma obrazka " + assetPath + "."); w++; }
+                            continue;
+                        }
+                        EnsureSprite(assetPath);
+                        b.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+                    }
+            return w;
+        }
+
+        static string StripExt(string p)
+        {
+            string e = Path.GetExtension(p);
+            if (p.StartsWith("Resources/")) p = p.Substring("Resources/".Length);
+            return string.IsNullOrEmpty(e) ? p : p.Substring(0, p.Length - e.Length);
+        }
+
+        // Obrazek treści musi być Sprite'em. Bez mipmap (UI nie potrzebuje) i maks. 2048 px – lżej na telefonie.
+        static void EnsureSprite(string assetPath)
+        {
+            var ti = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            if (ti == null || (ti.textureType == TextureImporterType.Sprite && !ti.mipmapEnabled && ti.maxTextureSize <= 2048)) return;
+            ti.textureType = TextureImporterType.Sprite;
+            ti.spriteImportMode = SpriteImportMode.Single;
+            ti.mipmapEnabled = false;
+            ti.alphaIsTransparency = true;
+            if (ti.maxTextureSize > 2048) ti.maxTextureSize = 2048;
+            ti.SaveAndReimport();
         }
 
         static T Read<T>(string path) where T : class
@@ -107,7 +158,6 @@ namespace FinanceQuest.EditorTools
                     foreach (var b in blocks)
                     {
                         if (b.type == "image" && string.IsNullOrEmpty(b.image)) { Debug.LogWarning("Finance Quest: " + pw + "obrazek bez ścieżki."); w++; }
-                        if (b.type == "image" && !string.IsNullOrEmpty(b.image) && Resources.Load<Sprite>(b.image) == null && Resources.Load<Texture2D>(b.image) == null) { Debug.LogWarning("Finance Quest: " + pw + "nie ma obrazka Resources/" + b.image + "."); w++; }
                         if (b.type == "list" && b.items.Count == 0) { Debug.LogWarning("Finance Quest: " + pw + "pusta lista."); w++; }
                         if ((b.type == "text" || b.type == "heading" || b.type == "callout") && string.IsNullOrEmpty(b.text)) { Debug.LogWarning("Finance Quest: " + pw + "pusty blok tekstu."); w++; }
                     }
