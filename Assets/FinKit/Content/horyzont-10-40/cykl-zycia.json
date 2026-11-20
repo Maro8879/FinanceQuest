@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "id": "cykl-zycia",
+  "title": "Cykl życia portfela i emerytura",
+  "color": "#0E4A55",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:36:13Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
