@@ -5,130 +5,104 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:00Z"
+    "editedAt": "2026-11-20T22:54:58Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Wprowadzenie",
+      "title": "Obietnice a gwarancja zysku",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Wprowadzenie"
+              "text": "Obietnice a gwarancja zysku"
             },
             {
               "type": "text",
-              "text": "Analiza techniczna – pierwsze kroki.\nTa lekcja to przykładowa treść do podmiany w edytorze."
+              "text": ""
             }
           ]
         }
       ],
-      "tasks": [],
       "minigame": {
         "game": "",
         "settings": []
-      }
+      },
+      "tasks": []
     },
     {
       "id": "l2",
-      "kind": "minigame",
-      "title": "Mini gra",
+      "kind": "lesson",
+      "title": "Sygnały ostrzegawcze",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Sygnały ostrzegawcze"
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
       "minigame": {
-        "game": "sortowanie",
-        "settings": [
-          {
-            "key": "czas",
-            "value": "60"
-          }
-        ]
+        "game": "",
+        "settings": []
       },
-      "pages": [],
       "tasks": []
     },
     {
       "id": "l3",
-      "kind": "task",
-      "title": "Sprawdź się",
-      "tasks": [
+      "kind": "lesson",
+      "title": "Popularne oszustwa",
+      "pages": [
         {
-          "type": "choice",
-          "prompt": "Przykładowe pytanie o: Analiza techniczna",
-          "multi": false,
-          "options": [
+          "blocks": [
             {
-              "text": "Poprawna odpowiedź",
-              "correct": true
+              "type": "heading",
+              "text": "Popularne oszustwa"
             },
             {
-              "text": "Błędna odpowiedź",
-              "correct": false
-            },
-            {
-              "text": "Inna błędna",
-              "correct": false
+              "type": "text",
+              "text": ""
             }
-          ],
-          "explain": "Tu wpisz wyjaśnienie po złej odpowiedzi.",
-          "fact": "Tu wpisz ciekawostkę po dobrej odpowiedzi.",
-          "extra": [],
-          "pairs": [],
-          "zones": [],
-          "items": [],
-          "answers": [],
-          "wrong": [],
-          "answer": "",
-          "image": "",
-          "text": "",
-          "mode": ""
+          ]
         }
       ],
-      "pages": [],
       "minigame": {
         "game": "",
         "settings": []
-      }
+      },
+      "tasks": []
     },
     {
       "id": "l4",
-      "kind": "test",
-      "title": "Test rozdziału",
-      "tasks": [
+      "kind": "lesson",
+      "title": "Jak się ochronić",
+      "pages": [
         {
-          "type": "choice",
-          "prompt": "Pytanie testowe: Analiza techniczna",
-          "multi": false,
-          "options": [
+          "blocks": [
             {
-              "text": "Tak",
-              "correct": true
+              "type": "heading",
+              "text": "Jak się ochronić"
             },
             {
-              "text": "Nie",
-              "correct": false
+              "type": "text",
+              "text": ""
             }
-          ],
-          "explain": "Wyjaśnienie.",
-          "fact": "Ciekawostka.",
-          "extra": [],
-          "pairs": [],
-          "zones": [],
-          "items": [],
-          "answers": [],
-          "wrong": [],
-          "answer": "",
-          "image": "",
-          "text": "",
-          "mode": ""
+          ]
         }
       ],
-      "pages": [],
       "minigame": {
         "game": "",
         "settings": []
-      }
+      },
+      "tasks": []
     }
   ]
 }
