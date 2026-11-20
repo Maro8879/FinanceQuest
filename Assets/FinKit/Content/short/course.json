@@ -1,8 +1,8 @@
 {
   "format": 1,
   "id": "short",
-  "title": "Inwestowanie krótkoterminowe",
-  "shortName": "Trading",
+  "title": "HORYZONT KRÓTKI (0–2 lata) – płynność i bezpieczeństwo",
+  "shortName": "Krótki",
   "color": "#4A5D73",
   "art": "Magnifier",
   "icon": "Chart",
@@ -13,7 +13,7 @@
     "position"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T19:20:00Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-20T22:49:50Z"
   }
 }
