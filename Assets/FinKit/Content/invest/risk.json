@@ -1,11 +1,11 @@
 {
   "format": 1,
   "id": "risk",
-  "title": "Zarządzanie ryzykiem",
+  "title": "Akcje, obligacje, ETF",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T19:20:00Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-20T22:20:18Z"
   },
   "levels": [
     {
@@ -80,7 +80,17 @@
             }
           ],
           "explain": "Im większy możliwy zysk, tym większa szansa, że wynik będzie inny, niż zakładasz.",
-          "fact": "Inwestorzy nazywają to premią za ryzyko."
+          "fact": "Inwestorzy nazywają to premią za ryzyko.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
         },
         {
           "type": "gap",
@@ -95,9 +105,21 @@
             "takie same"
           ],
           "explain": "Cena akcji zmienia się codziennie, a lokata ma stały procent.",
-          "fact": "Kurs akcji potrafi zmienić się o kilka procent w jeden dzień."
+          "fact": "Kurs akcji potrafi zmienić się o kilka procent w jeden dzień.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
         }
-      ]
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     },
     {
       "id": "l2",
@@ -111,7 +133,9 @@
             "value": "60"
           }
         ]
-      }
+      },
+      "pages": [],
+      "tasks": []
     },
     {
       "id": "l3",
@@ -137,7 +161,17 @@
             }
           ],
           "explain": "Dywersyfikacja to podział pieniędzy między różne aktywa,\nżeby jedna strata nie zjadła całego portfela.",
-          "fact": "Nawet fundusz indeksowy to już dywersyfikacja – kupujesz kilkaset spółek naraz."
+          "fact": "Nawet fundusz indeksowy to już dywersyfikacja – kupujesz kilkaset spółek naraz.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
         },
         {
           "type": "pairs",
@@ -157,7 +191,18 @@
             }
           ],
           "explain": "Akcja daje udział w firmie, obligacja to pożyczka, a lokata – depozyt w banku.",
-          "fact": "Obligacje skarbowe kupisz już od 100 zł."
+          "fact": "Obligacje skarbowe kupisz już od 100 zł.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
         },
         {
           "type": "gap",
@@ -170,9 +215,22 @@
           ],
           "wrong": [],
           "explain": "To stare powiedzenie o dywersyfikacji: koszyk = jedna inwestycja.",
-          "fact": "To powiedzenie znane jest w wielu językach."
+          "fact": "To powiedzenie znane jest w wielu językach.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
         }
-      ]
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     },
     {
       "id": "l4",
@@ -199,7 +257,12 @@
             }
           ]
         }
-      ]
+      ],
+      "tasks": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     },
     {
       "id": "l5",
@@ -215,7 +278,17 @@
             "zawsze"
           ],
           "explain": "Zysk i ryzyko zwykle idą w parze.",
-          "fact": "Inwestorzy nazywają to premią za ryzyko."
+          "fact": "Inwestorzy nazywają to premią za ryzyko.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
         },
         {
           "type": "choice",
@@ -236,7 +309,17 @@
             }
           ],
           "explain": "Kredyt na akcje zwiększa ryzyko – możesz stracić więcej, niż masz.",
-          "fact": "Długi horyzont pozwala przeczekać spadki."
+          "fact": "Długi horyzont pozwala przeczekać spadki.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
         },
         {
           "type": "zones",
@@ -279,9 +362,23 @@
             }
           ],
           "explain": "Lokaty i obligacje skarbowe mają małe wahania, kryptowaluty i pojedyncze akcje – duże.",
-          "fact": "Nawet bezpieczne aktywa mają ryzyko inflacji."
+          "fact": "Nawet bezpieczne aktywa mają ryzyko inflacji.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "text": "",
+          "mode": "",
+          "multi": false
         }
-      ]
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

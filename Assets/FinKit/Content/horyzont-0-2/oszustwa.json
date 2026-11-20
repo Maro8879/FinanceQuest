@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "id": "oszustwa",
+  "title": "Oszustwa finansowe",
+  "color": "#3F6B5C",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:36:04Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
