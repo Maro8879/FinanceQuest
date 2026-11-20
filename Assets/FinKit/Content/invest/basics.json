@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T21:11:18Z"
+    "editedAt": "2026-11-20T21:14:30Z"
   },
   "levels": [
     {
@@ -39,7 +39,8 @@
               ]
             },
             {
-              "type": "divider"
+              "type": "space",
+              "size": 16
             },
             {
               "type": "text",
