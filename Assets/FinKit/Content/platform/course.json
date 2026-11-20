@@ -1,8 +1,8 @@
 {
   "format": 1,
   "id": "platform",
-  "title": "Obsługa platformy inwestycyjnej",
-  "shortName": "Platforma",
+  "title": "HORYZONT ŚREDNI (3–10 lat) – cele życiowe",
+  "shortName": "Średni",
   "color": "#3F6B5C",
   "art": "Laptop",
   "icon": "Phone",
@@ -13,7 +13,7 @@
     "fees"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T19:20:00Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-20T22:49:51Z"
   }
 }
