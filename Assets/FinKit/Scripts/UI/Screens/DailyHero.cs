@@ -30,6 +30,9 @@ namespace FinanceQuest
             art.raycastTarget = false;
             Ui.Stretch(art.rectTransform);
 
+            // Powiewające flagi nad masztami z obrazka (osobna, lekka warstwa).
+            WavingFlags.Create(root, w, h);
+
             // Panel z cytatem – półprzezroczysty, żeby wysokie budynki mogły sięgać pod tekst.
             const float inset = 10f, pad = 12f;
             var panel = Ui.Rounded("Panel", root, night ? PanelNight : PanelDay, 14f);

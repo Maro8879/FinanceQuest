@@ -143,6 +143,15 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .drop .dt b{color:var(--txt)}
 .bimg img{width:100%;height:100%;object-fit:cover;border-radius:11px;display:block}
 .bimg.has{padding:0;background:var(--pcard)}
+.tgrid{display:grid;gap:5px;align-items:center;margin-bottom:6px}
+.tgrid input{padding:6px 8px;font-size:13px;border-radius:8px}
+.tgrid input.thc{background:#E7F0F1;font-weight:800}.tgrid input.c0{font-weight:700}
+.btab{margin-bottom:14px}.btab table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.btab th,.btab td{text-align:left;padding:7px 6px;vertical-align:top;white-space:pre-wrap}.btab td:first-child{font-weight:800}.btab b{font-weight:800}
+.ta{border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;overflow:hidden;background:var(--pcard)}
+.ta th{background:var(--pet);color:#fff;font-weight:800}.ta tr:nth-child(odd) td{background:var(--pbg)}
+.tb th{font-weight:800;font-size:11px;letter-spacing:.6px;color:var(--pmut);text-transform:uppercase;border-bottom:2px solid var(--ptxt)}
+.tb td{border-bottom:2px solid var(--pedge)}.tb tr:last-child td{border-bottom:0}
 .modal{position:fixed;inset:0;background:rgba(15,25,28,.45);display:flex;align-items:center;justify-content:center;z-index:10}
 .modal .box{background:#fff;border-radius:16px;padding:20px 22px;width:560px;max-height:80vh;overflow:auto}
 .modal h3{font-size:18px;margin-bottom:8px}
@@ -171,7 +180,7 @@ const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
 const GAMES = ["sortowanie","budzet","wydatki","inna"];
-const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", callout:"Ważne", list:"Lista", divider:"Linia", space:"Odstęp"};
+const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", callout:"Ważne", list:"Lista", table:"Tabelka", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
 // ======================= stan =======================
@@ -187,7 +196,7 @@ const S = {
   knownPaths: new Set(),
   newOnDisk: [],
 };
-// plik: {kind:'course'|'chapter', name, path, handle, data, lastModified, dirty, disk}
+// plik: {kind:'course'|'chapter', name, path, data, base, stamp, dirty, disk}
 
 // ======================= narzędzia =======================
 const $ = id => document.getElementById(id);
@@ -219,57 +228,206 @@ function browserHelp(){
     prawy przycisk na <code>ContentEditor.html</code> → <b>Otwórz za pomocą</b> → Chrome / Edge.`;
 }
 
+// ======================= magazyn plików: folder albo GitHub =======================
+// Edytor posługuje się tylko ścieżkami „kurs/plik.json”. Skąd pliki przychodzą i dokąd idą, decyduje Store:
+//  • folder (Chrome/Edge) – zapis prosto do repo na dysku, potem Commit + Push w GitHub Desktop;
+//  • GitHub – zapis prosto do repozytorium przez API: każdy „Zapisz” to commit, GitHub Desktop niepotrzebny.
+// Znacznik wersji pliku (stamp): w folderze czas zmiany, na GitHubie skrót (sha) – po nim poznajemy cudze zmiany.
+const Store = {
+  kind: null,          // "fs" | "gh" | null (tylko odczyt)
+  gh: null,            // {owner, repo, branch, root, token}
+  tree: {},            // GitHub: ścieżka względna -> {sha, size}
+
+  async fsDir(parts, create){ let d = S.dir; for (const p of parts) d = await d.getDirectoryHandle(p, {create: !!create}); return d; },
+  async fsFile(path, create){ const parts = path.split("/"); const d = await Store.fsDir(parts.slice(0, -1), create); return d.getFileHandle(parts[parts.length-1], {create: !!create}); },
+
+  async api(method, url, body){
+    const r = await fetch("https://api.github.com" + url, {method, cache: "no-store",
+      headers: Object.assign({"Authorization": "Bearer " + Store.gh.token, "Accept": "application/vnd.github+json"}, body ? {"Content-Type": "application/json"} : {}),
+      body: body ? JSON.stringify(body) : undefined});
+    if (!r.ok){
+      let msg = r.statusText; try { msg = (await r.json()).message || msg; } catch(e){}
+      const e = new Error("GitHub " + r.status + ": " + msg); e.status = r.status; throw e;
+    }
+    return r.status === 204 ? null : r.json();
+  },
+  repoUrl(){ return "/repos/" + Store.gh.owner + "/" + Store.gh.repo; },
+  ghPath(p){ return encPath(Store.gh.root.replace(/\/+$/, "") + "/" + p); },
+  async refreshTree(){
+    const t = await Store.api("GET", Store.repoUrl() + "/git/trees/" + encodeURIComponent(Store.gh.branch) + "?recursive=1");
+    const pre = Store.gh.root.replace(/\/+$/, "") + "/", tree = {};
+    for (const it of t.tree) if (it.type === "blob" && it.path.startsWith(pre)) tree[it.path.slice(pre.length)] = {sha: it.sha, size: it.size};
+    Store.tree = tree;
+    return tree;
+  },
+
+  // Wszystkie pliki treści: „kurs/plik.json” -> znacznik wersji.
+  async listJson(){
+    const out = {};
+    if (Store.kind === "fs"){
+      for await (const [name, h] of S.dir.entries()){
+        if (h.kind !== "directory") continue;
+        for await (const [fn, fh] of h.entries()) if (fh.kind === "file" && fn.endsWith(".json")) out[name + "/" + fn] = (await fh.getFile()).lastModified;
+      }
+    } else if (Store.kind === "gh"){
+      for (const [p, v] of Object.entries(await Store.refreshTree())) if (/^[^/]+\/[^/]+\.json$/.test(p)) out[p] = v.sha;
+    }
+    return out;
+  },
+  async read(path){
+    if (Store.kind === "fs"){ const f = await (await Store.fsFile(path)).getFile(); return {text: await f.text(), stamp: f.lastModified}; }
+    const sha = Store.tree[path] && Store.tree[path].sha;
+    const b = await Store.api("GET", Store.repoUrl() + "/git/blobs/" + sha);
+    return {text: b64ToText(b.content), stamp: sha};
+  },
+  async stampOf(path){
+    if (Store.kind === "fs"){ try { return (await (await Store.fsFile(path)).getFile()).lastModified; } catch(e){ return null; } }
+    return Store.tree[path] ? Store.tree[path].sha : null;
+  },
+  // Zwraca nowy znacznik. Na GitHubie, gdy ktoś w międzyczasie zapisał plik, rzuca błąd 409 – wtedy scalamy i próbujemy jeszcze raz.
+  async write(path, text, stamp, message){
+    if (Store.kind === "fs"){
+      const h = await Store.fsFile(path, true), w = await h.createWritable(); await w.write(text); await w.close();
+      return (await h.getFile()).lastModified;
+    }
+    const body = {message, content: textToB64(text), branch: Store.gh.branch};
+    if (stamp) body.sha = stamp;
+    const r = await Store.api("PUT", Store.repoUrl() + "/contents/" + Store.ghPath(path), body);
+    Store.tree[path] = {sha: r.content.sha, size: r.content.size};
+    return r.content.sha;
+  },
+  async remove(path, stamp, message){
+    if (Store.kind === "fs"){ const parts = path.split("/"); await (await Store.fsDir(parts.slice(0, -1))).removeEntry(parts[parts.length-1]); return; }
+    await Store.api("DELETE", Store.repoUrl() + "/contents/" + Store.ghPath(path), {message, sha: stamp || (Store.tree[path] && Store.tree[path].sha), branch: Store.gh.branch});
+    delete Store.tree[path];
+  },
+  async readBlob(path){
+    if (Store.kind === "fs") return (await Store.fsFile(path)).getFile();
+    const sha = Store.tree[path] && Store.tree[path].sha; if (!sha) throw new Error("brak pliku");
+    const b = await Store.api("GET", Store.repoUrl() + "/git/blobs/" + sha);
+    return new Blob([b64ToBytes(b.content)]);
+  },
+  async size(path){   // -1 = nie ma takiego pliku
+    if (Store.kind === "fs"){ try { return (await (await Store.fsFile(path)).getFile()).size; } catch(e){ return -1; } }
+    return Store.tree[path] ? Store.tree[path].size : -1;
+  },
+  async writeBlob(path, blob, message){
+    if (Store.kind === "fs"){ const w = await (await Store.fsFile(path, true)).createWritable(); await w.write(blob); await w.close(); return; }
+    const body = {message, content: bytesToB64(new Uint8Array(await blob.arrayBuffer())), branch: Store.gh.branch};
+    if (Store.tree[path]) body.sha = Store.tree[path].sha;
+    const r = await Store.api("PUT", Store.repoUrl() + "/contents/" + Store.ghPath(path), body);
+    Store.tree[path] = {sha: r.content.sha, size: r.content.size};
+  },
+};
+function encPath(p){ return p.split("/").map(encodeURIComponent).join("/"); }
+function bytesToB64(u8){ let s = ""; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); }
+function b64ToBytes(b64){ const s = atob(String(b64).replace(/\s/g, "")); const u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u; }
+function textToB64(t){ return bytesToB64(new TextEncoder().encode(t)); }
+function b64ToText(b){ return new TextDecoder().decode(b64ToBytes(b)); }
+function commitMsg(path){ return "Treść: " + path + (S.me ? " (" + S.me + ")" : ""); }
+
 // ======================= wczytywanie =======================
 async function openFolder(){
   if (!window.showDirectoryPicker){ $("pick").click(); return; }
   try{
     const dir = await window.showDirectoryPicker({id:"fq-content", mode:"readwrite"});
-    S.dir = dir; S.readOnly = false;
-    await loadFromDir();
+    S.dir = dir; Store.kind = "fs"; S.readOnly = false;
+    await loadAll();
   }catch(e){ if(e.name !== "AbortError") alert("Nie udało się otworzyć folderu: " + e.message); }
 }
 
-async function readHandle(h){ const f = await h.getFile(); return {text: await f.text(), lastModified: f.lastModified}; }
-
-async function loadFromDir(){
-  const courses = [];
-  S.knownPaths = new Set();
-  for await (const [name, h] of S.dir.entries()){
-    if (h.kind !== "directory") continue;
-    let courseFile = null; const chapters = [];
-    for await (const [fn, fh] of h.entries()){
-      if (fh.kind !== "file" || !fn.endsWith(".json")) continue;
-      const r = await readHandle(fh);
-      const file = makeFile(fn === "course.json" ? "course" : "chapter", fn, name + "/" + fn, fh, r.text, r.lastModified);
-      S.knownPaths.add(file.path);
-      if (!file.data) continue;
-      if (fn === "course.json") courseFile = file; else chapters.push(file);
+// Połączenie z GitHubem – dane zapamiętane w tej przeglądarce (token tylko jeśli zaznaczysz „zapamiętaj”).
+const GH_KEY = "fq.editor.github";
+function savedGh(){ try { return JSON.parse(localStorage.getItem(GH_KEY) || "null"); } catch(e){ return null; } }
+function openGhDialog(){
+  const g = savedGh() || {repo:"", branch:"main", root:"Assets/FinKit/Content", token:"", remember:true};
+  const m = document.createElement("div"); m.className = "modal";
+  m.innerHTML = `<div class="box"><h3>Połącz z GitHubem</h3>
+    <div class="sub" style="margin-bottom:6px">Edytor będzie czytał i zapisywał treść prosto w repozytorium. Każdy „Zapisz” to commit – GitHub Desktop nie jest potrzebny.</div>
+    <label>Repozytorium <span class="hint">właściciel/nazwa albo link</span></label><input type="text" id="ghRepo" value="${esc(g.repo)}" placeholder="np. marek/FinanceQuest">
+    <div class="grid2"><div><label>Gałąź</label><input type="text" id="ghBranch" value="${esc(g.branch)}"></div>
+    <div><label>Folder treści w repo</label><input type="text" id="ghRoot" value="${esc(g.root)}"></div></div>
+    <label>Token dostępu <span class="hint">każda osoba ma swój</span></label><input type="password" id="ghToken" value="${esc(g.token || "")}" placeholder="github_pat_…">
+    <label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="ghRemember" ${g.remember ? "checked" : ""}> zapamiętaj na tym komputerze</label>
+    <details style="margin-top:10px"><summary class="sub" style="cursor:pointer">Jak zrobić token?</summary><ol style="margin:8px 0 0 18px;line-height:1.6;font-size:13px">
+      <li>github.com → zdjęcie profilu → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+      <li><b>Repository access</b>: <i>Only select repositories</i> → wybierz repo z grą (właściciel repo musi Cię dodać jako współpracownika).</li>
+      <li><b>Permissions → Repository permissions → Contents</b>: <i>Read and write</i>.</li>
+      <li>Skopiuj token i wklej tutaj. Nie wysyłaj go nikomu.</li></ol></details>
+    <div id="ghErr"></div>
+    <div class="btns" style="margin-top:14px"><button class="btn main" id="ghGo">Połącz</button><button class="btn" id="ghCancel">Anuluj</button></div></div>`;
+  document.body.appendChild(m);
+  m.querySelector("#ghCancel").onclick = () => m.remove();
+  m.querySelector("#ghGo").onclick = async () => {
+    const repo = m.querySelector("#ghRepo").value.trim().replace(/^https?:\/\/github\.com\//, "").replace(/\.git$/, "").replace(/\/+$/, "");
+    const [owner, name] = repo.split("/");
+    const cfg = {owner, repo: name, branch: m.querySelector("#ghBranch").value.trim() || "main",
+      root: m.querySelector("#ghRoot").value.trim().replace(/^\/+|\/+$/g, ""), token: m.querySelector("#ghToken").value.trim()};
+    const remember = m.querySelector("#ghRemember").checked;
+    const err = t => m.querySelector("#ghErr").innerHTML = `<div class="warnbox">⚠ ${t}</div>`;
+    if (!owner || !name) return err("Wpisz repozytorium w postaci właściciel/nazwa.");
+    if (!cfg.token) return err("Wklej token dostępu.");
+    m.querySelector("#ghGo").disabled = true;
+    try { await connectGh(cfg); }
+    catch(e){
+      m.querySelector("#ghGo").disabled = false;
+      return err(e.status === 401 ? "Token jest nieprawidłowy albo wygasł."
+        : e.status === 404 ? "Nie widzę tego repozytorium albo gałęzi. Sprawdź nazwę i czy token ma dostęp do tego repo."
+        : esc(e.message));
     }
-    if (courseFile) courses.push({id: name, dir: h, file: courseFile, chapters: orderChapters(courseFile, chapters)});
-  }
-  finishLoad(courses);
+    localStorage.setItem(GH_KEY, JSON.stringify({repo: owner + "/" + name, branch: cfg.branch, root: cfg.root, token: remember ? cfg.token : "", remember}));
+    m.remove();
+  };
+}
+async function connectGh(cfg){
+  const prev = {gh: Store.gh, kind: Store.kind};
+  Store.gh = cfg; Store.kind = "gh";
+  try { await Store.refreshTree(); }
+  catch(e){ Store.gh = prev.gh; Store.kind = prev.kind; throw e; }
+  S.dir = null; S.readOnly = false;
+  await loadAll();
+  if (!S.courses.length) toast("W folderze " + cfg.root + " nie ma jeszcze treści.");
 }
 
-function loadFromMap(map){   // tryb bez zapisu do folderu oraz test
+async function loadAll(){
+  const list = await Store.listJson(), paths = Object.keys(list);
+  const texts = await Promise.all(paths.map(p => Store.read(p)));
+  const by = {};
+  paths.forEach((path, i) => {
+    const [course, fn] = path.split("/");
+    const file = makeFile(fn === "course.json" ? "course" : "chapter", fn, path, texts[i].text, texts[i].stamp);
+    if (!file.data) return;
+    by[course] = by[course] || {course: null, chapters: []};
+    if (fn === "course.json") by[course].course = file; else by[course].chapters.push(file);
+  });
+  S.knownPaths = new Set(paths);
+  finishLoad(Object.entries(by).filter(([, v]) => v.course).map(([id, v]) => ({id, file: v.course, chapters: orderChapters(v.course, v.chapters)})));
+}
+
+function loadFromMap(map){   // tryb bez zapisu (przeglądarka bez dostępu do folderu) oraz testy
   const by = {};
   for (const [path, text] of Object.entries(map)){
     const parts = path.split("/"); if (parts.length < 2) continue;
     const course = parts[parts.length-2], fn = parts[parts.length-1];
-    (by[course] = by[course] || {course:null, chapters:[]});
-    const file = makeFile(fn === "course.json" ? "course" : "chapter", fn, course + "/" + fn, null, text, 0);
+    by[course] = by[course] || {course:null, chapters:[]};
+    const file = makeFile(fn === "course.json" ? "course" : "chapter", fn, course + "/" + fn, text, 0);
     if (!file.data) continue;
     if (fn === "course.json") by[course].course = file; else by[course].chapters.push(file);
   }
-  const courses = Object.entries(by).filter(([,v])=>v.course).map(([id,v])=>({id, dir:null, file:v.course, chapters: orderChapters(v.course, v.chapters)}));
-  finishLoad(courses);
+  finishLoad(Object.entries(by).filter(([,v])=>v.course).map(([id,v])=>({id, file:v.course, chapters: orderChapters(v.course, v.chapters)})));
 }
 
-function makeFile(kind, name, path, handle, text, lastModified){
+// Plik w pamięci. base = wersja, od której zacząłeś edycję – dzięki niej da się połączyć Twoje zmiany z cudzymi.
+function makeFile(kind, name, path, text, stamp){
   let data = null;
   try { data = JSON.parse(text); } catch(e){ alert("Błąd JSON w " + path + ": " + e.message); }
-  if (data && kind === "chapter") normalizeChapter(data, name);
-  if (data && kind === "course"){ data.chapters = data.chapters || []; data.meta = data.meta || {}; }
-  return {kind, name, path, handle, data, lastModified, dirty:false, disk:false};
+  if (data) normalizeData(kind, data, name);
+  return {kind, name, path, data, base: data ? clone(data) : null, stamp, dirty:false, disk:false};
+}
+function normalizeData(kind, data, name){
+  if (kind === "chapter") normalizeChapter(data, name);
+  if (kind === "course"){ data.chapters = data.chapters || []; data.meta = data.meta || {}; }
+  return data;
 }
 
 function normalizeChapter(d, name){
@@ -298,8 +456,15 @@ function normalizeBlock(b){
   if (b.type === "image"){ b.image = b.image ?? ""; b.width = b.width ?? 1; b.maxHeight = b.maxHeight ?? 220; b.caption = b.caption ?? ""; }
   if (b.type === "list") b.items = b.items || [];
   if (b.type === "space") b.size = b.size ?? 16;
+  if (b.type === "table"){
+    b.rows = b.rows || []; b.header = b.header ?? true; b.style = b.style || "a";
+    const cols = Math.max(1, ...b.rows.map(r => (r.cells || []).length));
+    for (const r of b.rows){ r.cells = (r.cells || []).map(c => c ?? ""); while (r.cells.length < cols) r.cells.push(""); }   // równe wiersze – bez „dziur” w JSON
+  }
 }
-function newBlock(type){ const b = {type}; normalizeBlock(b); if (type === "list") b.items = ["", ""]; return b; }
+function newBlock(type){ const b = {type}; normalizeBlock(b); if (type === "list") b.items = ["", ""];
+  if (type === "table") b.rows = [{cells:["", "Kolumna 1", "Kolumna 2"]}, {cells:["Wiersz 1", "", ""]}, {cells:["Wiersz 2", "", ""]}];
+  return b; }
 function normalizeTask(t){
   for (const k of ["options","extra","pairs","zones","items","answers","wrong"]) t[k] = t[k] || [];
   for (const k of ["prompt","answer","image","text","mode","explain","fact"]) t[k] = t[k] ?? "";
@@ -326,7 +491,7 @@ function finishLoad(courses){
 $("pick").addEventListener("change", async e => {
   const map = {};
   for (const f of e.target.files) if (f.name.endsWith(".json")) map[f.webkitRelativePath] = await f.text();
-  S.readOnly = true; S.dir = null;
+  S.readOnly = true; S.dir = null; Store.kind = null;
   loadFromMap(map);
   renderBanner();
 });
@@ -334,37 +499,42 @@ $("pick").addEventListener("change", async e => {
 // ======================= zapis =======================
 const allFiles = () => S.courses.flatMap(c => [c.file, ...c.chapters]);
 const dirtyFiles = () => allFiles().filter(f => f.dirty);
+function stampMeta(f){ f.data.meta = {editedBy: S.me, editedAt: new Date().toISOString().slice(0,19) + "Z"}; }   // UTC – ten sam czas u wszystkich
 
 async function saveAll(){
   if (!S.me && !askName()) return;
   const list = dirtyFiles(); if (!list.length) { toast("Brak zmian do zapisania"); return; }
-  for (const f of list){
-    if (f.handle){
-      const disk = await f.handle.getFile();
-      if (f.lastModified && disk.lastModified !== f.lastModified){
-        let who = ""; try { who = JSON.parse(await disk.text()).meta?.editedBy || ""; } catch(e){}
-        if (!confirm(`Plik ${f.path} zmienił się na dysku${who ? " (zapisał go: " + who + ")" : ""}.\nNadpisać jego zmiany Twoją wersją?\n\nAnuluj = zostaw, a potem „Porównaj” na żółtym pasku.`)) continue;
-      }
-    }
-    f.data.meta = {editedBy: S.me, editedAt: new Date().toISOString().slice(0,19) + "Z"};   // UTC – ten sam czas u obu osób
-    const text = serialize(f.data);
-    if (f.handle){
-      const w = await f.handle.createWritable(); await w.write(text); await w.close();
-      f.lastModified = (await f.handle.getFile()).lastModified;
-    } else download(f.path.replace("/", "__"), text);
-    f.dirty = false; f.disk = false;
+  if (!Store.kind){
+    for (const f of list){ stampMeta(f); download(f.path.replace("/", "__"), serialize(f.data)); f.dirty = false; }
+    renderAll(); return;
   }
-  renderAll(); toast("Zapisano. Pamiętaj o Commit + Push w GitHub Desktop.");
+  if (Store.kind === "gh") await Store.refreshTree().catch(() => {});
+  let saved = 0;
+  for (const f of list){
+    try {
+      // Ktoś zapisał ten plik, odkąd go wczytałeś? Najpierw dołączamy jego zmiany do Twoich.
+      const now = await Store.stampOf(f.path);
+      if (now && f.stamp && now !== f.stamp && !(await mergeRemote(f))) continue;
+      stampMeta(f);
+      try { f.stamp = await Store.write(f.path, serialize(f.data), f.stamp, commitMsg(f.path)); }
+      catch(e){
+        if (e.status !== 409 && e.status !== 422) throw e;
+        if (Store.kind === "gh") await Store.refreshTree();
+        if (!(await mergeRemote(f))) continue;
+        stampMeta(f);
+        f.stamp = await Store.write(f.path, serialize(f.data), f.stamp, commitMsg(f.path));
+      }
+      f.base = clone(f.data); f.dirty = false; f.disk = false; saved++;
+    } catch(e){ alert("Nie udało się zapisać " + f.path + ":\n" + e.message); }
+  }
+  S.knownPaths = new Set([...S.knownPaths, ...allFiles().map(f => f.path)]);
+  renderAll();
+  if (saved) toast(Store.kind === "gh" ? "Zapisano na GitHubie (" + saved + " plik" + (saved > 1 ? "i" : "") + ")." : "Zapisano. Pamiętaj o Commit + Push w GitHub Desktop.");
 }
 
 function download(name, text){
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], {type:"application/json"}));
   a.download = name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
-}
-
-async function ensureHandle(course, file){
-  if (!course.dir || file.handle) return;
-  file.handle = await course.dir.getFileHandle(file.name, {create:true});
 }
 
 // ======================= obrazki =======================
@@ -385,16 +555,14 @@ function normImagePath(p, courseId){
 
 // Adres do podglądu obrazka (czytany z folderu repo). Pierwsze wywołanie zaczyna wczytywanie i zwraca null.
 function imageUrl(course, path){
-  if (!course || !course.dir || !path) return null;
+  if (!course || !Store.kind || !path) return null;
   const key = course.id + "/" + path;
   if (imageCache[key]) return imageCache[key];
   if (!imageLoading[key]){
     imageLoading[key] = true;
     (async () => {
       try {
-        let d = course.dir; const parts = path.split("/");
-        for (const seg of parts.slice(0, -1)) d = await d.getDirectoryHandle(seg);
-        const file = await (await d.getFileHandle(parts[parts.length-1])).getFile();
+        const file = await Store.readBlob(course.id + "/" + path);
         const url = URL.createObjectURL(file);
         const bmp = await createImageBitmap(file); imageSize[url] = {w: bmp.width, h: bmp.height}; bmp.close?.();
         imageCache[key] = url; renderForm(); renderPreview();
@@ -421,15 +589,19 @@ async function prepareImage(file){
 async function addImage(file, pageIdx, blockIdx){
   const course = curCourse(), l = curLevel(), f = curChapterFile();
   if (!file || !file.type.startsWith("image/")) { toast("To nie jest obrazek (PNG lub JPG)."); return; }
-  if (!course?.dir){ alert("Obrazki można dodawać tylko z zapisem do folderu (Chrome lub Edge, „Otwórz folder Content”)."); return; }
+  if (!Store.kind){ alert("Obrazki można dodawać po otwarciu folderu Content (Chrome/Edge) albo po połączeniu z GitHubem."); return; }
   const {blob, ext} = await prepareImage(file);
-  const dir = await course.dir.getDirectoryHandle(IMG_DIR, {create:true});
+  if (Store.kind === "gh") await Store.refreshTree();
   const base = slug(file.name.replace(/\.[^.]+$/, "")) || "obrazek";
   let name = base + ext, n = 2;
-  while (true){   // ta sama nazwa i ten sam rozmiar = ten sam obrazek, nie kopiujemy drugi raz
-    try { const ex = await (await dir.getFileHandle(name)).getFile(); if (ex.size === blob.size) break; name = base + "-" + (n++) + ext; }
-    catch(e){ const w = await (await dir.getFileHandle(name, {create:true})).createWritable(); await w.write(blob); await w.close(); break; }
-  }
+  try {
+    while (true){   // ta sama nazwa i ten sam rozmiar = ten sam obrazek, nie kopiujemy drugi raz
+      const size = await Store.size(course.id + "/" + IMG_DIR + "/" + name);
+      if (size === blob.size) break;
+      if (size < 0){ await Store.writeBlob(course.id + "/" + IMG_DIR + "/" + name, blob, "Obrazek: " + course.id + "/" + IMG_DIR + "/" + name + (S.me ? " (" + S.me + ")" : "")); break; }
+      name = base + "-" + (n++) + ext;
+    }
+  } catch(e){ alert("Nie udało się zapisać obrazka: " + e.message); return; }
   const path = IMG_DIR + "/" + name;
   const page = l.pages[pageIdx];
   if (blockIdx === "new" || blockIdx == null) page.blocks.push(Object.assign(newBlock("image"), {image: path}));
@@ -458,64 +630,131 @@ document.addEventListener("drop", e => {
   addImage(file, Number(p), b === "new" ? "new" : Number(b));
 });
 
-// ======================= współpraca: zmiany na dysku =======================
-async function poll(){
-  if (!S.dir) return;
-  let changed = false;
-  for (const f of allFiles()){
-    if (!f.handle || f.disk) continue;
-    try { const d = await f.handle.getFile(); if (f.lastModified && d.lastModified !== f.lastModified){ f.disk = true; changed = true; } } catch(e){}
-  }
-  // nowe pliki od kolegi (np. nowy rozdział po „Pull”)
-  const found = [];
-  try{
-    for await (const [name, h] of S.dir.entries()){
-      if (h.kind !== "directory") continue;
-      for await (const [fn, fh] of h.entries()) if (fh.kind === "file" && fn.endsWith(".json") && !S.knownPaths.has(name + "/" + fn)) found.push(name + "/" + fn);
+// ======================= współpraca: cudze zmiany i łączenie =======================
+// Co chwilę sprawdzamy, czy ktoś zapisał pliki (folder: co 3 s, GitHub: co 20 s).
+// Plik, którego nie zmieniałeś, wczytujemy po cichu. Plik z Twoimi niezapisanymi zmianami tylko oznaczamy –
+// przy zapisie (albo po kliknięciu „Połącz”) edytor dołączy cudze zmiany do Twoich.
+let polling = false, lastGhPoll = 0;
+async function poll(force){
+  if (!Store.kind || polling) return;
+  if (Store.kind === "gh" && !force && Date.now() - lastGhPoll < 20000) return;
+  polling = true; lastGhPoll = Date.now();
+  try {
+    const list = await Store.listJson();
+    const quiet = [];
+    let changed = false;
+    for (const f of allFiles()){
+      const st = list[f.path];
+      if (st === undefined || !f.stamp || st === f.stamp) continue;
+      if (f.dirty){ if (!f.disk){ f.disk = true; changed = true; } }
+      else quiet.push(f);
     }
-  }catch(e){}
-  if (found.join() !== S.newOnDisk.join()){ S.newOnDisk = found; changed = true; }
-  if (changed){ renderBanner(); renderTree(); }
+    for (const f of quiet) await reloadFile(f, true);
+    const found = Object.keys(list).filter(p => !S.knownPaths.has(p)).sort();
+    if (found.length && !dirtyFiles().length){ await loadAll(); toast("Wczytano nowe pliki: " + found.join(", ")); }
+    else if (found.join() !== S.newOnDisk.join()){ S.newOnDisk = found; changed = true; }
+    if (quiet.length){ clampSel(); renderAll(); toast("Wczytano nowszą wersję: " + quiet.map(f => f.path).join(", ")); }
+    else if (changed){ renderBanner(); renderTree(); }
+  } catch(e){ /* brak sieci / folderu – spróbujemy za chwilę */ }
+  finally { polling = false; }
 }
 setInterval(poll, POLL_MS);
 
-async function reloadFile(f){
-  if (f.dirty && !confirm("Masz niezapisane zmiany w " + f.path + ". Porzucić je i wczytać wersję z dysku?")) return;
-  const r = await readHandle(f.handle);
-  const nf = makeFile(f.kind, f.name, f.path, f.handle, r.text, r.lastModified);
-  Object.assign(f, {data: nf.data, lastModified: r.lastModified, dirty:false, disk:false});
+// Wczytuje aktualną wersję pliku. Jeśli masz w nim niezapisane zmiany – łączy je z nową wersją (nic nie ginie).
+async function reloadFile(f, silent){
+  if (Store.kind === "gh") await Store.refreshTree().catch(() => {});
+  if (f.dirty){
+    if (!(await mergeRemote(f))) return;
+    if (!silent){ clampSel(); renderAll(); toast("Połączono Twoje zmiany z nową wersją " + f.path + ". Zapisz, żeby je wysłać."); }
+    return;
+  }
+  const r = await Store.read(f.path);
+  const nf = makeFile(f.kind, f.name, f.path, r.text, r.stamp);
+  Object.assign(f, {data: nf.data, base: nf.base, stamp: r.stamp, dirty:false, disk:false});
   const c = S.courses.find(c => c.file === f || c.chapters.includes(f));
   if (c && f.kind === "course") c.chapters = orderChapters(c.file, c.chapters);
-  clampSel(); renderAll(); toast("Wczytano nową wersję " + f.path);
+  if (!silent){ clampSel(); renderAll(); toast("Wczytano nową wersję " + f.path); }
+}
+
+// Łączenie 3 wersji: base (od czego zacząłeś), mine (Twoja), theirs (zapisana przez kogoś innego).
+// Rozdział łączymy level po levelu: zmienił tylko jeden z Was – bierzemy jego wersję; zmieniliście ten sam level – pytamy.
+async function mergeRemote(f){
+  const r = await Store.read(f.path);
+  let theirs;
+  try { theirs = normalizeData(f.kind, JSON.parse(r.text), f.name); } catch(e){ alert("Nowa wersja " + f.path + " ma błąd JSON – zostawiam Twoją."); return false; }
+  const who = theirs.meta && theirs.meta.editedBy ? theirs.meta.editedBy : "kolega";
+  const ask = what => confirm(`${what} – zmieniliście to oboje (Ty i ${who}).\n\nOK = zostaw moją wersję\nAnuluj = weź wersję od: ${who}`);
+  const base = f.base || theirs;
+  f.data = f.kind === "chapter" ? mergeChapter(base, f.data, theirs, ask) : mergeCourse(base, f.data, theirs, ask);
+  f.base = clone(theirs); f.stamp = r.stamp; f.disk = false; f.dirty = true;
+  const c = S.courses.find(c => c.file === f || c.chapters.includes(f));
+  if (c && f.kind === "course") c.chapters = orderChapters(c.file, c.chapters);
+  return true;
+}
+const js = o => JSON.stringify(o === undefined ? null : o);
+function pick3(b, m, t, askFn){
+  if (js(m) === js(t)) return m;
+  if (js(m) === js(b)) return t;      // zmienił tylko on
+  if (js(t) === js(b)) return m;      // zmieniłeś tylko Ty
+  return askFn() ? m : t;
+}
+function mergeOrder(bIds, mIds, tIds){
+  const seq = js(mIds) !== js(bIds) ? mIds.slice() : tIds.slice();
+  for (const id of [...mIds, ...tIds]) if (!seq.includes(id)) seq.push(id);
+  return seq;
+}
+function mergeChapter(base, mine, theirs, ask){
+  const out = clone(theirs);
+  out.title = pick3(base.title, mine.title, theirs.title, () => ask("Tytuł rozdziału"));
+  out.color = pick3(base.color, mine.color, theirs.color, () => ask("Kolor rozdziału"));
+  const by = a => Object.fromEntries((a.levels || []).map(l => [l.id, l]));
+  const B = by(base), M = by(mine), T = by(theirs);
+  const ids = mergeOrder((base.levels || []).map(l => l.id), mine.levels.map(l => l.id), (theirs.levels || []).map(l => l.id));
+  out.levels = [];
+  for (const id of ids){
+    const name = ((M[id] || T[id] || B[id] || {}).title) || id;
+    const l = pick3(B[id], M[id], T[id], () => ask(`Level „${name}”`));
+    if (l) out.levels.push(clone(l));
+  }
+  out.meta = mine.meta;
+  return out;
+}
+function mergeCourse(base, mine, theirs, ask){
+  const out = clone(theirs);
+  for (const k of ["title","shortName","color","art","icon","order"]) out[k] = pick3(base[k], mine[k], theirs[k], () => ask("Ustawienie kursu „" + k + "”"));
+  const removed = (base.chapters || []).filter(id => !mine.chapters.includes(id) || !(theirs.chapters || []).includes(id));
+  out.chapters = mergeOrder(base.chapters || [], mine.chapters, theirs.chapters || []).filter(id => !removed.includes(id));
+  out.meta = mine.meta;
+  return out;
 }
 
 async function compareFile(f){
-  const r = await readHandle(f.handle);
-  let disk; try { disk = JSON.parse(r.text); } catch(e){ alert("Plik na dysku ma błąd JSON."); return; }
+  if (Store.kind === "gh") await Store.refreshTree().catch(() => {});
+  const r = await Store.read(f.path);
+  let disk; try { disk = JSON.parse(r.text); } catch(e){ alert("Nowa wersja ma błąd JSON."); return; }
   const lines = [];
   const mine = f.data;
   if (f.kind === "chapter"){
-    if (disk.title !== mine.title) lines.push(`Tytuł: „${esc(disk.title)}” (dysk) vs „${esc(mine.title)}” (Ty)`);
+    if (disk.title !== mine.title) lines.push(`Tytuł: „${esc(disk.title)}” (nowa wersja) vs „${esc(mine.title)}” (Ty)`);
     const dl = Object.fromEntries((disk.levels||[]).map(l=>[l.id,l])), ml = Object.fromEntries((mine.levels||[]).map(l=>[l.id,l]));
+    normalizeChapter(disk, f.name);
     for (const id of new Set([...Object.keys(dl), ...Object.keys(ml)])){
       const a = dl[id], b = ml[id];
       const name = esc((b||a).title || id);
-      if (!b) lines.push(`Level „${name}” – jest tylko na dysku`);
+      if (!b) lines.push(`Level „${name}” – jest tylko w nowej wersji`);
       else if (!a) lines.push(`Level „${name}” – jest tylko u Ciebie`);
-      else if (JSON.stringify(a) !== JSON.stringify(normalizeLevelCopy(b))) lines.push(`Level „${name}” – różni się`);
+      else if (js(a) !== js(b)) lines.push(`Level „${name}” – różni się`);
     }
-    if ((disk.levels||[]).map(l=>l.id).join() !== mine.levels.map(l=>l.id).join()) lines.push("Inna kolejność leveli");
   } else {
-    for (const k of ["title","shortName","color","art","icon","order"]) if (disk[k] !== mine[k]) lines.push(`${k}: „${esc(disk[k])}” (dysk) vs „${esc(mine[k])}” (Ty)`);
+    for (const k of ["title","shortName","color","art","icon","order"]) if (disk[k] !== mine[k]) lines.push(`${k}: „${esc(disk[k])}” (nowa wersja) vs „${esc(mine[k])}” (Ty)`);
     if ((disk.chapters||[]).join() !== mine.chapters.join()) lines.push("Inna lista lub kolejność rozdziałów");
   }
   const who = disk.meta?.editedBy ? `${esc(disk.meta.editedBy)}, ${ago(disk.meta.editedAt)}` : "nieznany";
-  modal(`<h3>Porównanie: ${esc(f.path)}</h3><div class="sub">Wersję na dysku zapisał: <b>${who}</b></div>
+  modal(`<h3>Porównanie: ${esc(f.path)}</h3><div class="sub">Nową wersję zapisał: <b>${who}</b></div>
     ${lines.length ? "<ul>" + lines.map(l=>"<li>"+l+"</li>").join("") + "</ul>" : '<div class="okbox">Treść jest taka sama.</div>'}
-    <div class="btns"><button class="btn main" data-act="modal-reload">Wczytaj wersję z dysku</button><button class="btn" data-act="modal-keep">Zostaw moją</button></div>`,
-    {reload: () => reloadFile(f), keep: () => { f.disk = false; f.lastModified = r.lastModified; f.dirty = true; renderAll(); }});
+    <div class="btns"><button class="btn main" data-act="modal-reload">${f.dirty ? "Połącz z moimi zmianami" : "Wczytaj nową wersję"}</button><button class="btn" data-act="modal-keep">Zostaw moją (nadpisz przy zapisie)</button></div>`,
+    {reload: () => reloadFile(f), keep: () => { f.disk = false; f.stamp = r.stamp; f.base = normalizeData(f.kind, JSON.parse(r.text), f.name); f.dirty = true; renderAll(); }});
 }
-function normalizeLevelCopy(l){ return JSON.parse(JSON.stringify(l)); }
 
 let modalActions = {};
 function modal(html, actions){
@@ -586,6 +825,7 @@ function levelWarnings(l){
       if ((b.type === "text" || b.type === "heading" || b.type === "callout") && !String(b.text).trim()) w.push(pre + "pusty blok „" + BLOCKS[b.type] + "”.");
       if (b.type === "image" && !String(b.image).trim()) w.push(pre + "obrazek bez ścieżki.");
       if (b.type === "list" && !b.items.some(x => x.trim())) w.push(pre + "pusta lista.");
+      if (b.type === "table" && !b.rows.some(r => r.cells.some(c => String(c).trim()))) w.push(pre + "pusta tabelka.");
       if (/\*\*/.test((b.text || "") + (b.items || []).join(" ")) && (((b.text || "") + (b.items || []).join(" ")).match(/\*\*/g).length % 2)) w.push(pre + "niesparowane ** (pogrubienie).");
     }
   });
@@ -600,10 +840,11 @@ function renderAll(){ renderTop(); renderBanner(); renderTree(); renderForm(); r
 function renderTop(){
   const n = dirtyFiles().length;
   $("top").innerHTML = `<div class="logo">Finance Quest <span>· edytor treści</span></div>
-    <div class="folder" title="Folder Content">${S.loaded ? (S.readOnly ? "📄 tylko odczyt" : "📁 " + esc(S.dir?.name || "")) : ""}</div>
-    <button class="btn" data-act="open">📁 Otwórz folder Content</button>
-    ${S.dir ? '<button class="btn" data-act="reload-all">↻ Wczytaj z dysku</button>' : ""}
-    <button class="btn main" data-act="save" ${n ? "" : "disabled"}>${S.readOnly ? "Pobierz zmienione pliki" : "Zapisz zmiany"}${n ? " (" + n + ")" : ""}</button>
+    <div class="folder" title="Skąd pochodzi treść">${!S.loaded ? "" : S.readOnly ? "📄 tylko odczyt" : Store.kind === "gh" ? "☁ " + esc(Store.gh.owner + "/" + Store.gh.repo + " · " + Store.gh.branch) : "📁 " + esc(S.dir?.name || "")}</div>
+    <button class="btn" data-act="open">📁 Folder</button>
+    <button class="btn" data-act="github">☁ GitHub</button>
+    ${Store.kind ? '<button class="btn" data-act="reload-all">↻ Odśwież</button>' : ""}
+    <button class="btn main" data-act="save" ${n ? "" : "disabled"}>${S.readOnly ? "Pobierz zmienione pliki" : Store.kind === "gh" ? "Zapisz na GitHubie" : "Zapisz zmiany"}${n ? " (" + n + ")" : ""}</button>
     <div class="who" data-act="me" title="Kliknij, żeby zmienić">Ty: <b>${esc(S.me || "—")}</b> ▾</div>`;
 }
 
@@ -611,11 +852,11 @@ function renderBanner(){
   const f = fileOfSel();
   let h = "";
   if (S.loaded && S.readOnly) h += `<div class="ban red"><div>⚠ Tryb tylko do odczytu – zmiany nie zapiszą się w repo, przycisk tylko pobierze pliki. ${browserHelp()}</div></div>`;
-  if (f && f.disk) h += `<div class="ban ${f.dirty ? "red" : ""}">⚠ Plik <b>${esc(f.path)}</b> zmienił się na dysku (np. po „Pull” w GitHub Desktop)${f.dirty ? " – a Ty masz w nim niezapisane zmiany" : ""}.
-      <a data-act="disk-reload">Wczytaj nową wersję</a> · <a data-act="disk-compare">Porównaj</a></div>`;
+  if (f && f.disk) h += `<div class="ban">⚠ Ktoś zapisał nowszą wersję <b>${esc(f.path)}</b>, a Ty masz w nim niezapisane zmiany. Przy zapisie edytor połączy je automatycznie (zapyta tylko, gdy zmieniliście ten sam level).
+      <a data-act="disk-reload">Połącz teraz</a> · <a data-act="disk-compare">Porównaj</a></div>`;
   const others = allFiles().filter(x => x.disk && x !== f);
-  if (others.length) h += `<div class="ban">Zmienione na dysku: ${others.map(x=>esc(x.path)).join(", ")} – otwórz plik, żeby wczytać.</div>`;
-  if (S.newOnDisk.length) h += `<div class="ban">Nowe pliki na dysku: ${S.newOnDisk.map(esc).join(", ")}. <a data-act="reload-all">Wczytaj z dysku</a></div>`;
+  if (others.length) h += `<div class="ban">Nowsza wersja czeka też w: ${others.map(x=>esc(x.path)).join(", ")} – połączy się przy zapisie.</div>`;
+  if (S.newOnDisk.length) h += `<div class="ban">Nowe pliki: ${S.newOnDisk.map(esc).join(", ")} – wczytają się po zapisaniu Twoich zmian. <a data-act="reload-all">Wczytaj teraz (porzuca niezapisane)</a></div>`;
   $("banner").innerHTML = h;
 }
 
@@ -675,11 +916,11 @@ function renderForm(){
   const el = $("form");
   if (!S.loaded){
     el.innerHTML = `<div class="empty"><h2>Edytor treści Finance Quest</h2>
-      <p>Kliknij <b>„Otwórz folder Content”</b> i wskaż folder <code>Assets/FinKit/Content</code> w Twoim repo.</p>
-      <p>Edytor zapisuje pliki JSON prosto do tego folderu (Chrome lub Edge). Potem w GitHub Desktop robisz Commit + Push, a kolega – Pull.</p>
-      <p>Jeden rozdział = jeden plik, więc możecie pracować równolegle nad różnymi rozdziałami.</p>
-      ${CAN_WRITE ? "" : `<div class="warnbox" style="text-align:left">⚠ ${browserHelp()}</div>`}
-      <div class="btns" style="justify-content:center;margin-top:16px"><button class="btn main" data-act="open">📁 Otwórz folder Content</button></div></div>`;
+      <p><b>☁ GitHub</b> – edytujesz prosto w repozytorium, z dowolnego komputera. Każdy „Zapisz” to commit; GitHub Desktop nie jest potrzebny.</p>
+      <p><b>📁 Folder</b> – wskazujesz <code>Assets/FinKit/Content</code> w repo na dysku (Chrome lub Edge), potem Commit + Push w GitHub Desktop.</p>
+      <p>Kilka osób naraz? Edytor sam łączy zmiany – pyta tylko, gdy dwie osoby zmieniły ten sam level.</p>
+      <div class="btns" style="justify-content:center;margin-top:16px"><button class="btn main" data-act="github">☁ Połącz z GitHubem</button><button class="btn" data-act="open">📁 Otwórz folder Content</button></div>
+      ${CAN_WRITE ? "" : `<div class="warnbox" style="text-align:left;margin-top:14px">⚠ Folder: ${browserHelp()}</div>`}</div>`;
     return;
   }
   const s = S.sel;
@@ -769,6 +1010,17 @@ function blockForm(bl, bind, p, j){
     <div class="grid2" style="margin-top:6px"><div><span class="sub">Szerokość (0.3–1)</span><input type="number" step="0.1" min="0.3" max="1" data-bind="${bind}.width" data-num="1" value="${esc(bl.width)}"></div>
     <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
     <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
+  if (bl.type === "table"){
+    const cols = Math.max(1, ...bl.rows.map(r => r.cells.length));
+    f = `<div class="grid2" style="margin-bottom:8px"><div><span class="sub">Wygląd</span>${sel(`${bind}.style`, bl.style, {a:"A – karta z ciemnym nagłówkiem", b:"B – bez ramki, same linie"})}</div>
+      <div style="display:flex;align-items:flex-end"><label style="margin:0;display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" data-check="${bind}.header" ${bl.header ? "checked" : ""}> pierwszy wiersz = nagłówek</label></div></div>
+      <div class="tgrid" style="grid-template-columns:repeat(${cols}, minmax(70px,1fr)) 30px">
+      ${bl.rows.map((r, ri) => Array.from({length: cols}, (_, ci) =>
+          `<input type="text" class="${bl.header && ri === 0 ? "thc" : ""} ${ci === 0 ? "c0" : ""}" data-bind="${bind}.rows.${ri}.cells.${ci}" value="${esc(r.cells[ci] ?? "")}">`).join("")
+          + `<button class="mini x" data-act="trow" data-p="${p}" data-b="${j}" data-i="${ri}" title="Usuń wiersz">✕</button>`).join("")}
+      ${Array.from({length: cols}, (_, ci) => `<button class="mini x" style="width:100%" data-act="tcol" data-p="${p}" data-b="${j}" data-i="${ci}" title="Usuń kolumnę">✕</button>`).join("")}<span></span></div>
+      <div class="btns"><button class="btn small" data-act="tadd-row" data-p="${p}" data-b="${j}">+ wiersz</button><button class="btn small" data-act="tadd-col" data-p="${p}" data-b="${j}">+ kolumna</button></div>`;
+  }
   if (bl.type === "space") f = `<input type="number" step="4" min="0" max="200" data-bind="${bind}.size" data-num="1" value="${esc(bl.size)}">`;
   if (bl.type === "divider") f = `<div class="sub">Cienka linia oddzielająca części strony.</div>`;
   return head + `<div style="margin-top:6px">${f}</div>`;
@@ -860,6 +1112,11 @@ function blockPreview(b){
     case "callout": return `<div class="bc"><span class="bci">!</span><div>${rich(b.text)}</div></div>`;
     case "list": return `<div class="bl">${b.items.filter(x=>x.trim()).map(x=>`<div class="bli"><span class="blc"></span><div>${rich(x)}</div></div>`).join("")}</div>`;
     case "divider": return `<div class="bd"></div>`;
+    case "table": {
+      const cols = Math.max(1, ...b.rows.map(r => r.cells.length)), head = b.header && b.rows.length > 1;
+      return `<div class="btab ${b.style === "b" ? "tb" : "ta"}"><table>${b.rows.map((r, ri) => "<tr>" + Array.from({length: cols}, (_, ci) => {
+        const tag = head && ri === 0 ? "th" : "td"; return `<${tag}>${rich(r.cells[ci] ?? "")}</${tag}>`; }).join("") + "</tr>").join("")}</table></div>`;
+    }
     case "space": return `<div style="height:${Math.min(200, Number(b.size)||0)}px"></div>`;
     case "image": {
       const w = Math.max(30, Math.min(100, (Number(b.width)||1)*100)), mh = Number(b.maxHeight) || 220;
@@ -968,7 +1225,8 @@ document.addEventListener("click", async e => {
   const changed = () => { markDirty(f); renderForm(); renderPreview(); renderTree(); };
   switch (act){
     case "open": return openFolder();
-    case "reload-all": if (dirtyFiles().length && !confirm("Masz niezapisane zmiany. Wczytać wszystko z dysku i je porzucić?")) return; return S.dir ? loadFromDir() : null;
+    case "reload-all": if (dirtyFiles().length && !confirm("Masz niezapisane zmiany. Wczytać wszystko od nowa i je porzucić?")) return; return Store.kind ? loadAll() : null;
+    case "github": return openGhDialog();
     case "save": return saveAll();
     case "me": askName(); renderTree(); return;
     case "disk-reload": return reloadFile(f);
@@ -993,6 +1251,15 @@ document.addEventListener("click", async e => {
     case "add-block": { const pi = Number(a.dataset.p); l.pages[pi].blocks.push(newBlock(a.dataset.type)); S.page = pi; return changed(); }
     case "block": { const pi = Number(a.dataset.p); S.page = pi; if (moveIn(l.pages[pi].blocks, i, dir)) changed(); return; }
     case "ppage": S.page = i; return renderPreview();
+    case "tadd-row": case "tadd-col": case "trow": case "tcol": {
+      const pi = Number(a.dataset.p), tb = l.pages[pi].blocks[Number(a.dataset.b)];
+      const cols = Math.max(1, ...tb.rows.map(r => r.cells.length));
+      if (act === "tadd-row") tb.rows.push({cells: Array(cols).fill("")});
+      if (act === "tadd-col") tb.rows.forEach(r => { while (r.cells.length < cols) r.cells.push(""); r.cells.push(""); });
+      if (act === "trow"){ if (tb.rows.length <= 1 || !confirm("Usunąć wiersz?")) return; tb.rows.splice(i, 1); }
+      if (act === "tcol"){ if (cols <= 1 || !confirm("Usunąć kolumnę?")) return; tb.rows.forEach(r => r.cells.splice(i, 1)); }
+      S.page = pi; return changed();
+    }
     case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
@@ -1009,34 +1276,33 @@ document.addEventListener("click", async e => {
       const c = S.courses[Number(a.dataset.c)]; const title = prompt("Tytuł nowego rozdziału:"); if (!title) return;
       let id = slug(title); while (c.chapters.some(x => x.name === id + ".json")) id += "-2";
       const data = {format:1, id, title, color: c.file.data.color, meta:{}, levels:[{id:"l1", kind:"lesson", title:"", pages:[{blocks:[newBlock("heading"), newBlock("text")]}], minigame:{game:"",settings:[]}, tasks:[]}]};
-      const nf = {kind:"chapter", name: id + ".json", path: c.id + "/" + id + ".json", handle:null, data, lastModified:0, dirty:true, disk:false};
-      await ensureHandle(c, nf); S.knownPaths.add(nf.path);
+      const nf = {kind:"chapter", name: id + ".json", path: c.id + "/" + id + ".json", data, base: null, stamp: null, dirty:true, disk:false};
+      S.knownPaths.add(nf.path);
       c.chapters.push(nf); c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); c.file.dirty = true;
       S.sel = {c: S.courses.indexOf(c), ch: c.chapters.length - 1, lv:-1, part:"chapter", idx:-1}; return renderAll();
     }
     case "delete-chapter": {
       const c = curCourse(), cf = curChapterFile();
-      if (!confirm(`Usunąć rozdział „${cf.data.title}” (plik ${cf.name})? Kolega zobaczy to po Pull.`)) return;
-      if (c.dir){ try { await c.dir.removeEntry(cf.name); } catch(err){} }
+      if (!confirm(`Usunąć rozdział „${cf.data.title}” (plik ${cf.name})?`)) return;
+      if (Store.kind && cf.stamp){ try { await Store.remove(cf.path, cf.stamp, "Usunięto rozdział: " + cf.path + (S.me ? " (" + S.me + ")" : "")); } catch(err){ alert("Nie udało się usunąć pliku: " + err.message); return; } }
       S.knownPaths.delete(cf.path);
       c.chapters.splice(S.sel.ch, 1); c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); markDirty(c.file);
       S.sel = {c:S.sel.c, ch:-1, lv:-1, part:"course", idx:-1}; return renderAll();
     }
     case "add-course": {
-      if (!S.dir){ alert("Nowy kurs można dodać po otwarciu folderu w Chrome/Edge."); return; }
+      if (!Store.kind){ alert("Nowy kurs można dodać po otwarciu folderu Content (Chrome/Edge) albo po połączeniu z GitHubem."); return; }
       const title = prompt("Tytuł nowego kursu:"); if (!title) return;
       let id = slug(title); while (S.courses.some(c => c.id === id)) id += "-2";
-      const dir = await S.dir.getDirectoryHandle(id, {create:true});
       const data = {format:1, id, title, shortName: title.split(" ")[0], color: PALETTE.Petrol, art:"Portfolio", icon:"Chart", order: S.courses.length + 1, chapters:[], meta:{}};
-      const nf = {kind:"course", name:"course.json", path: id + "/course.json", handle: await dir.getFileHandle("course.json", {create:true}), data, lastModified:0, dirty:true, disk:false};
-      S.knownPaths.add(nf.path); S.courses.push({id, dir, file: nf, chapters: []});
+      const nf = {kind:"course", name:"course.json", path: id + "/course.json", data, base: null, stamp: null, dirty:true, disk:false};
+      S.knownPaths.add(nf.path); S.courses.push({id, file: nf, chapters: []});
       S.sel = {c: S.courses.length - 1, ch:-1, lv:-1, part:"course", idx:-1}; return renderAll();
     }
   }
 });
 
 // Test / podgląd bez folderu: FQ.load({"invest/course.json": "...", ...})
-window.FQ = { load: map => { S.readOnly = true; loadFromMap(map); }, useDir: async d => { S.dir = d; S.readOnly = false; await loadFromDir(); }, state: S, select, serialize, saveAll, poll };
+window.FQ = { load: map => { S.readOnly = true; loadFromMap(map); }, useDir: async d => { S.dir = d; Store.kind = "fs"; S.readOnly = false; await loadAll(); }, connectGh, Store, poll, state: S, select, serialize, saveAll };
 renderAll();
 </script>
 </body>

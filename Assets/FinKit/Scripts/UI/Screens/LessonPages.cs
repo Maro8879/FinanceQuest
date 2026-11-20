@@ -121,6 +121,7 @@ namespace FinanceQuest
                     case "image": y += Picture(parent, b, m, y, cw) + 16f; break;
                     case "callout": y += Callout(parent, b, m, y, cw) + 16f; break;
                     case "list": y += BulletList(parent, b, m, y, cw) + 10f; break;
+                    case "table": y += TableBlock.Build(parent, b, m, y, cw) + 16f; break;
                     case "divider": y += Divider(parent, m, y + 4f, cw) + 22f; break;
                     case "space": y += Mathf.Clamp(b.size, 0f, 200f); break;
                 }
