@@ -2,7 +2,7 @@ using System;
 
 namespace FinanceQuest
 {
-    // „Myśl na dziś” – krótkie, własne zdania o pieniądzach (bez przypisywania znanym osobom).
+    // Cytat dnia nad trofeami – zdanie o pieniądzach i jego autor.
     // Wybór zależy od dnia roku, więc przez cały dzień widać tę samą myśl, a jutro inną.
     public static class DailyThoughts
     {
@@ -40,9 +40,23 @@ namespace FinanceQuest
             "Każdy wielki portfel zaczynał od pierwszej złotówki.",
         };
 
+        // TESTOWO – wyłącz przed wydaniem: wszystkie zdania wyżej są nasze, a nie tej osoby.
+        // Przed wydaniem trzeba podmienić je na prawdziwe cytaty z prawdziwymi autorami.
+        const string PlaceholderAuthor = "Warren Buffett";
+
+        // Ile razy w tej sesji kliknięto w kartę – każde kliknięcie pokazuje kolejny cytat.
+        static int skip;
+
         public static string Today()
         {
-            return All[DateTime.Now.DayOfYear % All.Length];
+            return All[(DateTime.Now.DayOfYear + skip) % All.Length];
+        }
+
+        public static void Next() { skip++; }
+
+        public static string TodayAuthor()
+        {
+            return PlaceholderAuthor;
         }
     }
 }
