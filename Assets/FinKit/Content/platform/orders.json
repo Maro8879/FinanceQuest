@@ -14,8 +14,16 @@
       "title": "Wprowadzenie",
       "pages": [
         {
-          "text": "Rodzaje zleceń – pierwsze kroki.\nTa lekcja to przykładowa treść do podmiany w edytorze.",
-          "image": ""
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Wprowadzenie"
+            },
+            {
+              "type": "text",
+              "text": "Rodzaje zleceń – pierwsze kroki.\nTa lekcja to przykładowa treść do podmiany w edytorze."
+            }
+          ]
         }
       ]
     },

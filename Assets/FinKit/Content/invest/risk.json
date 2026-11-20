@@ -14,12 +14,88 @@
       "title": "Czym jest ryzyko",
       "pages": [
         {
-          "text": "Ryzyko to szansa, że wynik inwestycji będzie inny, niż zakładasz.\nMoże być lepszy – ale może też być gorszy.",
-          "image": ""
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Czym jest ryzyko?"
+            },
+            {
+              "type": "text",
+              "text": "Ryzyko to **szansa**, że wynik inwestycji będzie **inny**, niż zakładasz – lepszy albo gorszy."
+            },
+            {
+              "type": "image",
+              "image": "Images/wahania",
+              "width": 1,
+              "maxHeight": 200,
+              "caption": "Cena akcji w ciągu roku – w górę i w dół"
+            },
+            {
+              "type": "callout",
+              "text": "Wyższy możliwy zysk zwykle oznacza **wyższe ryzyko**."
+            }
+          ]
         },
         {
-          "text": "Zwykle wyższy możliwy zysk oznacza wyższe ryzyko.\nNie ma inwestycji z wysokim zyskiem i zerowym ryzykiem.",
-          "image": ""
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Różne aktywa, różne wahania"
+            },
+            {
+              "type": "list",
+              "items": [
+                "**Lokata** – małe wahania",
+                "**Obligacje** – średnie wahania",
+                "**Akcje** – duże wahania"
+              ]
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "text",
+              "text": "Im dłużej inwestujesz, tym **łatwiej przeczekać** spadki."
+            }
+          ]
+        }
+      ],
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Co zwykle idzie w parze z wyższym możliwym zyskiem?",
+          "multi": false,
+          "options": [
+            {
+              "text": "Wyższe ryzyko",
+              "correct": true
+            },
+            {
+              "text": "Niższe ryzyko",
+              "correct": false
+            },
+            {
+              "text": "Brak ryzyka",
+              "correct": false
+            }
+          ],
+          "explain": "Im większy możliwy zysk, tym większa szansa, że wynik będzie inny, niż zakładasz.",
+          "fact": "Inwestorzy nazywają to premią za ryzyko."
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Akcje mają ___ wahania niż lokata.",
+          "mode": "choose",
+          "answers": [
+            "większe"
+          ],
+          "wrong": [
+            "mniejsze",
+            "takie same"
+          ],
+          "explain": "Cena akcji zmienia się codziennie, a lokata ma stały procent.",
+          "fact": "Kurs akcji potrafi zmienić się o kilka procent w jeden dzień."
         }
       ]
     },
@@ -104,8 +180,24 @@
       "title": "Twój profil ryzyka",
       "pages": [
         {
-          "text": "Profil ryzyka zależy od celu, czasu i tego, jak znosisz spadki.\nIm dłuższy horyzont, tym więcej wahań możesz przeczekać.",
-          "image": ""
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Twój profil ryzyka"
+            },
+            {
+              "type": "text",
+              "text": "Profil ryzyka zależy od **celu**, **czasu** i tego, jak znosisz spadki."
+            },
+            {
+              "type": "space",
+              "size": 8
+            },
+            {
+              "type": "callout",
+              "text": "Im dłuższy horyzont, tym więcej wahań możesz przeczekać."
+            }
+          ]
         }
       ]
     },

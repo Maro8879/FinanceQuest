@@ -40,7 +40,29 @@ namespace FinanceQuest
         public string fact;
     }
 
-    [Serializable] public class PageDef { public string text; public string image; }
+    // Blok treści na stronie lekcji. Jedna klasa na wszystkie rodzaje (jak w zadaniach) – typ mówi, których pól używać.
+    // W tekście **słowo** = pogrubienie.
+    [Serializable]
+    public class BlockDef
+    {
+        public string type;                                   // heading | text | image | callout | list | divider | space
+        public string text;                                   // heading, text, callout
+        public string image;                                  // image: ścieżka w Resources bez rozszerzenia, np. Images/ryzyko
+        public float width = 1f;                              // image: szerokość jako ułamek szerokości strony (0.3–1)
+        public float maxHeight = 220f;                        // image: obrazek nie będzie wyższy niż tyle
+        public string caption;                                // image: podpis pod obrazkiem
+        public List<string> items = new List<string>();       // list: punkty listy
+        public float size = 16f;                              // space: wysokość odstępu
+    }
+
+    [Serializable]
+    public class PageDef
+    {
+        public List<BlockDef> blocks = new List<BlockDef>();
+        // Stary format (jeden tekst + obrazek) – nadal czytany, gdy strona nie ma bloków.
+        public string text;
+        public string image;
+    }
 
     [Serializable]
     public class MiniGameDef
@@ -54,6 +76,7 @@ namespace FinanceQuest
     {
         public string id;
         public string kind;                                   // lesson | minigame | task | test
+        // lesson: najpierw strony (pages), potem – jeśli są – zadania sprawdzające (tasks).
         public string title;
         public List<PageDef> pages = new List<PageDef>();
         public MiniGameDef minigame = new MiniGameDef();

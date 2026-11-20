@@ -3,17 +3,45 @@ using UnityEngine;
 
 namespace FinanceQuest
 {
-    // Tymczasowy ekran levelu (etap 1). Przycisk „Ukończ (test)” pozwala już teraz sprawdzić
-    // odblokowywanie, złoto i paski postępu, zanim powstaną prawdziwe lekcje i zadania.
+    // Ekran levelu. Lekcja ze stronami pokazuje już prawdziwe strony z blokami (LessonPages).
+    // Zadania i mini gry mają na razie tymczasowy ekran z przyciskiem „Ukończ (test)”, żeby dało się sprawdzić postęp.
     public static class LevelScreen
     {
         public static void Build(RectTransform screen, FinanceQuestApp app, CourseData course, int chapterIndex, int levelIndex)
         {
-            float W = app.ScreenWidth;
             var ch = course.Chapters[chapterIndex];
             var level = ch.Levels[levelIndex];
-            app.Header.Set(ch.Title, false, IconId.Home, Palette.TextLocked, app.Home);
+            app.Header.Set(string.IsNullOrEmpty(level.Title) ? ch.Title : level.Title, false, IconId.Back, Palette.TextLocked, app.Back);
 
+            var def = level.Def;
+            bool hasTasks = def != null && def.tasks != null && def.tasks.Count > 0;
+            if (level.Kind == LevelKind.Lesson && def != null && def.pages != null && def.pages.Count > 0)
+            {
+                LessonPages.Build(screen, app, level, () =>
+                {
+                    if (hasTasks)
+                    {
+                        // Zadania na końcu lekcji – ich ekran powstanie w następnym kroku; na razie zaślepka.
+                        // Podmieniamy treść tego samego ekranu, więc „wstecz” wraca od razu do rozdziału.
+                        for (int i = screen.childCount - 1; i >= 0; i--) Object.Destroy(screen.GetChild(i).gameObject);
+                        app.SwipeForward = null;
+                        Placeholder(screen, app, ch, level, "Zadania na koniec lekcji: " + def.tasks.Count + ".\nEkran zadań jest w przygotowaniu.");
+                    }
+                    else
+                    {
+                        app.Progress.Complete(level);
+                        app.Back();
+                    }
+                });
+                return;
+            }
+            Placeholder(screen, app, ch, level, "Tu pojawi się treść levelu (mini gra lub zadania).");
+        }
+
+        // Tymczasowy ekran: pozwala oznaczyć level jako ukończony, zanim powstaną zadania i mini gry.
+        static void Placeholder(RectTransform screen, FinanceQuestApp app, ChapterData ch, LevelData level, string info)
+        {
+            float W = app.ScreenWidth;
             float m = ScreenKit.Margin, cw = W - 2 * m, y = 8f;
 
             var card = LipCard.Create(screen, "Info", m, y, cw, 150, Palette.CardFill, Palette.CardEdge, Palette.CardLip,
@@ -23,8 +51,7 @@ namespace FinanceQuest
             var t = Ui.Text("Title", card.Content, "Level " + level.Number + " · " + ContentText.KindLabel(level.Kind),
                 20f, Palette.Text);
             Ui.Place(t.rectTransform, 72, 22, cw - 90, 30);
-            var d = Ui.Text("Desc", card.Content, "Tu pojawi się treść levelu (tekst, mini gra lub zadanie).", 14f,
-                Palette.TextMuted, FontWeight.Regular);
+            var d = Ui.Text("Desc", card.Content, info, 14f, Palette.TextMuted, FontWeight.Regular);
             Ui.Place(d.rectTransform, 18, 74, cw - 36, 60);
 
             y += 150 + 20f;

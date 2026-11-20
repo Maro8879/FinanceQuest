@@ -318,6 +318,16 @@ namespace FinanceQuest
                     c.Cut(p => SdfCanvas.RoundRect(p, V(12, 9.5f), V(23, 3), 0f));
                     c.Cut(p => SdfCanvas.Capsule(p, V(6, 15.5f), V(10, 15.5f), 0.9f));
                     break;
+                case IconId.Bulb:
+                {
+                    // Żarówka: bańka + zwężenie + dwa paski gwintu (ramka „Ważne” na stronach lekcji).
+                    var neck = new[] { V(7.6f, 12.4f), V(16.4f, 12.4f), V(14.6f, 16.6f), V(9.4f, 16.6f) };
+                    c.Add(p => SdfCanvas.Circle(p, V(12, 8.8f), 6.9f));
+                    c.Add(p => SdfCanvas.Polygon(p, neck));
+                    c.Add(p => SdfCanvas.Capsule(p, V(9.4f, 18.6f), V(14.6f, 18.6f), 1.25f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(10.4f, 21.4f), V(13.6f, 21.4f), 1.2f));
+                    break;
+                }
                 case IconId.Spark:
                 {
                     var s = new[] { V(12, 0.5f), V(14.4f, 9.6f), V(23.5f, 12), V(14.4f, 14.4f), V(12, 23.5f), V(9.6f, 14.4f), V(0.5f, 12), V(9.6f, 9.6f) };

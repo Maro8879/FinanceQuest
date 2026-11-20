@@ -32,7 +32,18 @@ namespace FinanceQuest
             var asset = TMP_FontAsset.CreateFontAsset(font);
             asset.name = font.name + " (dynamic)";
             cache[i] = asset;
+            if (weight != FontWeight.ExtraBold) LinkBold(asset);
             return asset;
+        }
+
+        // <b> w tekście (czyli **pogrubienie** z treści) ma rysować Rubik ExtraBold, a nie sztucznie pogrubiony regular.
+        // TMP szuka grubości „bold” w tabeli grubości font assetu (pozycja 7 = 700).
+        static void LinkBold(TMP_FontAsset asset)
+        {
+            var bold = Get(FontWeight.ExtraBold);
+            var table = asset.fontWeightTable;
+            if (bold == null || table == null || table.Length < 8) return;
+            table[7].regularTypeface = bold;
         }
     }
 }

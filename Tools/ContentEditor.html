@@ -120,6 +120,21 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .plevel{border-radius:16px;padding:10px 13px;margin-bottom:10px;background:var(--pcard);border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);font-weight:800}
 .plevel.cur{border-color:var(--y);box-shadow:0 4px 0 var(--yl)}
 .plevel .s{font-weight:600;font-size:12px;color:var(--pmut)}
+.pscroll{position:absolute;top:78px;left:16px;right:16px;bottom:104px;overflow:auto;scrollbar-width:none}
+.pdots i{cursor:pointer}
+.pbtn{cursor:pointer}
+.bh{font-weight:800;font-size:21px;line-height:1.2;margin-bottom:10px;white-space:pre-wrap}
+.bt{font-size:14.5px;line-height:1.5;margin-bottom:12px;white-space:pre-wrap}
+.bh b,.bt b,.bc b,.bli b,.bcap b{font-weight:800}
+.bimg{margin:0 auto;border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;background:var(--pcard);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--pmut);text-align:center;padding:6px;word-break:break-all}
+.bcap{font-size:11.5px;color:var(--pmut);font-weight:600;margin:6px 0 0}
+.bimg,.bcap{margin-bottom:14px}.bimg+.bcap{margin-top:-8px}
+.bc{display:flex;gap:10px;align-items:center;background:var(--pcard);border:2px solid var(--y);box-shadow:0 4px 0 var(--yl);border-radius:14px;padding:10px 11px;font-size:13.5px;line-height:1.4;margin-bottom:14px;white-space:pre-wrap}
+.bci{width:30px;height:30px;border-radius:15px;background:var(--y);display:flex;align-items:center;justify-content:center;flex:none;font-size:15px}
+.bl{display:flex;flex-direction:column;gap:7px;margin-bottom:12px}
+.bli{display:flex;gap:9px;align-items:center;background:var(--pcard);border:2px solid var(--pedge);box-shadow:0 3px 0 var(--pedge);border-radius:11px;padding:6px 9px;font-size:13.5px}
+.blc{width:20px;height:20px;border-radius:10px;background:var(--pet);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+.bd{width:70%;margin:6px auto 18px;border-top:3px dotted var(--pedge)}
 .modal{position:fixed;inset:0;background:rgba(15,25,28,.45);display:flex;align-items:center;justify-content:center;z-index:10}
 .modal .box{background:#fff;border-radius:16px;padding:20px 22px;width:560px;max-height:80vh;overflow:auto}
 .modal h3{font-size:18px;margin-bottom:8px}
@@ -147,6 +162,7 @@ const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
 const GAMES = ["sortowanie","budzet","wydatki","inna"];
+const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", callout:"Ważne", list:"Lista", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
 // ======================= stan =======================
@@ -241,10 +257,29 @@ function normalizeChapter(d, name){
   d.levels = d.levels || []; d.meta = d.meta || {};
   for (const l of d.levels){
     l.pages = l.pages || []; l.tasks = l.tasks || []; l.minigame = l.minigame || {game:"", settings:[]};
+    for (const pg of l.pages) normalizePage(pg);
     l.minigame.settings = l.minigame.settings || [];
     for (const t of l.tasks) normalizeTask(t);
   }
 }
+// Strona = lista bloków. Stary format (jeden tekst + obrazek) zamieniamy na bloki przy wczytaniu.
+function normalizePage(pg){
+  if (!pg.blocks || !pg.blocks.length){
+    pg.blocks = [];
+    if (pg.text) pg.blocks.push({type:"text", text: pg.text});
+    if (pg.image) pg.blocks.push({type:"image", image: pg.image});
+  }
+  delete pg.text; delete pg.image;
+  for (const b of pg.blocks) normalizeBlock(b);
+}
+function normalizeBlock(b){
+  b.type = b.type || "text";
+  if (b.type === "heading" || b.type === "text" || b.type === "callout") b.text = b.text ?? "";
+  if (b.type === "image"){ b.image = b.image ?? ""; b.width = b.width ?? 1; b.maxHeight = b.maxHeight ?? 220; b.caption = b.caption ?? ""; }
+  if (b.type === "list") b.items = b.items || [];
+  if (b.type === "space") b.size = b.size ?? 16;
+}
+function newBlock(type){ const b = {type}; normalizeBlock(b); if (type === "list") b.items = ["", ""]; return b; }
 function normalizeTask(t){
   for (const k of ["options","extra","pairs","zones","items","answers","wrong"]) t[k] = t[k] || [];
   for (const k of ["prompt","answer","image","text","mode","explain","fact"]) t[k] = t[k] ?? "";
@@ -263,6 +298,7 @@ function finishLoad(courses){
   courses.sort((a,b)=>(a.file.data.order||0)-(b.file.data.order||0) || a.id.localeCompare(b.id));
   S.courses = courses; S.loaded = true; S.newOnDisk = [];
   if (S.sel.c >= courses.length || S.sel.c < 0) S.sel = {c: courses.length ? 0 : -1, ch:-1, lv:-1, part: courses.length ? "course" : null, idx:-1};
+  else clampSel();   // po ponownym wczytaniu zaznaczony level mógł zniknąć
   renderAll();
   if (!S.me) askName();
 }
@@ -392,7 +428,7 @@ const curCourse = () => S.courses[S.sel.c];
 const curChapterFile = () => curCourse()?.chapters[S.sel.ch];
 const curChapter = () => curChapterFile()?.data;
 const curLevel = () => curChapter()?.levels[S.sel.lv];
-function select(c, ch=-1, lv=-1, part=null, idx=-1){ S.sel = {c, ch, lv, part: part || (lv>=0?"level":ch>=0?"chapter":"course"), idx}; S.mode = "q"; renderAll(); }
+function select(c, ch=-1, lv=-1, part=null, idx=-1){ S.sel = {c, ch, lv, part: part || (lv>=0?"level":ch>=0?"chapter":"course"), idx}; S.mode = "q"; S.page = 0; renderAll(); }
 function clampSel(){
   const s = S.sel, c = S.courses[s.c];
   if (!c){ S.sel = {c:-1,ch:-1,lv:-1,part:null,idx:-1}; return; }
@@ -432,6 +468,16 @@ function levelWarnings(l){
   const w = [];
   if ((l.kind === "task" || l.kind === "test") && !l.tasks.length) w.push("Level bez zadań.");
   if (l.kind === "lesson" && !l.pages.length) w.push("Lekcja bez stron.");
+  if (l.kind === "lesson") l.pages.forEach((pg, i) => {
+    const pre = "Strona " + (i+1) + ": ";
+    if (!pg.blocks.length) w.push(pre + "pusta strona.");
+    for (const b of pg.blocks){
+      if ((b.type === "text" || b.type === "heading" || b.type === "callout") && !String(b.text).trim()) w.push(pre + "pusty blok „" + BLOCKS[b.type] + "”.");
+      if (b.type === "image" && !String(b.image).trim()) w.push(pre + "obrazek bez ścieżki.");
+      if (b.type === "list" && !b.items.some(x => x.trim())) w.push(pre + "pusta lista.");
+      if (/\*\*/.test((b.text || "") + (b.items || []).join(" ")) && (((b.text || "") + (b.items || []).join(" ")).match(/\*\*/g).length % 2)) w.push(pre + "niesparowane ** (pogrubienie).");
+    }
+  });
   if (l.kind === "minigame" && !l.minigame.game) w.push("Wybierz mini grę.");
   return w.concat(...l.tasks.map(taskWarnings));
 }
@@ -487,7 +533,7 @@ function renderTree(){
           const lw = levelWarnings(l).length;
           h += `<div class="row indent2 ${S.sel.lv === li && S.sel.part === "level" ? "sel" : ""}" data-act="sel" data-c="${ci}" data-ch="${chi}" data-lv="${li}">
             <span class="grow">${li+1} · ${esc(l.title || KINDS[l.kind])}</span><span class="sub">${KINDS[l.kind] || ""}</span>${lw ? `<span class="st warn">⚠</span>` : ""}</div>`;
-          if (S.sel.lv === li && (l.kind === "task" || l.kind === "test"))
+          if (S.sel.lv === li && (l.kind === "task" || l.kind === "test" || l.tasks.length))
             l.tasks.forEach((t, ti) => h += `<div class="row indent3 sub ${S.sel.part === "task" && S.sel.idx === ti ? "sel" : ""}" data-act="sel-task" data-i="${ti}">
               <span class="grow">${ti+1} · ${esc(TYPES[t.type] || t.type)}</span>${taskWarnings(t).length ? '<span class="st warn">⚠</span>' : ""}</div>`);
         });
@@ -565,22 +611,46 @@ function levelForm(){
   const l = curLevel(), b = `levels.${S.sel.lv}`, f = curChapterFile();
   let body = "";
   if (l.kind === "lesson"){
-    body = `<label>Strony lekcji <span class="hint">Enter = nowa linia</span></label>` + l.pages.map((p,i) => `<div class="card"><div class="ct"><b>Strona ${i+1}</b><span style="flex:1"></span>${ctrl("page", i)}</div>
-      <label>Tekst</label>${multi(`${b}.pages.${i}.text`, p.text, "Treść strony…")}
-      <label>Obrazek <span class="hint">ścieżka, np. Images/ryzyko.png (opcjonalnie)</span></label>${one(`${b}.pages.${i}.image`, p.image)}</div>`).join("")
-      + `<div class="btns"><button class="btn small" data-act="add-page">+ strona</button></div>`;
+    body = `<label>Strony lekcji <span class="hint">**słowo** albo Ctrl+B = pogrubienie</span></label>` + l.pages.map((p,i) => `<div class="card"><div class="ct"><b>Strona ${i+1}</b><span class="sub">· ${p.blocks.length} bl.</span><span style="flex:1"></span>${ctrl("page", i)}</div>
+      ${p.blocks.map((bl,j) => blockForm(bl, `${b}.pages.${i}.blocks.${j}`, i, j)).join("")}
+      <div class="btns">${Object.entries(BLOCKS).map(([k,v]) => `<button class="btn small" data-act="add-block" data-p="${i}" data-type="${k}">+ ${v}</button>`).join("")}</div></div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-page">+ strona</button></div>`
+      + `<label>Zadania na koniec lekcji <span class="hint">opcjonalnie – po stronach; trzeba odpowiedzieć poprawnie, żeby przejść dalej</span></label>`
+      + taskList(l);
   } else if (l.kind === "minigame"){
     body = `<label>Mini gra</label>${sel(`${b}.minigame.game`, l.minigame.game, Object.fromEntries([["","— wybierz —"], ...GAMES.map(g=>[g,g])]))}
       <label>Ustawienia <span class="hint">klucz → wartość</span></label>` + l.minigame.settings.map((s,i) => `<div class="line"><div class="f">${one(`${b}.minigame.settings.${i}.key`, s.key, "klucz")}</div><div class="f">${one(`${b}.minigame.settings.${i}.value`, s.value, "wartość")}</div><button class="mini x" data-act="setting" data-i="${i}" data-dir="0">✕</button></div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-setting">+ ustawienie</button></div>`;
   } else {
-    body = `<label>Zadania</label>` + l.tasks.map((t,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px;cursor:pointer" data-act="sel-task" data-i="${i}">
-        <b>${i+1}. ${esc(TYPES[t.type])}</b> <span class="sub">· ${esc((t.prompt || "").slice(0,50)) || "bez polecenia"}${taskWarnings(t).length ? " · ⚠" : ""}</span></div>${ctrl("task-list", i)}</div>`).join("")
-      + `<div class="btns">${Object.entries(TYPES).map(([k,v]) => `<button class="btn small" data-act="add-task" data-type="${k}">+ ${v}</button>`).join("")}</div>`;
+    body = `<label>Zadania</label>` + taskList(l);
   }
   return `<div class="h">Level ${S.sel.lv+1} <span class="pill">${KINDS[l.kind]}</span></div><div class="crumb">${esc(curChapter().title)} › ${esc(l.title || "Level " + (S.sel.lv+1))}</div>
     <div class="grid2"><div><label>Tytuł levelu</label>${one(`${b}.title`, l.title)}</div><div><label>Rodzaj</label>${sel(`${b}.kind`, l.kind, KINDS)}</div></div>
     ${body}${warnBox(levelWarnings(l).slice(0, 6))}${metaLine(f)}`;
+}
+
+function taskList(l){
+  return l.tasks.map((t,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px;cursor:pointer" data-act="sel-task" data-i="${i}">
+        <b>${i+1}. ${esc(TYPES[t.type])}</b> <span class="sub">· ${esc((t.prompt || "").slice(0,50)) || "bez polecenia"}${taskWarnings(t).length ? " · ⚠" : ""}</span></div>${ctrl("task-list", i)}</div>`).join("")
+      + `<div class="btns">${Object.entries(TYPES).map(([k,v]) => `<button class="btn small" data-act="add-task" data-type="${k}">+ ${v}</button>`).join("")}</div>`;
+}
+
+// Jeden blok strony: nagłówek z typem i strzałkami + pola zależne od typu.
+function blockForm(bl, bind, p, j){
+  const head = `<div class="ct" style="margin-top:10px"><span class="pill" style="background:#6F7A7C">${BLOCKS[bl.type] || bl.type}</span><span style="flex:1"></span>
+    <button class="mini" data-act="block" data-p="${p}" data-i="${j}" data-dir="-1" title="W górę">↑</button><button class="mini" data-act="block" data-p="${p}" data-i="${j}" data-dir="1" title="W dół">↓</button><button class="mini x" data-act="block" data-p="${p}" data-i="${j}" data-dir="0" title="Usuń">✕</button></div>`;
+  let f = "";
+  if (bl.type === "heading") f = one(`${bind}.text`, bl.text, "Tytuł strony");
+  if (bl.type === "text") f = multi(`${bind}.text`, bl.text, "Tekst… **pogrubienie**");
+  if (bl.type === "callout") f = multi(`${bind}.text`, bl.text, "Najważniejsza informacja");
+  if (bl.type === "list") f = `<textarea class="multi" data-lines="${bind}.items" placeholder="Jeden punkt w linii">${esc(bl.items.join("\n"))}</textarea><div class="sub" style="margin-top:3px">Każda linia = jeden punkt</div>`;
+  if (bl.type === "image") f = `${one(`${bind}.image`, bl.image, "Ścieżka w Resources, np. Images/wahania")}
+    <div class="grid2" style="margin-top:6px"><div><span class="sub">Szerokość (0.3–1)</span><input type="number" step="0.1" min="0.3" max="1" data-bind="${bind}.width" data-num="1" value="${esc(bl.width)}"></div>
+    <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
+    <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
+  if (bl.type === "space") f = `<input type="number" step="4" min="0" max="200" data-bind="${bind}.size" data-num="1" value="${esc(bl.size)}">`;
+  if (bl.type === "divider") f = `<div class="sub">Kropkowana linia oddzielająca części strony.</div>`;
+  return head + `<div style="margin-top:6px">${f}</div>`;
 }
 
 function taskForm(){
@@ -647,15 +717,35 @@ function previewBody(){
   }
   const l = curLevel();
   if (s.part === "level" && l.kind === "lesson"){
-    const p = l.pages[0] || {text:"(brak stron)"};
-    return `<div class="pbar"><div class="pbx">✕</div><div class="ptrack"><i style="width:20%"></i></div></div>
-      <div class="pk">LEKCJA · ${esc(l.title)}</div><div class="ptext">${esc(p.text)}</div>${p.image ? `<div class="pimg">${esc(p.image)}</div>` : ""}
-      <div class="pdots">${l.pages.map((_,i)=>`<i class="${i===0?"on":""}"></i>`).join("")}</div><div class="pbtn y">DALEJ</div>`;
+    const n = l.pages.length, pi = Math.min(S.page || 0, Math.max(0, n-1)), p = l.pages[pi] || {blocks:[]};
+    const last = pi === n - 1;
+    return `<div class="pbar"><div class="pbx">✕</div><div class="pk" style="margin:0">LEKCJA${n > 1 ? ` · STRONA ${pi+1} Z ${n}` : ""}</div></div>
+      <div class="pscroll">${p.blocks.map(blockPreview).join("") || '<div class="sub">(pusta strona)</div>'}</div>
+      ${n > 1 ? `<div class="pdots">${l.pages.map((_,i)=>`<i class="${i===pi?"on":""}" data-act="ppage" data-i="${i}"></i>`).join("")}</div>` : ""}
+      <div class="pbtn y" data-act="ppage" data-i="${last ? pi : pi+1}">${!last ? "DALEJ" : l.tasks.length ? "DO ZADAŃ" : "UKOŃCZ"}</div>`;
   }
   if (s.part === "level" && l.kind === "minigame")
     return `<div class="pk">MINI GRA</div><div class="pq">${esc(l.title || "Mini gra")}</div><div class="pa">Gra: <b>${esc(l.minigame.game || "—")}</b>${l.minigame.settings.map(x=>`<br>${esc(x.key)}: ${esc(x.value)}`).join("")}</div>
       <div class="sub" style="color:var(--pmut)">Podgląd samej gry pojawi się, gdy powstanie w aplikacji.</div><div class="pbtn y">GRAJ</div>`;
   return taskPreview(l.tasks[s.idx]);
+}
+
+// **x** -> pogrubienie (po zabezpieczeniu HTML). Niesparowane ** zostają jak są – tak samo jak w aplikacji.
+function rich(t){ return esc(t).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>"); }
+function blockPreview(b){
+  switch (b.type){
+    case "heading": return `<div class="bh">${rich(b.text)}</div>`;
+    case "text": return `<div class="bt">${rich(b.text)}</div>`;
+    case "callout": return `<div class="bc"><span class="bci">💡</span><div>${rich(b.text)}</div></div>`;
+    case "list": return `<div class="bl">${b.items.filter(x=>x.trim()).map(x=>`<div class="bli"><span class="blc">✓</span><div>${rich(x)}</div></div>`).join("")}</div>`;
+    case "divider": return `<div class="bd"></div>`;
+    case "space": return `<div style="height:${Math.min(200, Number(b.size)||0)}px"></div>`;
+    case "image": {
+      const w = Math.max(30, Math.min(100, (Number(b.width)||1)*100)), mh = Number(b.maxHeight) || 220;
+      return `<div class="bimg" style="width:${w}%;height:${Math.min(mh, 140)}px">🖼 ${esc(b.image || "brak ścieżki")}</div>${b.caption ? `<div class="bcap">${rich(b.caption)}</div>` : ""}`;
+    }
+  }
+  return "";
 }
 
 function taskPreview(t){
@@ -691,22 +781,37 @@ document.addEventListener("input", e => {
   const t = e.target, f = fileOfSel(); if (!f) return;
   if (t.dataset.bind){
     let v = t.value; if (t.dataset.num) v = v === "" ? 0 : Number(v);
-    setPath(f.data, t.dataset.bind, v); markDirty(f);
+    setPath(f.data, t.dataset.bind, v); markDirty(f); trackPage(t.dataset.bind);
     if (t.tagName === "TEXTAREA") autoGrow(t);
     if (t.tagName === "SELECT" || /\.(type|kind|mode)$/.test(t.dataset.bind) || /\.(id|label)$/.test(t.dataset.bind) && t.dataset.bind.includes("zones")) { if (t.tagName === "SELECT") { if (/\.type$/.test(t.dataset.bind)) normalizeTask(getPath(f.data, t.dataset.bind.replace(/\.type$/,""))); renderForm(); } }
     renderPreview(); renderBanner();
+  } else if (t.dataset.lines){
+    setPath(f.data, t.dataset.lines, t.value.split("\n")); markDirty(f); autoGrow(t); trackPage(t.dataset.lines); renderPreview(); renderBanner();
   } else if (t.dataset.list){
     setPath(f.data, t.dataset.list, t.value.split(/[,;]/).map(x=>x.trim()).filter(Boolean)); markDirty(f); renderPreview();
   } else if (t.dataset.check){
     setPath(f.data, t.dataset.check, t.checked); markDirty(f); renderPreview();
   }
 });
+// Podgląd pokazuje stronę, którą właśnie edytujesz.
+function trackPage(bind){ const m = /\.pages\.(\d+)\./.exec(bind || ""); if (m) S.page = Number(m[1]); }
+document.addEventListener("focusin", e => { const b = e.target.dataset?.bind || e.target.dataset?.lines; if (b && /\.pages\./.test(b)){ const old = S.page; trackPage(b); if (old !== S.page) renderPreview(); } });
 document.addEventListener("change", e => { if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", {bubbles:true})); });
 
 // Pola jednolinijkowe: Enter nie dodaje linii (zatwierdza), Shift+Enter = nowa linia.
 document.addEventListener("keydown", e => {
   if (e.target.classList?.contains("one") && e.key === "Enter" && !e.shiftKey){ e.preventDefault(); e.target.blur(); }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s"){ e.preventDefault(); saveAll(); }
+  // Ctrl+B: zaznaczony tekst -> **pogrubiony** (albo zdejmuje pogrubienie, gdy już jest).
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b" && e.target.tagName === "TEXTAREA"){
+    e.preventDefault();
+    const t = e.target, v = t.value; let a = t.selectionStart, z = t.selectionEnd;
+    while (a < z && /\s/.test(v[a])) a++; while (z > a && /\s/.test(v[z-1])) z--;   // spacje zostają poza **
+    const sel = v.slice(a, z);
+    if (v.slice(a-2, a) === "**" && v.slice(z, z+2) === "**"){ t.value = v.slice(0, a-2) + sel + v.slice(z+2); t.setSelectionRange(a-2, z-2); }
+    else { t.value = v.slice(0, a) + "**" + sel + "**" + v.slice(z); t.setSelectionRange(a+2, z+2); }
+    t.dispatchEvent(new Event("input", {bubbles:true}));
+  }
 });
 window.addEventListener("beforeunload", e => { if (dirtyFiles().length){ e.preventDefault(); e.returnValue = ""; } });
 
@@ -750,8 +855,11 @@ document.addEventListener("click", async e => {
     case "zone": if (moveIn(t.zones, i, dir)) changed(); return;
     case "add-item": t.items.push({text:"", zone: t.zones[0]?.id || ""}); return changed();
     case "item": if (moveIn(t.items, i, dir)) changed(); return;
-    case "add-page": l.pages.push({text:"", image:""}); return changed();
-    case "page": if (moveIn(l.pages, i, dir)) changed(); return;
+    case "add-page": l.pages.push({blocks:[newBlock("text")]}); S.page = l.pages.length - 1; return changed();
+    case "page": if (moveIn(l.pages, i, dir)){ S.page = 0; changed(); } return;
+    case "add-block": { const pi = Number(a.dataset.p); l.pages[pi].blocks.push(newBlock(a.dataset.type)); S.page = pi; return changed(); }
+    case "block": { const pi = Number(a.dataset.p); S.page = pi; if (moveIn(l.pages[pi].blocks, i, dir)) changed(); return; }
+    case "ppage": S.page = i; return renderPreview();
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
     case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();
@@ -759,14 +867,14 @@ document.addEventListener("click", async e => {
     case "level-list": if (moveIn(curChapter().levels, i, dir)){ clampSel(); changed(); } return;
     case "add-level": {
       const d = curChapter(), kind = a.dataset.kind || "lesson";
-      const nl = {id: uniqueLevelId(d), kind, title: "", pages: kind === "lesson" ? [{text:"", image:""}] : [], minigame: {game:"", settings:[]}, tasks: []};
+      const nl = {id: uniqueLevelId(d), kind, title: "", pages: kind === "lesson" ? [{blocks:[newBlock("heading"), newBlock("text")]}] : [], minigame: {game:"", settings:[]}, tasks: []};
       d.levels.push(nl); const cf = curChapterFile(); S.sel = {c:S.sel.c, ch:S.sel.ch, lv:d.levels.length-1, part:"level", idx:-1}; markDirty(cf); return renderAll();
     }
     case "move-chapter": { const c = curCourse(); if (moveIn(c.chapters, i, dir)){ c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); markDirty(c.file); renderAll(); } return; }
     case "add-chapter": {
       const c = S.courses[Number(a.dataset.c)]; const title = prompt("Tytuł nowego rozdziału:"); if (!title) return;
       let id = slug(title); while (c.chapters.some(x => x.name === id + ".json")) id += "-2";
-      const data = {format:1, id, title, color: c.file.data.color, meta:{}, levels:[{id:"l1", kind:"lesson", title:"", pages:[{text:"", image:""}], minigame:{game:"",settings:[]}, tasks:[]}]};
+      const data = {format:1, id, title, color: c.file.data.color, meta:{}, levels:[{id:"l1", kind:"lesson", title:"", pages:[{blocks:[newBlock("heading"), newBlock("text")]}], minigame:{game:"",settings:[]}, tasks:[]}]};
       const nf = {kind:"chapter", name: id + ".json", path: c.id + "/" + id + ".json", handle:null, data, lastModified:0, dirty:true, disk:false};
       await ensureHandle(c, nf); S.knownPaths.add(nf.path);
       c.chapters.push(nf); c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); c.file.dirty = true;

@@ -99,6 +99,19 @@ namespace FinanceQuest.EditorTools
                 string where = file + " / " + (string.IsNullOrEmpty(l.title) ? l.id : l.title);
                 if ((l.kind == "task" || l.kind == "test") && l.tasks.Count == 0) { Debug.LogWarning("Finance Quest: " + where + ": level bez zadań."); w++; }
                 if (l.kind == "lesson" && l.pages.Count == 0) { Debug.LogWarning("Finance Quest: " + where + ": lekcja bez stron."); w++; }
+                for (int p = 0; p < l.pages.Count; p++)
+                {
+                    var blocks = ContentBlocks.Of(l.pages[p]);
+                    string pw = where + ", strona " + (p + 1) + ": ";
+                    if (blocks.Count == 0) { Debug.LogWarning("Finance Quest: " + pw + "pusta strona."); w++; }
+                    foreach (var b in blocks)
+                    {
+                        if (b.type == "image" && string.IsNullOrEmpty(b.image)) { Debug.LogWarning("Finance Quest: " + pw + "obrazek bez ścieżki."); w++; }
+                        if (b.type == "image" && !string.IsNullOrEmpty(b.image) && Resources.Load<Sprite>(b.image) == null && Resources.Load<Texture2D>(b.image) == null) { Debug.LogWarning("Finance Quest: " + pw + "nie ma obrazka Resources/" + b.image + "."); w++; }
+                        if (b.type == "list" && b.items.Count == 0) { Debug.LogWarning("Finance Quest: " + pw + "pusta lista."); w++; }
+                        if ((b.type == "text" || b.type == "heading" || b.type == "callout") && string.IsNullOrEmpty(b.text)) { Debug.LogWarning("Finance Quest: " + pw + "pusty blok tekstu."); w++; }
+                    }
+                }
                 for (int i = 0; i < l.tasks.Count; i++)
                 {
                     var t = l.tasks[i];
