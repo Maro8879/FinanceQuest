@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "id": "horyzont-0-2",
+  "title": "Horyzont 0–2 lata",
+  "shortName": "0–2 lata",
+  "color": "#3F6B5C",
+  "art": "Wallet",
+  "icon": "Wallet",
+  "order": 6,
+  "chapters": [
+    "konto-lokata",
+    "oszustwa",
+    "fundusze-rp"
+  ],
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:36:02Z"
+  }
+}
