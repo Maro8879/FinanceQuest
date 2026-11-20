@@ -1,11 +1,11 @@
 {
   "format": 1,
   "id": "income",
-  "title": "Przychody i wydatki",
+  "title": "Dupa",
   "color": "#9C7A2E",
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T19:20:00Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-20T22:16:48Z"
   },
   "levels": [
     {
@@ -25,7 +25,12 @@
             }
           ]
         }
-      ]
+      ],
+      "tasks": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     },
     {
       "id": "l2",
@@ -39,7 +44,9 @@
             "value": "60"
           }
         ]
-      }
+      },
+      "pages": [],
+      "tasks": []
     },
     {
       "id": "l3",
@@ -65,9 +72,24 @@
             }
           ],
           "explain": "Tu wpisz wyjaśnienie po złej odpowiedzi.",
-          "fact": "Tu wpisz ciekawostkę po dobrej odpowiedzi."
+          "fact": "Tu wpisz ciekawostkę po dobrej odpowiedzi.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
         }
-      ]
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     },
     {
       "id": "l4",
@@ -89,9 +111,24 @@
             }
           ],
           "explain": "Wyjaśnienie.",
-          "fact": "Ciekawostka."
+          "fact": "Ciekawostka.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
         }
-      ]
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }
