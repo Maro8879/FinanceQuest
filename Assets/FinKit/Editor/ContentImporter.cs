@@ -158,6 +158,7 @@ namespace FinanceQuest.EditorTools
                     foreach (var b in blocks)
                     {
                         if (b.type == "image" && string.IsNullOrEmpty(b.image)) { Debug.LogWarning("Finance Quest: " + pw + "obrazek bez ścieżki."); w++; }
+                        if (b.type == "table" && (b.rows.Count == 0 || b.rows.TrueForAll(r => r.cells.TrueForAll(string.IsNullOrEmpty)))) { Debug.LogWarning("Finance Quest: " + pw + "pusta tabelka."); w++; }
                         if (b.type == "list" && b.items.Count == 0) { Debug.LogWarning("Finance Quest: " + pw + "pusta lista."); w++; }
                         if ((b.type == "text" || b.type == "heading" || b.type == "callout") && string.IsNullOrEmpty(b.text)) { Debug.LogWarning("Finance Quest: " + pw + "pusty blok tekstu."); w++; }
                     }

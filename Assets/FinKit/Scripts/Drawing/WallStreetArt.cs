@@ -38,12 +38,16 @@ namespace FinanceQuest
         }
 
         static readonly Color StoneF = Palette.Hex("D9CBAA"), ShadeF = Palette.Hex("B8A77F"), DarkF = Palette.Hex("3C3420");
-        static readonly Color Red = Palette.Hex("B83A33"), FlagWhite = Palette.Hex("F4F1EA"), Navy = Palette.Hex("24406E");
+        internal static readonly Color Red = Palette.Hex("B83A33"), FlagWhite = Palette.Hex("F4F1EA"), Navy = Palette.Hex("24406E");
+
+        // Flagi: maszty są w obrazku, a sam materiał rysuje osobno WavingFlags (żeby mógł powiewać).
+        internal static readonly float[] FlagX = { 124f, 172f, 220f };
+        internal const float FlagY = 195f, PoleLength = 26f, FlagDrop = 28f, PoleAngle = -38f;
         static readonly Color Pole = Palette.Hex("7B8284"), Finial = Palette.Hex("D8B45A"), Bracket = Palette.Hex("6E7577"), Bolt = Palette.Hex("A9B0B2");
 
         // Duży rysunek (ok. 0,8 s liczenia) – w grze wczytywany z PNG po „Bake Drawn Pictures”.
-        public static Sprite Night { get { return DrawnPictures.Get("wallstreet_night", () => Draw(true)); } }
-        public static Sprite Day { get { return DrawnPictures.Get("wallstreet_day", () => Draw(false)); } }
+        public static Sprite Night { get { return DrawnPictures.Get("wallstreet_night_poles", () => Draw(true)); } }
+        public static Sprite Day { get { return DrawnPictures.Get("wallstreet_day_poles", () => Draw(false)); } }
         public static Sprite Current { get { return Settings.DarkMode ? Night : Day; } }
 
         static Sprite Draw(bool night)
@@ -59,9 +63,9 @@ namespace FinanceQuest
                 WhiteTower(c, 290, 440, 26);
                 Facade(c);
                 Ledge(c);
-                foreach (float x in new[] { 124f, 172f, 220f })
+                foreach (float x in FlagX)
                 {
-                    UsFlag(c, x, 195f, 26f, 28f, x * 0.02f);
+                    FlagPole(c, x, FlagY, PoleLength);
                     Rect(c, x - 3, 193, 6, 5, 1, Bracket);
                     Circle(c, V(x, 195), 1.4f, Bolt);
                 }
@@ -197,43 +201,14 @@ namespace FinanceQuest
         }
 
         // Flaga USA na ukośnym drzewcu: 7 pasów, kanton z gwiazdkami, lekkie falowanie i cienie fałd.
-        static void UsFlag(ColorCanvas c, float x, float y, float length, float drop, float phase)
+        // Maszt z kulką na końcu (materiał flagi dorysowuje WavingFlags).
+        static void FlagPole(ColorCanvas c, float x, float y, float length)
         {
-            float ang = -38f * Mathf.Deg2Rad;
+            float ang = PoleAngle * Mathf.Deg2Rad;
             var root = V(x, y);
             var tip = V(x + Mathf.Cos(ang) * length, y + Mathf.Sin(ang) * length);
             Line(c, root, tip, 0.9f, Pole);
             Circle(c, tip, 2f, Finial);
-
-            var A0 = root + (tip - root) * 0.35f;
-            var B0 = root + (tip - root) * 0.95f;
-            System.Func<float, float, Vector2> P = (u, v) =>
-            {
-                var h = A0 + (B0 - A0) * u;
-                float wave = Mathf.Sin(v * Mathf.PI * 1.6f + phase + u * 0.8f) * 1.8f * v;
-                return V(h.x + wave - v * 2.5f, h.y + v * drop);
-            };
-            const int stripes = 7;
-            for (int k = 0; k < stripes; k++) Band(c, P, k / (float)stripes, (k + 1) / (float)stripes, 0, 1, k % 2 == 0 ? Red : FlagWhite);
-            Band(c, P, 3f / stripes, 1, 0, 0.42f, Navy);
-            for (int i = 0; i < 3; i++)
-                for (int j = 0; j < 3; j++)
-                    Circle(c, P(3f / stripes + (4f / stripes) * (i + 0.5f) / 3f, 0.42f * (j + 0.5f) / 3f), 0.7f, Color.white);
-            for (int k = 1; k < 4; k++) Band(c, P, 0, 1, k * 0.25f - 0.04f, k * 0.25f, new Color(0, 0, 0, 0.08f));
-        }
-
-        // Pas materiału flagi między u0..u1 (w poprzek) i v0..v1 (wzdłuż zwisu) – krawędzie próbkowane, żeby falowały.
-        static void Band(ColorCanvas c, System.Func<float, float, Vector2> P, float u0, float u1, float v0, float v1, Color col)
-        {
-            const int n = 8;
-            var pts = new Vector2[(n + 1) * 2];
-            for (int k = 0; k <= n; k++)
-            {
-                float v = v0 + (v1 - v0) * k / n;
-                pts[k] = P(u0, v);
-                pts[pts.Length - 1 - k] = P(u1, v);
-            }
-            Poly(c, pts, col);
         }
 
         // ---------- kształty (wszystko w jednostkach 358 x 230) ----------
