@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "platform",
-  "title": "HORYZONT ŚREDNI (3–10 lat) – cele życiowe",
+  "title": "Horyzont 3-10 lat",
   "shortName": "Średni",
   "color": "#3F6B5C",
   "art": "Laptop",
@@ -13,7 +13,7 @@
     "fees"
   ],
   "meta": {
-    "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T22:49:51Z"
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:55:00Z"
   }
 }
