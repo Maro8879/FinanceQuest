@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T21:14:30Z"
+    "editedAt": "2026-11-20T21:24:33Z"
   },
   "levels": [
     {
@@ -28,7 +28,7 @@
             },
             {
               "type": "text",
-              "text": "Gotówka traci wartość w czasie z powodu inflacji, czyli systematycznego wzrostu cen. Bierze się ona z trzech głównych źródeł: "
+              "text": "Inflacja to stały wzrost cen: z nadmiaru pieniądza, droższej produkcji i wysokiego popytu."
             },
             {
               "type": "list",
@@ -44,7 +44,7 @@
             },
             {
               "type": "text",
-              "text": "W efekcie za tę samą kwotę pieniędzy po kilku latach można kupić znacznie mniej niż dzisiaj — spada tzw. **siła nabywcza**. Jeśli Twoje oszczędności leżą na nieoprocentowanym koncie (0%), a ceny rosną o 3–5% rocznie, realna wartość tych pieniędzy każdego roku **maleje** dokładnie o tyle, ile wynosi **inflacja**."
+              "text": "Za tę samą kwotę kupisz z czasem mniej. Przy 0% oprocentowanie na koncie i inflacji 3–5% tracisz tyle, ile wynosi inflacja."
             }
           ]
         }
