@@ -347,13 +347,14 @@ function openGhDialog(){
     <label>Repozytorium <span class="hint">właściciel/nazwa albo link</span></label><input type="text" id="ghRepo" value="${esc(g.repo)}" placeholder="np. marek/FinanceQuest">
     <div class="grid2"><div><label>Gałąź</label><input type="text" id="ghBranch" value="${esc(g.branch)}"></div>
     <div><label>Folder treści w repo</label><input type="text" id="ghRoot" value="${esc(g.root)}"></div></div>
-    <label>Token dostępu <span class="hint">każda osoba ma swój</span></label><input type="password" id="ghToken" value="${esc(g.token || "")}" placeholder="github_pat_…">
+    <label>Token dostępu <span class="hint">każda osoba ma swój</span></label><input type="password" id="ghToken" value="${esc(g.token || "")}" placeholder="ghp_…">
     <label style="display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" id="ghRemember" ${g.remember ? "checked" : ""}> zapamiętaj na tym komputerze</label>
     <details style="margin-top:10px"><summary class="sub" style="cursor:pointer">Jak zrobić token?</summary><ol style="margin:8px 0 0 18px;line-height:1.6;font-size:13px">
-      <li>github.com → zdjęcie profilu → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
-      <li><b>Repository access</b>: <i>Only select repositories</i> → wybierz repo z grą (właściciel repo musi Cię dodać jako współpracownika).</li>
-      <li><b>Permissions → Repository permissions → Contents</b>: <i>Read and write</i>.</li>
-      <li>Skopiuj token i wklej tutaj. Nie wysyłaj go nikomu.</li></ol></details>
+      <li>Najpierw przyjmij zaproszenie do repozytorium (mail od GitHuba albo github.com/notifications).</li>
+      <li>github.com → zdjęcie profilu → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Tokens (classic)</b> → <b>Generate new token (classic)</b>.</li>
+      <li>Note: dowolna nazwa, Expiration: np. 90 dni, <b>Scopes: zaznacz „repo”</b>.</li>
+      <li><b>Generate token</b>, skopiuj (zaczyna się od <code>ghp_</code>) i wklej tutaj. Nie wysyłaj go nikomu.</li>
+      <li>Token „fine-grained” nie zadziała, jeśli repo należy do kogoś innego – wtedy potrzebny jest klasyczny.</li></ol></details>
     <div id="ghErr"></div>
     <div class="btns" style="margin-top:14px"><button class="btn main" id="ghGo">Połącz</button><button class="btn" id="ghCancel">Anuluj</button></div></div>`;
   document.body.appendChild(m);
@@ -372,7 +373,7 @@ function openGhDialog(){
     catch(e){
       m.querySelector("#ghGo").disabled = false;
       return err(e.status === 401 ? "Token jest nieprawidłowy albo wygasł."
-        : e.status === 404 ? "Nie widzę tego repozytorium albo gałęzi. Sprawdź nazwę i czy token ma dostęp do tego repo."
+        : e.status === 404 ? "Nie widzę tego repozytorium albo gałęzi. Sprawdź nazwę, czy przyjąłeś zaproszenie do repo i czy token jest klasyczny z zaznaczonym „repo” (token fine-grained nie działa w cudzym repo)."
         : esc(e.message));
     }
     localStorage.setItem(GH_KEY, JSON.stringify({repo: owner + "/" + name, branch: cfg.branch, root: cfg.root, token: remember ? cfg.token : "", remember}));
