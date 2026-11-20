@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "id": "portfel-zrownowazony",
+  "title": "Portfel zrównoważony",
+  "color": "#9C7A2E",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:36:09Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
