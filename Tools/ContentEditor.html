@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Finance Quest – edytor treści</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+/* Jeden plik, działa offline. Zapis prosto do folderu Content w repo (Chrome / Edge – File System Access API).
+   Praca we dwóch: każdy edytuje u siebie, synchronizacja przez GitHub Desktop; jeden rozdział = jeden plik. */
+:root{--pet:#0E4A55;--y:#F2C200;--yl:#B59100;--txt:#1D2B2F;--mut:#6F7A7C;--bg:#F5F3EE;--edge:#DAD5CA;--ok:#3E9A68;--bad:#C4553F;--mod:#B58100;--other:#6A5ACD;--lock:#E7E3DA}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Rubik","Nunito","Segoe UI",system-ui,sans-serif;background:var(--bg);color:var(--txt);font-size:14px;overflow:hidden}
+button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-rows:auto auto 1fr;height:100%}
+.top{height:56px;background:#fff;border-bottom:2px solid var(--edge);display:flex;align-items:center;gap:10px;padding:0 16px}
+.logo{font-weight:800;font-size:18px;color:var(--pet);margin-right:auto;white-space:nowrap}
+.logo span{font-weight:600;color:var(--mut);font-size:14px}
+.btn{font-weight:600;font-size:13px;border:2px solid var(--edge);box-shadow:0 3px 0 var(--edge);border-radius:10px;padding:7px 12px;background:#fff;white-space:nowrap;transition:transform .05s}
+.btn:active{transform:translateY(3px);box-shadow:0 0 0 var(--edge)}
+.btn.main{background:var(--y);border-color:var(--y);box-shadow:0 3px 0 var(--yl);font-weight:800}
+.btn.main:disabled{opacity:.5;cursor:default}
+.btn.small{padding:4px 9px;font-size:12px;box-shadow:0 2px 0 var(--edge)}
+.btn.danger{color:var(--bad)}
+.who{font-size:13px;color:var(--mut);cursor:pointer;white-space:nowrap}
+.who b{color:var(--txt)}
+.folder{font-size:13px;color:var(--mut);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ban{background:#FFF3C4;border-bottom:2px solid #F0D98A;font-size:13px;padding:8px 16px;font-weight:600;display:flex;gap:12px;align-items:center}
+.ban.red{background:#FBE1DB;border-color:#EDB5A8}
+.ban a{color:var(--txt);cursor:pointer;text-decoration:underline}
+.cols{display:grid;grid-template-columns:290px 1fr 440px;min-height:0}
+.tree{background:#fff;border-right:2px solid var(--edge);overflow:auto;padding:12px}
+.th{font-weight:800;font-size:11.5px;letter-spacing:1.5px;color:var(--mut);text-transform:uppercase;margin:4px 0 6px}
+.row{display:flex;align-items:center;gap:6px;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:600}
+.row:hover{background:#F2EFE8}
+.row.sel{background:#E7F0F1}
+.row .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:5px;flex:none}
+.st{font-size:11px;font-weight:600;white-space:nowrap}
+.st.ok{color:var(--ok)} .st.mod{color:var(--mod)} .st.disk{color:var(--bad)} .st.other{color:var(--other)} .st.warn{color:var(--bad)}
+.course{font-weight:800}
+.indent{margin-left:14px} .indent2{margin-left:28px} .indent3{margin-left:42px}
+.sub{font-size:12.5px;color:var(--mut);font-weight:600}
+.add{color:var(--pet);font-weight:800;font-size:13px;padding:6px 8px;cursor:pointer}
+.center{overflow:auto;padding:20px 24px 60px}
+.h{font-weight:800;font-size:19px;margin-bottom:4px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.crumb{font-size:12.5px;color:var(--mut);margin-bottom:14px;font-weight:600}
+.pill{font-size:12px;background:var(--pet);color:#fff;border-radius:20px;padding:4px 10px;font-weight:600}
+label{display:block;font-weight:800;font-size:12px;color:var(--mut);margin:14px 0 5px;letter-spacing:.3px}
+.hint{font-weight:600;color:#9A9488;margin-left:6px}
+textarea,input[type=text],input[type=number],select{width:100%;background:#fff;border:2px solid var(--edge);border-radius:10px;padding:8px 11px;font:inherit;font-size:14px;color:var(--txt);resize:none;outline:none}
+textarea:focus,input:focus,select:focus{border-color:var(--pet)}
+textarea.one{overflow:hidden;line-height:1.35}
+textarea.multi{min-height:64px;line-height:1.4}
+.line{display:flex;gap:8px;align-items:flex-start;margin-bottom:7px}
+.line>.f{flex:1}
+.ck{width:34px;height:36px;border-radius:9px;border:2px solid var(--edge);display:flex;align-items:center;justify-content:center;color:#ccc;font-weight:800;background:#fff;flex:none}
+.ck.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.mini{width:30px;height:36px;border-radius:8px;border:2px solid var(--edge);background:#fff;color:var(--mut);font-weight:800;flex:none}
+.mini.x{color:var(--bad)}
+.card{background:#fff;border:2px solid var(--edge);box-shadow:0 4px 0 var(--edge);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+.card .ct{display:flex;gap:8px;align-items:center}
+.warnbox{background:#FBE1DB;border:2px solid #EDB5A8;border-radius:10px;padding:8px 12px;margin:12px 0;font-size:13px;font-weight:600;color:#7A2E20}
+.okbox{background:#DDF0E3;border:2px solid #B9DFC6;border-radius:10px;padding:8px 12px;margin:12px 0;font-size:13px;font-weight:600;color:#2C6E4A}
+.swatches{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.sw{width:30px;height:30px;border-radius:9px;border:3px solid transparent;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.sw.on{border-color:var(--y)}
+.meta{margin-top:20px;font-size:12.5px;color:var(--mut)}
+code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid6{display:grid;grid-template-columns:76px 1fr 62px 62px 62px 62px 30px;gap:6px;align-items:center;margin-bottom:6px}
+.grid6 input[type=number]{padding:8px 4px;text-align:center}
+.empty{max-width:560px;margin:80px auto;text-align:center}
+.empty h2{font-size:24px;margin-bottom:10px}
+.empty p{color:var(--mut);margin-bottom:8px;line-height:1.5}
+/* podgląd */
+.right{background:#E9E6DF;border-left:2px solid var(--edge);padding:14px;display:flex;flex-direction:column;align-items:center;overflow:auto}
+.rh{font-weight:800;font-size:13px;color:var(--mut);align-self:stretch;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px}
+.seg{display:flex;border:2px solid var(--edge);border-radius:9px;overflow:hidden;background:#fff}
+.seg span{padding:4px 9px;font-size:12px;font-weight:600;cursor:pointer;color:var(--mut)}
+.seg span.on{background:var(--pet);color:#fff}
+.ph{width:330px;height:680px;background:#111;border-radius:42px;padding:11px;flex:none}
+.phs{width:100%;height:100%;background:var(--pbg);color:var(--ptxt);border-radius:32px;padding:44px 16px 16px;position:relative;overflow:hidden;--pbg:#F5F3EE;--ptxt:#1D2B2F;--pmut:#6F7A7C;--pcard:#fff;--pedge:#DAD5CA}
+.phs.dark{--pbg:#10252A;--ptxt:#EEF2F1;--pmut:#9FB0B2;--pcard:#1A363C;--pedge:#2A4B52}
+.pbar{display:flex;gap:10px;align-items:center}
+.pbx{color:var(--pmut);font-weight:800}
+.ptrack{flex:1;height:12px;background:var(--pedge);border-radius:6px;position:relative;overflow:hidden}
+.ptrack i{position:absolute;left:0;top:0;bottom:0;background:var(--y);border-radius:6px}
+.pk{font-weight:800;font-size:10.5px;letter-spacing:1.5px;color:var(--pmut);margin-top:18px}
+.pq{font-weight:800;font-size:19px;margin:6px 0 14px;white-space:pre-wrap}
+.pa{background:var(--pcard);border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;padding:11px 12px;font-size:13.5px;font-weight:600;margin-bottom:10px;white-space:pre-wrap}
+.pa.ok{border-color:var(--ok);box-shadow:0 4px 0 var(--ok)}
+.pa.bad{border-color:var(--bad);box-shadow:0 4px 0 var(--bad)}
+.tiles{display:flex;flex-wrap:wrap;gap:8px}
+.tile{background:var(--pcard);border:2px solid var(--pedge);box-shadow:0 3px 0 var(--pedge);border-radius:11px;padding:7px 10px;font-weight:600;font-size:13.5px}
+.slot{min-height:46px;border-bottom:2px solid var(--pedge);margin-bottom:16px;display:flex;flex-wrap:wrap;gap:8px;padding-bottom:6px}
+.pairs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.zonebox{position:relative;width:100%;aspect-ratio:4/3;background:var(--pcard);border:2px solid var(--pedge);border-radius:14px;margin-bottom:12px;overflow:hidden;background-size:cover;background-position:center}
+.zone{position:absolute;border:2px dashed var(--pmut);border-radius:10px;display:flex;align-items:flex-start;justify-content:center;font-size:11.5px;font-weight:800;color:var(--pmut);padding-top:4px}
+.gapt{font-size:17px;font-weight:600;line-height:1.6;white-space:pre-wrap}
+.gap{display:inline-block;min-width:80px;border-bottom:3px solid var(--y);text-align:center;font-weight:800}
+.pinput{background:var(--pcard);border:2px solid var(--pedge);border-radius:12px;padding:10px;margin-top:14px;color:var(--pmut)}
+.pfb{position:absolute;left:0;right:0;bottom:0;padding:14px 16px 70px;font-size:12.5px;white-space:pre-wrap}
+.pfb.good{background:#DDF0E3;color:#2C6E4A}
+.pfb.bad{background:#FBE1DB;color:#7A2E20}
+.phs.dark .pfb.good{background:#1E4A36;color:#BFE6CC}
+.phs.dark .pfb.bad{background:#4A2620;color:#F2C8BE}
+.pbtn{position:absolute;left:16px;right:16px;bottom:16px;color:#fff;font-weight:800;text-align:center;border-radius:12px;padding:11px;background:var(--ok);box-shadow:0 4px 0 #2C7550}
+.pbtn.y{background:var(--y);color:var(--txt);box-shadow:0 4px 0 var(--yl)}
+.pbtn.bad{background:var(--bad);box-shadow:0 4px 0 #933E2D}
+.ptext{font-size:15.5px;line-height:1.55;white-space:pre-wrap;margin-top:18px}
+.pimg{width:100%;aspect-ratio:16/9;border-radius:14px;background:var(--pcard) center/cover;border:2px solid var(--pedge);margin-top:16px;display:flex;align-items:center;justify-content:center;color:var(--pmut);font-size:12px}
+.pdots{display:flex;gap:6px;justify-content:center;position:absolute;left:0;right:0;bottom:72px}
+.pdots i{width:7px;height:7px;border-radius:4px;background:var(--pedge)}
+.pdots i.on{background:var(--y)}
+.pcardc{border-radius:18px;padding:13px 15px;color:#fff;margin-bottom:12px;box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.pcardc .t{font-weight:800;font-size:16px;white-space:pre-wrap}
+.pcardc .s{font-weight:600;font-size:12px;opacity:.8;margin-top:2px}
+.plevel{border-radius:16px;padding:10px 13px;margin-bottom:10px;background:var(--pcard);border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);font-weight:800}
+.plevel.cur{border-color:var(--y);box-shadow:0 4px 0 var(--yl)}
+.plevel .s{font-weight:600;font-size:12px;color:var(--pmut)}
+.modal{position:fixed;inset:0;background:rgba(15,25,28,.45);display:flex;align-items:center;justify-content:center;z-index:10}
+.modal .box{background:#fff;border-radius:16px;padding:20px 22px;width:560px;max-height:80vh;overflow:auto}
+.modal h3{font-size:18px;margin-bottom:8px}
+.modal ul{margin:8px 0 14px 18px;line-height:1.6}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:9px 16px;border-radius:12px;font-weight:600;z-index:20}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top" id="top"></div>
+  <div id="banner"></div>
+  <div class="cols">
+    <div class="tree" id="tree"></div>
+    <div class="center" id="form"></div>
+    <div class="right" id="preview"></div>
+  </div>
+</div>
+<input type="file" id="pick" webkitdirectory multiple style="display:none">
+<script>
+"use strict";
+// ======================= stałe =======================
+const PALETTE = {Petrol:"#0E4A55", Moss:"#3F6B5C", Mustard:"#9C7A2E", Brick:"#8E4A36", Slate:"#4A5D73"};
+const ARTS = ["Portfolio","Magnifier","Laptop","Wallet","Cards"];
+const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
+const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
+const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
+const GAMES = ["sortowanie","budzet","wydatki","inna"];
+const POLL_MS = 3000;
+
+// ======================= stan =======================
+const S = {
+  dir: null,          // uchwyt folderu Content (File System Access API)
+  readOnly: false,    // przeglądarka bez zapisu do folderu: zapis = pobranie pliku
+  loaded: false,
+  courses: [],        // {id, dir, file, chapters:[file]}
+  sel: {c:-1, ch:-1, lv:-1, part:null, idx:-1},
+  me: localStorage.getItem("fq.editor.me") || "",
+  dark: false,
+  mode: "q",          // podgląd zadania: q = pytanie, good = dobrze, bad = źle
+  knownPaths: new Set(),
+  newOnDisk: [],
+};
+// plik: {kind:'course'|'chapter', name, path, handle, data, lastModified, dirty, disk}
+
+// ======================= narzędzia =======================
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const clone = o => JSON.parse(JSON.stringify(o));
+function toast(t){ const d=document.createElement("div"); d.className="toast"; d.textContent=t; document.body.appendChild(d); setTimeout(()=>d.remove(),2200); }
+function slug(t){ return (t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ł/g,"l").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,30) || "nowy"; }
+function ago(iso){
+  if(!iso) return "";
+  const m = Math.round((Date.now() - new Date(/[zZ]|[+-]\d\d:?\d\d$/.test(iso) ? iso : iso + "Z").getTime())/60000);
+  if (isNaN(m)) return "";
+  if (m < 1) return "przed chwilą"; if (m < 60) return m + " min temu";
+  const h = Math.round(m/60); if (h < 24) return h + " h temu";
+  return new Date(iso).toLocaleDateString("pl-PL");
+}
+// Stały porządek kluczy = małe, czytelne zmiany w GitHubie.
+function serialize(data){ return JSON.stringify(data, null, 2) + "\n"; }
+function getPath(o, p){ return p.split(".").reduce((a,k)=>a==null?a:a[k], o); }
+function setPath(o, p, v){ const ks=p.split("."); let a=o; for(let i=0;i<ks.length-1;i++){ if(a[ks[i]]==null) a[ks[i]] = isNaN(ks[i+1])?{}:[]; a=a[ks[i]]; } a[ks[ks.length-1]] = v; }
+
+// ======================= wczytywanie =======================
+async function openFolder(){
+  if (!window.showDirectoryPicker){ $("pick").click(); return; }
+  try{
+    const dir = await window.showDirectoryPicker({id:"fq-content", mode:"readwrite"});
+    S.dir = dir; S.readOnly = false;
+    await loadFromDir();
+  }catch(e){ if(e.name !== "AbortError") alert("Nie udało się otworzyć folderu: " + e.message); }
+}
+
+async function readHandle(h){ const f = await h.getFile(); return {text: await f.text(), lastModified: f.lastModified}; }
+
+async function loadFromDir(){
+  const courses = [];
+  S.knownPaths = new Set();
+  for await (const [name, h] of S.dir.entries()){
+    if (h.kind !== "directory") continue;
+    let courseFile = null; const chapters = [];
+    for await (const [fn, fh] of h.entries()){
+      if (fh.kind !== "file" || !fn.endsWith(".json")) continue;
+      const r = await readHandle(fh);
+      const file = makeFile(fn === "course.json" ? "course" : "chapter", fn, name + "/" + fn, fh, r.text, r.lastModified);
+      S.knownPaths.add(file.path);
+      if (!file.data) continue;
+      if (fn === "course.json") courseFile = file; else chapters.push(file);
+    }
+    if (courseFile) courses.push({id: name, dir: h, file: courseFile, chapters: orderChapters(courseFile, chapters)});
+  }
+  finishLoad(courses);
+}
+
+function loadFromMap(map){   // tryb bez zapisu do folderu oraz test
+  const by = {};
+  for (const [path, text] of Object.entries(map)){
+    const parts = path.split("/"); if (parts.length < 2) continue;
+    const course = parts[parts.length-2], fn = parts[parts.length-1];
+    (by[course] = by[course] || {course:null, chapters:[]});
+    const file = makeFile(fn === "course.json" ? "course" : "chapter", fn, course + "/" + fn, null, text, 0);
+    if (!file.data) continue;
+    if (fn === "course.json") by[course].course = file; else by[course].chapters.push(file);
+  }
+  const courses = Object.entries(by).filter(([,v])=>v.course).map(([id,v])=>({id, dir:null, file:v.course, chapters: orderChapters(v.course, v.chapters)}));
+  finishLoad(courses);
+}
+
+function makeFile(kind, name, path, handle, text, lastModified){
+  let data = null;
+  try { data = JSON.parse(text); } catch(e){ alert("Błąd JSON w " + path + ": " + e.message); }
+  if (data && kind === "chapter") normalizeChapter(data, name);
+  if (data && kind === "course"){ data.chapters = data.chapters || []; data.meta = data.meta || {}; }
+  return {kind, name, path, handle, data, lastModified, dirty:false, disk:false};
+}
+
+function normalizeChapter(d, name){
+  d.id = d.id || name.replace(/\.json$/, "");
+  d.levels = d.levels || []; d.meta = d.meta || {};
+  for (const l of d.levels){
+    l.pages = l.pages || []; l.tasks = l.tasks || []; l.minigame = l.minigame || {game:"", settings:[]};
+    l.minigame.settings = l.minigame.settings || [];
+    for (const t of l.tasks) normalizeTask(t);
+  }
+}
+function normalizeTask(t){
+  for (const k of ["options","extra","pairs","zones","items","answers","wrong"]) t[k] = t[k] || [];
+  for (const k of ["prompt","answer","image","text","mode","explain","fact"]) t[k] = t[k] ?? "";
+  t.multi = !!t.multi;
+}
+
+function orderChapters(courseFile, chapters){
+  const order = courseFile.data.chapters || [];
+  const byId = Object.fromEntries(chapters.map(c => [c.name.replace(/\.json$/,""), c]));
+  const out = order.filter(id => byId[id]).map(id => byId[id]);
+  for (const c of chapters.sort((a,b)=>a.name.localeCompare(b.name))) if (!out.includes(c)) out.push(c);
+  return out;
+}
+
+function finishLoad(courses){
+  courses.sort((a,b)=>(a.file.data.order||0)-(b.file.data.order||0) || a.id.localeCompare(b.id));
+  S.courses = courses; S.loaded = true; S.newOnDisk = [];
+  if (S.sel.c >= courses.length || S.sel.c < 0) S.sel = {c: courses.length ? 0 : -1, ch:-1, lv:-1, part: courses.length ? "course" : null, idx:-1};
+  renderAll();
+  if (!S.me) askName();
+}
+
+$("pick").addEventListener("change", async e => {
+  const map = {};
+  for (const f of e.target.files) if (f.name.endsWith(".json")) map[f.webkitRelativePath] = await f.text();
+  S.readOnly = true; S.dir = null;
+  loadFromMap(map);
+  toast("Tryb tylko do odczytu – „Zapisz” pobierze pliki. Do zapisu w folderze użyj Chrome lub Edge.");
+});
+
+// ======================= zapis =======================
+const allFiles = () => S.courses.flatMap(c => [c.file, ...c.chapters]);
+const dirtyFiles = () => allFiles().filter(f => f.dirty);
+
+async function saveAll(){
+  if (!S.me && !askName()) return;
+  const list = dirtyFiles(); if (!list.length) { toast("Brak zmian do zapisania"); return; }
+  for (const f of list){
+    if (f.handle){
+      const disk = await f.handle.getFile();
+      if (f.lastModified && disk.lastModified !== f.lastModified){
+        let who = ""; try { who = JSON.parse(await disk.text()).meta?.editedBy || ""; } catch(e){}
+        if (!confirm(`Plik ${f.path} zmienił się na dysku${who ? " (zapisał go: " + who + ")" : ""}.\nNadpisać jego zmiany Twoją wersją?\n\nAnuluj = zostaw, a potem „Porównaj” na żółtym pasku.`)) continue;
+      }
+    }
+    f.data.meta = {editedBy: S.me, editedAt: new Date().toISOString().slice(0,19) + "Z"};   // UTC – ten sam czas u obu osób
+    const text = serialize(f.data);
+    if (f.handle){
+      const w = await f.handle.createWritable(); await w.write(text); await w.close();
+      f.lastModified = (await f.handle.getFile()).lastModified;
+    } else download(f.path.replace("/", "__"), text);
+    f.dirty = false; f.disk = false;
+  }
+  renderAll(); toast("Zapisano. Pamiętaj o Commit + Push w GitHub Desktop.");
+}
+
+function download(name, text){
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], {type:"application/json"}));
+  a.download = name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+async function ensureHandle(course, file){
+  if (!course.dir || file.handle) return;
+  file.handle = await course.dir.getFileHandle(file.name, {create:true});
+}
+
+// ======================= współpraca: zmiany na dysku =======================
+async function poll(){
+  if (!S.dir) return;
+  let changed = false;
+  for (const f of allFiles()){
+    if (!f.handle || f.disk) continue;
+    try { const d = await f.handle.getFile(); if (f.lastModified && d.lastModified !== f.lastModified){ f.disk = true; changed = true; } } catch(e){}
+  }
+  // nowe pliki od kolegi (np. nowy rozdział po „Pull”)
+  const found = [];
+  try{
+    for await (const [name, h] of S.dir.entries()){
+      if (h.kind !== "directory") continue;
+      for await (const [fn, fh] of h.entries()) if (fh.kind === "file" && fn.endsWith(".json") && !S.knownPaths.has(name + "/" + fn)) found.push(name + "/" + fn);
+    }
+  }catch(e){}
+  if (found.join() !== S.newOnDisk.join()){ S.newOnDisk = found; changed = true; }
+  if (changed){ renderBanner(); renderTree(); }
+}
+setInterval(poll, POLL_MS);
+
+async function reloadFile(f){
+  if (f.dirty && !confirm("Masz niezapisane zmiany w " + f.path + ". Porzucić je i wczytać wersję z dysku?")) return;
+  const r = await readHandle(f.handle);
+  const nf = makeFile(f.kind, f.name, f.path, f.handle, r.text, r.lastModified);
+  Object.assign(f, {data: nf.data, lastModified: r.lastModified, dirty:false, disk:false});
+  const c = S.courses.find(c => c.file === f || c.chapters.includes(f));
+  if (c && f.kind === "course") c.chapters = orderChapters(c.file, c.chapters);
+  clampSel(); renderAll(); toast("Wczytano nową wersję " + f.path);
+}
+
+async function compareFile(f){
+  const r = await readHandle(f.handle);
+  let disk; try { disk = JSON.parse(r.text); } catch(e){ alert("Plik na dysku ma błąd JSON."); return; }
+  const lines = [];
+  const mine = f.data;
+  if (f.kind === "chapter"){
+    if (disk.title !== mine.title) lines.push(`Tytuł: „${esc(disk.title)}” (dysk) vs „${esc(mine.title)}” (Ty)`);
+    const dl = Object.fromEntries((disk.levels||[]).map(l=>[l.id,l])), ml = Object.fromEntries((mine.levels||[]).map(l=>[l.id,l]));
+    for (const id of new Set([...Object.keys(dl), ...Object.keys(ml)])){
+      const a = dl[id], b = ml[id];
+      const name = esc((b||a).title || id);
+      if (!b) lines.push(`Level „${name}” – jest tylko na dysku`);
+      else if (!a) lines.push(`Level „${name}” – jest tylko u Ciebie`);
+      else if (JSON.stringify(a) !== JSON.stringify(normalizeLevelCopy(b))) lines.push(`Level „${name}” – różni się`);
+    }
+    if ((disk.levels||[]).map(l=>l.id).join() !== mine.levels.map(l=>l.id).join()) lines.push("Inna kolejność leveli");
+  } else {
+    for (const k of ["title","shortName","color","art","icon","order"]) if (disk[k] !== mine[k]) lines.push(`${k}: „${esc(disk[k])}” (dysk) vs „${esc(mine[k])}” (Ty)`);
+    if ((disk.chapters||[]).join() !== mine.chapters.join()) lines.push("Inna lista lub kolejność rozdziałów");
+  }
+  const who = disk.meta?.editedBy ? `${esc(disk.meta.editedBy)}, ${ago(disk.meta.editedAt)}` : "nieznany";
+  modal(`<h3>Porównanie: ${esc(f.path)}</h3><div class="sub">Wersję na dysku zapisał: <b>${who}</b></div>
+    ${lines.length ? "<ul>" + lines.map(l=>"<li>"+l+"</li>").join("") + "</ul>" : '<div class="okbox">Treść jest taka sama.</div>'}
+    <div class="btns"><button class="btn main" data-act="modal-reload">Wczytaj wersję z dysku</button><button class="btn" data-act="modal-keep">Zostaw moją</button></div>`,
+    {reload: () => reloadFile(f), keep: () => { f.disk = false; f.lastModified = r.lastModified; f.dirty = true; renderAll(); }});
+}
+function normalizeLevelCopy(l){ return JSON.parse(JSON.stringify(l)); }
+
+let modalActions = {};
+function modal(html, actions){
+  modalActions = actions || {};
+  const m = document.createElement("div"); m.className = "modal"; m.innerHTML = `<div class="box">${html}</div>`;
+  m.addEventListener("click", e => {
+    const a = e.target.closest("[data-act]")?.dataset.act;
+    if (e.target === m || a){ m.remove(); if (a === "modal-reload") modalActions.reload?.(); if (a === "modal-keep") modalActions.keep?.(); }
+  });
+  document.body.appendChild(m);
+}
+
+function askName(){
+  const n = prompt("Twoje imię (zapisuje się w plikach jako „ostatnio edytował”):", S.me || "");
+  if (n && n.trim()){ S.me = n.trim(); localStorage.setItem("fq.editor.me", S.me); renderTop(); return true; }
+  return false;
+}
+
+// ======================= zaznaczenie =======================
+const curCourse = () => S.courses[S.sel.c];
+const curChapterFile = () => curCourse()?.chapters[S.sel.ch];
+const curChapter = () => curChapterFile()?.data;
+const curLevel = () => curChapter()?.levels[S.sel.lv];
+function select(c, ch=-1, lv=-1, part=null, idx=-1){ S.sel = {c, ch, lv, part: part || (lv>=0?"level":ch>=0?"chapter":"course"), idx}; S.mode = "q"; renderAll(); }
+function clampSel(){
+  const s = S.sel, c = S.courses[s.c];
+  if (!c){ S.sel = {c:-1,ch:-1,lv:-1,part:null,idx:-1}; return; }
+  if (s.ch >= c.chapters.length){ s.ch = -1; s.lv = -1; s.part = "course"; }
+  const ch = c.chapters[s.ch]?.data;
+  if (ch && s.lv >= ch.levels.length){ s.lv = -1; s.part = "chapter"; }
+  const l = ch?.levels[s.lv];
+  if (l && s.part === "task" && s.idx >= l.tasks.length){ s.part = "level"; s.idx = -1; }
+}
+function markDirty(f){ if (!f.dirty){ f.dirty = true; renderTop(); } renderTreeSoon(); }
+function fileOfSel(){ return S.sel.part === "course" ? curCourse()?.file : curChapterFile(); }
+
+// ======================= walidacja =======================
+function taskWarnings(t){
+  const w = [];
+  if (!t.prompt.trim()) w.push("Brak polecenia.");
+  if (t.type === "choice"){
+    if (t.options.length < 2) w.push("Potrzebne co najmniej 2 odpowiedzi.");
+    if (!t.options.some(o=>o.correct)) w.push("Zaznacz poprawną odpowiedź (✓).");
+    if (!t.multi && t.options.filter(o=>o.correct).length > 1) w.push("Kilka poprawnych – włącz „kilka poprawnych”.");
+  }
+  if (t.type === "tiles" && !t.answer.trim()) w.push("Wpisz zdanie do ułożenia.");
+  if (t.type === "pairs" && t.pairs.filter(p=>p.left.trim()&&p.right.trim()).length < 2) w.push("Potrzebne co najmniej 2 pełne pary.");
+  if (t.type === "zones"){
+    if (!t.zones.length) w.push("Dodaj strefy."); if (!t.items.length) w.push("Dodaj elementy do przeciągnięcia.");
+    if (t.items.some(i => !t.zones.some(z => z.id === i.zone))) w.push("Element przypisany do nieistniejącej strefy.");
+  }
+  if (t.type === "gap"){
+    if (!t.text.includes("___")) w.push("W tekście brakuje luki „___”.");
+    if (!t.answers.length) w.push("Wpisz poprawną odpowiedź.");
+  }
+  if (!t.explain.trim()) w.push("Brak wyjaśnienia po złej odpowiedzi.");
+  if (!t.fact.trim()) w.push("Brak ciekawostki po dobrej odpowiedzi.");
+  return w;
+}
+function levelWarnings(l){
+  const w = [];
+  if ((l.kind === "task" || l.kind === "test") && !l.tasks.length) w.push("Level bez zadań.");
+  if (l.kind === "lesson" && !l.pages.length) w.push("Lekcja bez stron.");
+  if (l.kind === "minigame" && !l.minigame.game) w.push("Wybierz mini grę.");
+  return w.concat(...l.tasks.map(taskWarnings));
+}
+const chapterWarnCount = d => d.levels.reduce((n,l)=>n+levelWarnings(l).length, 0);
+
+// ======================= render: góra, pasek, drzewo =======================
+function renderAll(){ renderTop(); renderBanner(); renderTree(); renderForm(); renderPreview(); }
+
+function renderTop(){
+  const n = dirtyFiles().length;
+  $("top").innerHTML = `<div class="logo">Finance Quest <span>· edytor treści</span></div>
+    <div class="folder" title="Folder Content">${S.loaded ? (S.readOnly ? "📄 tylko odczyt" : "📁 " + esc(S.dir?.name || "")) : ""}</div>
+    <button class="btn" data-act="open">📁 Otwórz folder Content</button>
+    ${S.dir ? '<button class="btn" data-act="reload-all">↻ Wczytaj z dysku</button>' : ""}
+    <button class="btn main" data-act="save" ${n ? "" : "disabled"}>Zapisz zmiany${n ? " (" + n + ")" : ""}</button>
+    <div class="who" data-act="me" title="Kliknij, żeby zmienić">Ty: <b>${esc(S.me || "—")}</b> ▾</div>`;
+}
+
+function renderBanner(){
+  const f = fileOfSel();
+  let h = "";
+  if (f && f.disk) h += `<div class="ban ${f.dirty ? "red" : ""}">⚠ Plik <b>${esc(f.path)}</b> zmienił się na dysku (np. po „Pull” w GitHub Desktop)${f.dirty ? " – a Ty masz w nim niezapisane zmiany" : ""}.
+      <a data-act="disk-reload">Wczytaj nową wersję</a> · <a data-act="disk-compare">Porównaj</a></div>`;
+  const others = allFiles().filter(x => x.disk && x !== f);
+  if (others.length) h += `<div class="ban">Zmienione na dysku: ${others.map(x=>esc(x.path)).join(", ")} – otwórz plik, żeby wczytać.</div>`;
+  if (S.newOnDisk.length) h += `<div class="ban">Nowe pliki na dysku: ${S.newOnDisk.map(esc).join(", ")}. <a data-act="reload-all">Wczytaj z dysku</a></div>`;
+  $("banner").innerHTML = h;
+}
+
+function status(f){
+  if (f.dirty) return '<span class="st mod">● zmiany</span>';
+  if (f.disk) return '<span class="st disk">⚠ na dysku</span>';
+  const m = f.data.meta || {};
+  if (m.editedBy && m.editedBy !== S.me) return `<span class="st other">${esc(m.editedBy)} · ${ago(m.editedAt)}</span>`;
+  return '<span class="st ok">✓</span>';
+}
+
+let treeTimer = 0;
+function renderTreeSoon(){ clearTimeout(treeTimer); treeTimer = setTimeout(renderTree, 150); }
+
+function renderTree(){
+  if (!S.loaded){ $("tree").innerHTML = '<div class="th">Pliki</div><div class="sub">Otwórz folder Content.</div>'; return; }
+  let h = '<div class="th">Kursy i rozdziały</div>';
+  S.courses.forEach((c, ci) => {
+    const d = c.file.data, selC = S.sel.c === ci && S.sel.part === "course";
+    h += `<div class="row course ${selC ? "sel" : ""}" data-act="sel" data-c="${ci}"><span class="dot" style="background:${esc(d.color)}"></span><span class="grow">${esc(d.title || c.id)}</span>${status(c.file)}</div>`;
+    c.chapters.forEach((f, chi) => {
+      const cd = f.data, open = S.sel.c === ci && S.sel.ch === chi, wc = chapterWarnCount(cd);
+      h += `<div class="row indent ${open && S.sel.part === "chapter" ? "sel" : ""}" data-act="sel" data-c="${ci}" data-ch="${chi}">
+        <span class="grow">${esc(f.name)}</span>${wc ? `<span class="st warn">⚠${wc}</span>` : ""}${status(f)}</div>`;
+      if (open){
+        cd.levels.forEach((l, li) => {
+          const lw = levelWarnings(l).length;
+          h += `<div class="row indent2 ${S.sel.lv === li && S.sel.part === "level" ? "sel" : ""}" data-act="sel" data-c="${ci}" data-ch="${chi}" data-lv="${li}">
+            <span class="grow">${li+1} · ${esc(l.title || KINDS[l.kind])}</span><span class="sub">${KINDS[l.kind] || ""}</span>${lw ? `<span class="st warn">⚠</span>` : ""}</div>`;
+          if (S.sel.lv === li && (l.kind === "task" || l.kind === "test"))
+            l.tasks.forEach((t, ti) => h += `<div class="row indent3 sub ${S.sel.part === "task" && S.sel.idx === ti ? "sel" : ""}" data-act="sel-task" data-i="${ti}">
+              <span class="grow">${ti+1} · ${esc(TYPES[t.type] || t.type)}</span>${taskWarnings(t).length ? '<span class="st warn">⚠</span>' : ""}</div>`);
+        });
+        h += `<div class="add indent2" data-act="add-level" data-kind="lesson">+ level</div>`;
+      }
+    });
+    h += `<div class="add indent" data-act="add-chapter" data-c="${ci}">+ rozdział</div>`;
+  });
+  h += `<div class="add" data-act="add-course">+ nowy kurs</div>`;
+  $("tree").innerHTML = h;
+}
+
+// ======================= render: formularze =======================
+const one = (bind, val, ph="") => `<textarea class="one" rows="1" data-bind="${bind}" placeholder="${esc(ph)}">${esc(val)}</textarea>`;
+const multi = (bind, val, ph="") => `<textarea class="multi" data-bind="${bind}" placeholder="${esc(ph)}">${esc(val)}</textarea>`;
+const listIn = (bind, arr, ph="") => `<input type="text" data-list="${bind}" value="${esc((arr||[]).join(", "))}" placeholder="${esc(ph)}">`;
+const sel = (bind, val, opts) => `<select data-bind="${bind}">${Object.entries(opts).map(([k,v]) => `<option value="${esc(k)}" ${k===val?"selected":""}>${esc(v)}</option>`).join("")}</select>`;
+const ctrl = (act, i, extra="") => `<button class="mini" data-act="${act}" data-i="${i}" data-dir="-1" title="W górę">↑</button><button class="mini" data-act="${act}" data-i="${i}" data-dir="1" title="W dół">↓</button><button class="mini x" data-act="${act}" data-i="${i}" data-dir="0" title="Usuń">✕</button>${extra}`;
+const warnBox = w => w.length ? `<div class="warnbox">⚠ ${w.map(esc).join("<br>⚠ ")}</div>` : '<div class="okbox">✓ Wszystko gotowe</div>';
+function swatches(bind, val){
+  return `<div class="swatches">${Object.entries(PALETTE).map(([n,c]) => `<div class="sw ${c.toLowerCase()===String(val).toLowerCase()?"on":""}" style="background:${c}" title="${n}" data-act="color" data-bind="${bind}" data-color="${c}"></div>`).join("")}
+    <input type="text" data-bind="${bind}" value="${esc(val)}" style="width:110px" placeholder="#RRGGBB"></div>`;
+}
+function metaLine(f){ const m = f.data.meta || {}; return `<div class="meta">${m.editedBy ? `Ostatnio zapisał: <b>${esc(m.editedBy)}</b>, ${ago(m.editedAt)} · ` : ""}plik <code>${esc(f.path)}</code></div>`; }
+
+function renderForm(){
+  const el = $("form");
+  if (!S.loaded){
+    el.innerHTML = `<div class="empty"><h2>Edytor treści Finance Quest</h2>
+      <p>Kliknij <b>„Otwórz folder Content”</b> i wskaż folder <code>Assets/FinanceQuest/Content</code> w Twoim repo.</p>
+      <p>Edytor zapisuje pliki JSON prosto do tego folderu (Chrome lub Edge). Potem w GitHub Desktop robisz Commit + Push, a kolega – Pull.</p>
+      <p>Jeden rozdział = jeden plik, więc możecie pracować równolegle nad różnymi rozdziałami.</p>
+      <div class="btns" style="justify-content:center;margin-top:16px"><button class="btn main" data-act="open">📁 Otwórz folder Content</button></div></div>`;
+    return;
+  }
+  const s = S.sel;
+  if (s.part === "course") el.innerHTML = courseForm();
+  else if (s.part === "chapter") el.innerHTML = chapterForm();
+  else if (s.part === "level") el.innerHTML = levelForm();
+  else if (s.part === "task") el.innerHTML = taskForm();
+  else el.innerHTML = '<div class="sub">Wybierz coś z listy po lewej.</div>';
+  el.querySelectorAll("textarea").forEach(autoGrow);
+}
+
+function courseForm(){
+  const c = curCourse(), d = c.file.data;
+  return `<div class="h">Kurs <span class="pill">${esc(d.title)}</span></div><div class="crumb">${esc(c.id)}/course.json</div>
+    <label>Tytuł kursu</label>${one("title", d.title)}
+    <div class="grid2"><div><label>Krótka nazwa <span class="hint">podpis pucharu</span></label>${one("shortName", d.shortName)}</div>
+    <div><label>Kolejność w menu</label><input type="number" data-bind="order" data-num="1" value="${esc(d.order)}"></div></div>
+    <label>Kolor karty</label>${swatches("color", d.color)}
+    <div class="grid2"><div><label>Ilustracja na karcie</label>${sel("art", d.art, Object.fromEntries(ARTS.map(a=>[a,a])))}</div>
+    <div><label>Ikona</label>${sel("icon", d.icon, Object.fromEntries(ICONS.map(a=>[a,a])))}</div></div>
+    <label>Rozdziały (kolejność)</label>
+    ${c.chapters.map((f,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px">${i+1}. ${esc(f.data.title)} <span class="sub">· ${esc(f.name)}</span></div>
+      <button class="mini" data-act="move-chapter" data-i="${i}" data-dir="-1">↑</button><button class="mini" data-act="move-chapter" data-i="${i}" data-dir="1">↓</button></div>`).join("")}
+    <div class="btns"><button class="btn small" data-act="add-chapter" data-c="${S.sel.c}">+ rozdział</button></div>
+    ${metaLine(c.file)}`;
+}
+
+function chapterForm(){
+  const f = curChapterFile(), d = f.data;
+  return `<div class="h">Rozdział <span class="pill">${esc(d.title)}</span></div><div class="crumb">${esc(curCourse().file.data.title)} › ${esc(d.title)}</div>
+    <label>Tytuł rozdziału</label>${one("title", d.title)}
+    <label>Kolor rozdziału</label>${swatches("color", d.color)}
+    <label>Levele</label>
+    ${d.levels.map((l,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px;cursor:pointer" data-act="sel" data-c="${S.sel.c}" data-ch="${S.sel.ch}" data-lv="${i}">
+      <b>${i+1}. ${esc(l.title || "Level " + (i+1))}</b> <span class="sub">· ${KINDS[l.kind]}${levelWarnings(l).length ? " · ⚠" : ""}</span></div>${ctrl("level-list", i)}</div>`).join("")}
+    <div class="btns">${Object.entries(KINDS).map(([k,v]) => `<button class="btn small" data-act="add-level" data-kind="${k}">+ ${v}</button>`).join("")}</div>
+    <div class="btns" style="margin-top:22px"><button class="btn small danger" data-act="delete-chapter">Usuń rozdział</button></div>
+    ${metaLine(f)}`;
+}
+
+function levelForm(){
+  const l = curLevel(), b = `levels.${S.sel.lv}`, f = curChapterFile();
+  let body = "";
+  if (l.kind === "lesson"){
+    body = `<label>Strony lekcji <span class="hint">Enter = nowa linia</span></label>` + l.pages.map((p,i) => `<div class="card"><div class="ct"><b>Strona ${i+1}</b><span style="flex:1"></span>${ctrl("page", i)}</div>
+      <label>Tekst</label>${multi(`${b}.pages.${i}.text`, p.text, "Treść strony…")}
+      <label>Obrazek <span class="hint">ścieżka, np. Images/ryzyko.png (opcjonalnie)</span></label>${one(`${b}.pages.${i}.image`, p.image)}</div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-page">+ strona</button></div>`;
+  } else if (l.kind === "minigame"){
+    body = `<label>Mini gra</label>${sel(`${b}.minigame.game`, l.minigame.game, Object.fromEntries([["","— wybierz —"], ...GAMES.map(g=>[g,g])]))}
+      <label>Ustawienia <span class="hint">klucz → wartość</span></label>` + l.minigame.settings.map((s,i) => `<div class="line"><div class="f">${one(`${b}.minigame.settings.${i}.key`, s.key, "klucz")}</div><div class="f">${one(`${b}.minigame.settings.${i}.value`, s.value, "wartość")}</div><button class="mini x" data-act="setting" data-i="${i}" data-dir="0">✕</button></div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-setting">+ ustawienie</button></div>`;
+  } else {
+    body = `<label>Zadania</label>` + l.tasks.map((t,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px;cursor:pointer" data-act="sel-task" data-i="${i}">
+        <b>${i+1}. ${esc(TYPES[t.type])}</b> <span class="sub">· ${esc((t.prompt || "").slice(0,50)) || "bez polecenia"}${taskWarnings(t).length ? " · ⚠" : ""}</span></div>${ctrl("task-list", i)}</div>`).join("")
+      + `<div class="btns">${Object.entries(TYPES).map(([k,v]) => `<button class="btn small" data-act="add-task" data-type="${k}">+ ${v}</button>`).join("")}</div>`;
+  }
+  return `<div class="h">Level ${S.sel.lv+1} <span class="pill">${KINDS[l.kind]}</span></div><div class="crumb">${esc(curChapter().title)} › ${esc(l.title || "Level " + (S.sel.lv+1))}</div>
+    <div class="grid2"><div><label>Tytuł levelu</label>${one(`${b}.title`, l.title)}</div><div><label>Rodzaj</label>${sel(`${b}.kind`, l.kind, KINDS)}</div></div>
+    ${body}${warnBox(levelWarnings(l).slice(0, 6))}${metaLine(f)}`;
+}
+
+function taskForm(){
+  const t = curLevel().tasks[S.sel.idx], b = `levels.${S.sel.lv}.tasks.${S.sel.idx}`;
+  let body = "";
+  if (t.type === "choice"){
+    body = `<label>Odpowiedzi <span class="hint">✓ = poprawna</span></label>` + t.options.map((o,i) => `<div class="line"><button class="ck ${o.correct?"on":""}" data-act="correct" data-i="${i}">✓</button><div class="f">${one(`${b}.options.${i}.text`, o.text, "Odpowiedź")}</div><button class="mini" data-act="opt" data-i="${i}" data-dir="-1">↑</button><button class="mini" data-act="opt" data-i="${i}" data-dir="1">↓</button><button class="mini x" data-act="opt" data-i="${i}" data-dir="0">✕</button></div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-opt">+ odpowiedź</button><label style="margin:0 0 0 12px;display:flex;gap:6px;align-items:center"><input type="checkbox" data-check="${b}.multi" ${t.multi?"checked":""}> kilka poprawnych</label></div>`;
+  } else if (t.type === "tiles"){
+    body = `<label>Zdanie do ułożenia <span class="hint">słowa rozdzielone spacją = kafelki</span></label>${one(`${b}.answer`, t.answer)}
+      <label>Słowa-pułapki <span class="hint">po przecinku</span></label>${listIn(`${b}.extra`, t.extra, "np. zawsze, nigdy")}`;
+  } else if (t.type === "pairs"){
+    body = `<label>Pary <span class="hint">lewa ↔ prawa</span></label>` + t.pairs.map((p,i) => `<div class="line"><div class="f">${one(`${b}.pairs.${i}.left`, p.left, "Pojęcie")}</div><div class="f">${one(`${b}.pairs.${i}.right`, p.right, "Opis")}</div>${ctrl("pair", i)}</div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-pair">+ para</button></div>`;
+  } else if (t.type === "zones"){
+    const zopts = Object.fromEntries([["","— strefa —"], ...t.zones.map(z => [z.id, z.label || z.id])]);
+    body = `<label>Obrazek <span class="hint">ścieżka (opcjonalnie)</span></label>${one(`${b}.image`, t.image)}
+      <label>Strefy <span class="hint">id · nazwa · x, y, szer., wys. (0–1 względem obrazka)</span></label>`
+      + t.zones.map((z,i) => `<div class="grid6">${one(`${b}.zones.${i}.id`, z.id, "id")}${one(`${b}.zones.${i}.label`, z.label, "Nazwa strefy")}
+        ${["x","y","w","h"].map(k => `<input type="number" step="0.05" min="0" max="1" data-bind="${b}.zones.${i}.${k}" data-num="1" value="${esc(z[k])}">`).join("")}<button class="mini x" data-act="zone" data-i="${i}" data-dir="0">✕</button></div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-zone">+ strefa</button></div>
+      <label>Elementy do przeciągnięcia</label>` + t.items.map((it,i) => `<div class="line"><div class="f">${one(`${b}.items.${i}.text`, it.text, "Element")}</div><div style="width:160px">${sel(`${b}.items.${i}.zone`, it.zone, zopts)}</div><button class="mini x" data-act="item" data-i="${i}" data-dir="0">✕</button></div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-item">+ element</button></div>`;
+  } else if (t.type === "gap"){
+    body = `<label>Tekst z luką <span class="hint">luka = ___ (trzy podkreślniki)</span></label>${one(`${b}.text`, t.text)}
+      <label>Sposób odpowiedzi</label>${sel(`${b}.mode`, t.mode || "type", {type:"Wpisanie z klawiatury", choose:"Wybór z kafelków"})}
+      <label>Poprawne odpowiedzi <span class="hint">po przecinku; pierwsza = główna, reszta = akceptowane alternatywy</span></label>${listIn(`${b}.answers`, t.answers, "np. koszyka, koszyczka")}
+      ${t.mode === "choose" ? `<label>Błędne propozycje <span class="hint">po przecinku</span></label>${listIn(`${b}.wrong`, t.wrong, "np. portfela, banku")}` : ""}`;
+  }
+  return `<div class="h">Zadanie ${S.sel.idx+1} <span class="pill">${esc(TYPES[t.type])}</span></div><div class="crumb">${esc(curChapter().title)} › ${esc(curLevel().title || "Level " + (S.sel.lv+1))} › zadanie ${S.sel.idx+1}</div>
+    <div class="grid2"><div><label>Typ zadania</label>${sel(`${b}.type`, t.type, TYPES)}</div><div></div></div>
+    <label>Polecenie / pytanie <span class="hint">Shift+Enter = nowa linia</span></label>${one(`${b}.prompt`, t.prompt)}
+    ${body}
+    <label>Wyjaśnienie po złej odpowiedzi</label>${multi(`${b}.explain`, t.explain)}
+    <label>Ciekawostka po dobrej odpowiedzi</label>${multi(`${b}.fact`, t.fact)}
+    ${warnBox(taskWarnings(t))}
+    <div class="btns"><button class="btn small" data-act="back-level">← wróć do levelu</button></div>${metaLine(curChapterFile())}`;
+}
+
+function autoGrow(t){ t.style.height = "auto"; t.style.height = (t.scrollHeight + 4) + "px"; }
+
+// ======================= render: podgląd =======================
+function renderPreview(){
+  const el = $("preview");
+  if (!S.loaded){ el.innerHTML = ""; return; }
+  const isTask = S.sel.part === "task";
+  el.innerHTML = `<div class="rh">Podgląd na żywo
+    <div style="display:flex;gap:6px">${isTask ? `<div class="seg">${[["q","Pytanie"],["good","Dobrze"],["bad","Źle"]].map(([k,v]) => `<span class="${S.mode===k?"on":""}" data-act="mode" data-mode="${k}">${v}</span>`).join("")}</div>` : ""}
+    <div class="seg"><span class="${S.dark?"":"on"}" data-act="dark" data-v="0">Jasny</span><span class="${S.dark?"on":""}" data-act="dark" data-v="1">Ciemny</span></div></div></div>
+    <div class="ph"><div class="phs ${S.dark?"dark":""}">${previewBody()}</div></div>`;
+}
+
+function previewBody(){
+  const s = S.sel;
+  if (s.part === "course"){
+    const c = curCourse();
+    return `<div class="pk" style="margin-top:0">MENU · KARTA KURSU</div><div style="height:12px"></div>` +
+      S.courses.map(x => { const d = x.file.data; return `<div class="pcardc" style="background:${esc(d.color)};${x===c?"outline:3px solid var(--y);outline-offset:3px":""}"><div class="t">${esc(d.title)}</div><div class="s">${x.chapters.length} rozdz. · ${x.chapters.reduce((n,f)=>n+f.data.levels.length,0)} leveli</div></div>`; }).join("");
+  }
+  if (s.part === "chapter" || (s.part === "level" && curLevel().kind !== "lesson" && curLevel().kind !== "minigame")){
+    const d = curChapter();
+    return `<div class="pcardc" style="background:${esc(d.color)}"><div class="s" style="margin:0">ROZDZIAŁ ${s.ch+1}</div><div class="t" style="font-size:18px">${esc(d.title)}</div></div>` +
+      d.levels.map((l,i) => `<div class="plevel ${i===s.lv?"cur":""}" style="margin-left:${[0,12,24,12][i%4]}px">Level ${i+1}<div class="s">${esc(l.title || KINDS[l.kind])}</div></div>`).join("");
+  }
+  const l = curLevel();
+  if (s.part === "level" && l.kind === "lesson"){
+    const p = l.pages[0] || {text:"(brak stron)"};
+    return `<div class="pbar"><div class="pbx">✕</div><div class="ptrack"><i style="width:20%"></i></div></div>
+      <div class="pk">LEKCJA · ${esc(l.title)}</div><div class="ptext">${esc(p.text)}</div>${p.image ? `<div class="pimg">${esc(p.image)}</div>` : ""}
+      <div class="pdots">${l.pages.map((_,i)=>`<i class="${i===0?"on":""}"></i>`).join("")}</div><div class="pbtn y">DALEJ</div>`;
+  }
+  if (s.part === "level" && l.kind === "minigame")
+    return `<div class="pk">MINI GRA</div><div class="pq">${esc(l.title || "Mini gra")}</div><div class="pa">Gra: <b>${esc(l.minigame.game || "—")}</b>${l.minigame.settings.map(x=>`<br>${esc(x.key)}: ${esc(x.value)}`).join("")}</div>
+      <div class="sub" style="color:var(--pmut)">Podgląd samej gry pojawi się, gdy powstanie w aplikacji.</div><div class="pbtn y">GRAJ</div>`;
+  return taskPreview(l.tasks[s.idx]);
+}
+
+function taskPreview(t){
+  const show = S.mode !== "q";
+  let body = "";
+  if (t.type === "choice"){
+    body = t.options.map(o => `<div class="pa ${show && o.correct ? "ok" : ""} ${S.mode==="bad" && !o.correct && o === t.options.find(x=>!x.correct) ? "bad" : ""}">${esc(o.text)}</div>`).join("");
+    if (t.multi) body = `<div class="sub" style="color:var(--pmut);margin:-6px 0 10px">Zaznacz wszystkie poprawne</div>` + body;
+  } else if (t.type === "tiles"){
+    const words = t.answer.split(/\s+/).filter(Boolean), all = [...words, ...t.extra].sort((a,b)=>(a.length*7+a.charCodeAt(0))%5-(b.length*7+b.charCodeAt(0))%5);
+    body = `<div class="slot">${show ? words.map(w=>`<span class="tile">${esc(w)}</span>`).join("") : ""}</div><div class="tiles">${(show ? t.extra : all).map(w=>`<span class="tile">${esc(w)}</span>`).join("")}</div>`;
+  } else if (t.type === "pairs"){
+    const rights = [...t.pairs].reverse();
+    body = `<div class="pairs"><div>${t.pairs.map(p=>`<div class="pa ${show?"ok":""}">${esc(p.left)}</div>`).join("")}</div><div>${(show ? t.pairs : rights).map(p=>`<div class="pa ${show?"ok":""}">${esc(p.right)}</div>`).join("")}</div></div>`;
+  } else if (t.type === "zones"){
+    body = `<div class="zonebox">${t.zones.map(z => `<div class="zone" style="left:${z.x*100}%;top:${z.y*100}%;width:${z.w*100}%;height:${z.h*100}%">${esc(z.label || z.id)}
+      ${show ? `<div style="position:absolute;top:22px;left:4px;right:4px;display:flex;flex-direction:column;gap:4px">${t.items.filter(i=>i.zone===z.id).map(i=>`<span class="tile" style="font-size:11.5px;padding:4px 6px">${esc(i.text)}</span>`).join("")}</div>` : ""}</div>`).join("")}</div>
+      ${show ? "" : `<div class="tiles">${t.items.map(i=>`<span class="tile">${esc(i.text)}</span>`).join("")}</div>`}`;
+  } else if (t.type === "gap"){
+    const parts = t.text.split("___");
+    body = `<div class="gapt">${esc(parts[0])}<span class="gap">${show ? esc(t.answers[0] || "") : "&nbsp;"}</span>${esc(parts.slice(1).join("___"))}</div>` +
+      (t.mode === "choose" ? `<div class="tiles" style="margin-top:16px">${[...t.answers.slice(0,1), ...t.wrong].map(w=>`<span class="tile">${esc(w)}</span>`).join("")}</div>` : `<div class="pinput">Wpisz odpowiedź…</div>`);
+  }
+  const fb = S.mode === "good" ? `<div class="pfb good"><b>Dobrze!</b> ${esc(t.fact)}</div><div class="pbtn">DALEJ</div>`
+           : S.mode === "bad" ? `<div class="pfb bad"><b>Nie tym razem.</b> ${esc(t.explain)}</div><div class="pbtn bad">ROZUMIEM</div>`
+           : `<div class="pbtn y">SPRAWDŹ</div>`;
+  return `<div class="pbar"><div class="pbx">✕</div><div class="ptrack"><i style="width:40%"></i></div></div>
+    <div class="pk">${esc((TYPES[t.type] || "").toUpperCase())}</div><div class="pq">${esc(t.prompt)}</div>${body}${fb}`;
+}
+
+// ======================= edycja (zdarzenia) =======================
+document.addEventListener("input", e => {
+  const t = e.target, f = fileOfSel(); if (!f) return;
+  if (t.dataset.bind){
+    let v = t.value; if (t.dataset.num) v = v === "" ? 0 : Number(v);
+    setPath(f.data, t.dataset.bind, v); markDirty(f);
+    if (t.tagName === "TEXTAREA") autoGrow(t);
+    if (t.tagName === "SELECT" || /\.(type|kind|mode)$/.test(t.dataset.bind) || /\.(id|label)$/.test(t.dataset.bind) && t.dataset.bind.includes("zones")) { if (t.tagName === "SELECT") { if (/\.type$/.test(t.dataset.bind)) normalizeTask(getPath(f.data, t.dataset.bind.replace(/\.type$/,""))); renderForm(); } }
+    renderPreview(); renderBanner();
+  } else if (t.dataset.list){
+    setPath(f.data, t.dataset.list, t.value.split(/[,;]/).map(x=>x.trim()).filter(Boolean)); markDirty(f); renderPreview();
+  } else if (t.dataset.check){
+    setPath(f.data, t.dataset.check, t.checked); markDirty(f); renderPreview();
+  }
+});
+document.addEventListener("change", e => { if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", {bubbles:true})); });
+
+// Pola jednolinijkowe: Enter nie dodaje linii (zatwierdza), Shift+Enter = nowa linia.
+document.addEventListener("keydown", e => {
+  if (e.target.classList?.contains("one") && e.key === "Enter" && !e.shiftKey){ e.preventDefault(); e.target.blur(); }
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s"){ e.preventDefault(); saveAll(); }
+});
+window.addEventListener("beforeunload", e => { if (dirtyFiles().length){ e.preventDefault(); e.returnValue = ""; } });
+
+function moveIn(arr, i, dir){
+  if (dir === 0){ if (!confirm("Usunąć?")) return false; arr.splice(i, 1); return true; }
+  const j = i + dir; if (j < 0 || j >= arr.length) return false;
+  [arr[i], arr[j]] = [arr[j], arr[i]]; return true;
+}
+function newTask(type){ const t = {type, prompt:"", explain:"", fact:""}; normalizeTask(t);
+  if (type === "choice") t.options = [{text:"",correct:true},{text:"",correct:false},{text:"",correct:false}];
+  if (type === "pairs") t.pairs = [{left:"",right:""},{left:"",right:""},{left:"",right:""}];
+  if (type === "gap"){ t.text = "Tekst z ___ luką."; t.mode = "type"; }
+  if (type === "zones"){ t.zones = [{id:"a",label:"Strefa A",x:0.04,y:0.1,w:0.44,h:0.8},{id:"b",label:"Strefa B",x:0.52,y:0.1,w:0.44,h:0.8}]; t.items = [{text:"",zone:"a"}]; }
+  return t; }
+function uniqueLevelId(d){ let n = d.levels.length + 1; while (d.levels.some(l => l.id === "l" + n)) n++; return "l" + n; }
+
+document.addEventListener("click", async e => {
+  const a = e.target.closest("[data-act]"); if (!a || a.closest(".modal")) return;
+  const act = a.dataset.act, i = Number(a.dataset.i), dir = Number(a.dataset.dir);
+  const f = fileOfSel(), l = curLevel(), t = l && S.sel.part === "task" ? l.tasks[S.sel.idx] : null;
+  const changed = () => { markDirty(f); renderForm(); renderPreview(); renderTree(); };
+  switch (act){
+    case "open": return openFolder();
+    case "reload-all": if (dirtyFiles().length && !confirm("Masz niezapisane zmiany. Wczytać wszystko z dysku i je porzucić?")) return; return S.dir ? loadFromDir() : null;
+    case "save": return saveAll();
+    case "me": askName(); renderTree(); return;
+    case "disk-reload": return reloadFile(f);
+    case "disk-compare": return compareFile(f);
+    case "sel": return select(Number(a.dataset.c), a.dataset.ch != null ? Number(a.dataset.ch) : -1, a.dataset.lv != null ? Number(a.dataset.lv) : -1);
+    case "sel-task": S.sel.part = "task"; S.sel.idx = i; S.mode = "q"; return renderAll();
+    case "back-level": S.sel.part = "level"; S.sel.idx = -1; return renderAll();
+    case "mode": S.mode = a.dataset.mode; return renderPreview();
+    case "dark": S.dark = a.dataset.v === "1"; return renderPreview();
+    case "color": setPath(f.data, a.dataset.bind, a.dataset.color); return changed();
+    case "correct": if (!t.multi) t.options.forEach(o => o.correct = false); t.options[i].correct = !t.options[i].correct || !t.multi; return changed();
+    case "add-opt": t.options.push({text:"", correct:false}); return changed();
+    case "opt": if (moveIn(t.options, i, dir)) changed(); return;
+    case "add-pair": t.pairs.push({left:"", right:""}); return changed();
+    case "pair": if (moveIn(t.pairs, i, dir)) changed(); return;
+    case "add-zone": t.zones.push({id: String.fromCharCode(97 + t.zones.length), label:"", x:0.1, y:0.1, w:0.3, h:0.3}); return changed();
+    case "zone": if (moveIn(t.zones, i, dir)) changed(); return;
+    case "add-item": t.items.push({text:"", zone: t.zones[0]?.id || ""}); return changed();
+    case "item": if (moveIn(t.items, i, dir)) changed(); return;
+    case "add-page": l.pages.push({text:"", image:""}); return changed();
+    case "page": if (moveIn(l.pages, i, dir)) changed(); return;
+    case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
+    case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
+    case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();
+    case "task-list": if (moveIn(l.tasks, i, dir)) changed(); return;
+    case "level-list": if (moveIn(curChapter().levels, i, dir)){ clampSel(); changed(); } return;
+    case "add-level": {
+      const d = curChapter(), kind = a.dataset.kind || "lesson";
+      const nl = {id: uniqueLevelId(d), kind, title: "", pages: kind === "lesson" ? [{text:"", image:""}] : [], minigame: {game:"", settings:[]}, tasks: []};
+      d.levels.push(nl); const cf = curChapterFile(); S.sel = {c:S.sel.c, ch:S.sel.ch, lv:d.levels.length-1, part:"level", idx:-1}; markDirty(cf); return renderAll();
+    }
+    case "move-chapter": { const c = curCourse(); if (moveIn(c.chapters, i, dir)){ c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); markDirty(c.file); renderAll(); } return; }
+    case "add-chapter": {
+      const c = S.courses[Number(a.dataset.c)]; const title = prompt("Tytuł nowego rozdziału:"); if (!title) return;
+      let id = slug(title); while (c.chapters.some(x => x.name === id + ".json")) id += "-2";
+      const data = {format:1, id, title, color: c.file.data.color, meta:{}, levels:[{id:"l1", kind:"lesson", title:"", pages:[{text:"", image:""}], minigame:{game:"",settings:[]}, tasks:[]}]};
+      const nf = {kind:"chapter", name: id + ".json", path: c.id + "/" + id + ".json", handle:null, data, lastModified:0, dirty:true, disk:false};
+      await ensureHandle(c, nf); S.knownPaths.add(nf.path);
+      c.chapters.push(nf); c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); c.file.dirty = true;
+      S.sel = {c: S.courses.indexOf(c), ch: c.chapters.length - 1, lv:-1, part:"chapter", idx:-1}; return renderAll();
+    }
+    case "delete-chapter": {
+      const c = curCourse(), cf = curChapterFile();
+      if (!confirm(`Usunąć rozdział „${cf.data.title}” (plik ${cf.name})? Kolega zobaczy to po Pull.`)) return;
+      if (c.dir){ try { await c.dir.removeEntry(cf.name); } catch(err){} }
+      S.knownPaths.delete(cf.path);
+      c.chapters.splice(S.sel.ch, 1); c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); markDirty(c.file);
+      S.sel = {c:S.sel.c, ch:-1, lv:-1, part:"course", idx:-1}; return renderAll();
+    }
+    case "add-course": {
+      if (!S.dir){ alert("Nowy kurs można dodać po otwarciu folderu w Chrome/Edge."); return; }
+      const title = prompt("Tytuł nowego kursu:"); if (!title) return;
+      let id = slug(title); while (S.courses.some(c => c.id === id)) id += "-2";
+      const dir = await S.dir.getDirectoryHandle(id, {create:true});
+      const data = {format:1, id, title, shortName: title.split(" ")[0], color: PALETTE.Petrol, art:"Portfolio", icon:"Chart", order: S.courses.length + 1, chapters:[], meta:{}};
+      const nf = {kind:"course", name:"course.json", path: id + "/course.json", handle: await dir.getFileHandle("course.json", {create:true}), data, lastModified:0, dirty:true, disk:false};
+      S.knownPaths.add(nf.path); S.courses.push({id, dir, file: nf, chapters: []});
+      S.sel = {c: S.courses.length - 1, ch:-1, lv:-1, part:"course", idx:-1}; return renderAll();
+    }
+  }
+});
+
+// Test / podgląd bez folderu: FQ.load({"invest/course.json": "...", ...})
+window.FQ = { load: map => { S.readOnly = true; loadFromMap(map); }, useDir: async d => { S.dir = d; S.readOnly = false; await loadFromDir(); }, state: S, select, serialize, saveAll, poll };
+renderAll();
+</script>
+</body>
+</html>
