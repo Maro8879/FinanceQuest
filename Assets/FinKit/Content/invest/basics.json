@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T20:21:51Z"
+    "editedAt": "2026-11-20T20:24:13Z"
   },
   "levels": [
     {
@@ -22,6 +22,28 @@
             {
               "type": "text",
               "text": "Czym jest inwestowanie – pierwsze kroki.\nTa lekcja to przykładowa treść do podmiany w edytorze."
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "callout",
+              "text": "Dupa"
+            },
+            {
+              "type": "space",
+              "size": 16
+            },
+            {
+              "type": "text",
+              "text": "cwe"
+            },
+            {
+              "type": "image",
+              "image": "C:\\Users\\HP\\Documents\\GitHub\\FinanceQuest\\Assets\\FinKit\\Resources\\Images\\wahania.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             }
           ]
         }
