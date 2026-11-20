@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T21:24:33Z"
+    "editedAt": "2026-11-20T21:50:47Z"
   },
   "levels": [
     {
@@ -17,7 +17,7 @@
           "blocks": [
             {
               "type": "image",
-              "image": "obrazki/wahania.png",
+              "image": "obrazki/1-dlaczego-gotowka-traci-warto.png",
               "width": 1,
               "maxHeight": 220,
               "caption": ""
@@ -28,7 +28,7 @@
             },
             {
               "type": "text",
-              "text": "Inflacja to stały wzrost cen: z nadmiaru pieniądza, droższej produkcji i wysokiego popytu."
+              "text": "**Inflacja** to stały wzrost cen: z nadmiaru pieniądza, droższej produkcji i wysokiego popytu."
             },
             {
               "type": "list",
@@ -56,59 +56,45 @@
       }
     },
     {
-      "id": "l2",
-      "kind": "minigame",
-      "title": "Mini gra",
-      "minigame": {
-        "game": "sortowanie",
-        "settings": [
-          {
-            "key": "czas",
-            "value": "60"
-          }
-        ]
-      },
-      "pages": [],
-      "tasks": []
-    },
-    {
       "id": "l3",
-      "kind": "task",
-      "title": "Sprawdź się",
-      "tasks": [
+      "kind": "lesson",
+      "title": "Jak działa procent składany\n",
+      "tasks": [],
+      "pages": [
         {
-          "type": "choice",
-          "prompt": "Przykładowe pytanie o: Czym jest inwestowanie",
-          "multi": false,
-          "options": [
+          "blocks": [
             {
-              "text": "Poprawna odpowiedź",
-              "correct": true
+              "type": "heading",
+              "text": "Jak działa procent składany"
             },
             {
-              "text": "Błędna odpowiedź",
-              "correct": false
+              "type": "image",
+              "image": "obrazki/2-jak-dziala-procent-skladany.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
-              "text": "Inna błędna",
-              "correct": false
+              "type": "text",
+              "text": "Odsetki są doliczane do kapitału i **same zaczynają zarabiać**, więc kapitał rośnie wykładniczo jak kula śnieżna. Z czasem zysk z odsetek przewyższa wpłacony kapitał."
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "text",
+              "text": "Na tym obrazku widać kumulacje zysku w porównaniu do wpłaconych pieniędzy."
+            },
+            {
+              "type": "image",
+              "image": "obrazki/procent-skladany-2.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             }
-          ],
-          "explain": "Tu wpisz wyjaśnienie po złej odpowiedzi.",
-          "fact": "Tu wpisz ciekawostkę po dobrej odpowiedzi.",
-          "extra": [],
-          "pairs": [],
-          "zones": [],
-          "items": [],
-          "answers": [],
-          "wrong": [],
-          "answer": "",
-          "image": "",
-          "text": "",
-          "mode": ""
+          ]
         }
       ],
-      "pages": [],
       "minigame": {
         "game": "",
         "settings": []
@@ -116,42 +102,38 @@
     },
     {
       "id": "l4",
-      "kind": "task",
-      "title": "Sprawdź się",
-      "tasks": [
+      "kind": "lesson",
+      "title": "Czas jako przewaga",
+      "tasks": [],
+      "pages": [
         {
-          "type": "choice",
-          "prompt": "Przykładowe pytanie o: Czym jest inwestowanie",
-          "multi": false,
-          "options": [
+          "blocks": [
             {
-              "text": "Poprawna odpowiedź",
-              "correct": true
+              "type": "heading",
+              "text": "Czas jako przewaga"
             },
             {
-              "text": "Błędna odpowiedź",
-              "correct": false
+              "type": "image",
+              "image": "obrazki/3-czas-jako-przewaga.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
-              "text": "Inna błędna",
-              "correct": false
+              "type": "text",
+              "text": "Im wcześniej zaczniesz, tym mniej musisz wpłacić na ten sam cel. Długi horyzont wygładza krachy, bo rynek w dekadach historycznie rośnie."
+            },
+            {
+              "type": "space",
+              "size": 16
+            },
+            {
+              "type": "text",
+              "text": "dodac przyklad"
             }
-          ],
-          "explain": "Tu wpisz wyjaśnienie po złej odpowiedzi.",
-          "fact": "Tu wpisz ciekawostkę po dobrej odpowiedzi.",
-          "extra": [],
-          "pairs": [],
-          "zones": [],
-          "items": [],
-          "answers": [],
-          "wrong": [],
-          "answer": "",
-          "image": "",
-          "text": "",
-          "mode": ""
+          ]
         }
       ],
-      "pages": [],
       "minigame": {
         "game": "",
         "settings": []
@@ -164,20 +146,23 @@
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Pytanie testowe: Czym jest inwestowanie",
-          "multi": false,
+          "prompt": "Czym jest inflacja?",
+          "explain": "Systematycznym wzrostem cen, który obniża siłę nabywczą pieniądza",
+          "fact": "Dokładnie tak! z czasem ta sama kwota wystarczy na mniej.",
           "options": [
             {
-              "text": "Tak",
+              "text": "Systematycznym wzrostem cen, który obniża siłę nabywczą pieniądza",
               "correct": true
             },
             {
-              "text": "Nie",
+              "text": "Odsetkami naliczanymi od kapitału",
+              "correct": false
+            },
+            {
+              "text": "Wzrostem kursu akcji na giełdzie",
               "correct": false
             }
           ],
-          "explain": "Wyjaśnienie.",
-          "fact": "Ciekawostka.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -187,7 +172,8 @@
           "answer": "",
           "image": "",
           "text": "",
-          "mode": ""
+          "mode": "",
+          "multi": false
         }
       ],
       "pages": [],
