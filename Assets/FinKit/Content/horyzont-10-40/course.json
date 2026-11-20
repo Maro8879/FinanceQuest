@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "id": "horyzont-10-40",
+  "title": "Horyzont 10–40 lat",
+  "shortName": "10–40 lat",
+  "color": "#0E4A55",
+  "art": "Portfolio",
+  "icon": "Star",
+  "order": 8,
+  "chapters": [
+    "plan-regularny",
+    "psychologia-krachu",
+    "cykl-zycia"
+  ],
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:36:10Z"
+  }
+}
