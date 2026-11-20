@@ -1,49 +1,49 @@
 {
   "format": 1,
   "id": "basics",
-  "title": "Czym jest inwestowanie",
+  "title": "Inflacja i procent składany",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T20:24:13Z"
+    "editedAt": "2026-11-20T21:11:18Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "TReolo",
+      "title": "Dlaczego gotówka traci wartość w czasie",
       "pages": [
         {
           "blocks": [
-            {
-              "type": "heading",
-              "text": "treolo"
-            },
-            {
-              "type": "text",
-              "text": "Czym jest inwestowanie – pierwsze kroki.\nTa lekcja to przykładowa treść do podmiany w edytorze."
-            },
-            {
-              "type": "divider"
-            },
-            {
-              "type": "callout",
-              "text": "Dupa"
-            },
-            {
-              "type": "space",
-              "size": 16
-            },
-            {
-              "type": "text",
-              "text": "cwe"
-            },
             {
               "type": "image",
               "image": "obrazki/wahania.png",
               "width": 1,
               "maxHeight": 220,
               "caption": ""
+            },
+            {
+              "type": "heading",
+              "text": "Dlaczego gotówka traci wartość w czasie"
+            },
+            {
+              "type": "text",
+              "text": "Gotówka traci wartość w czasie z powodu inflacji, czyli systematycznego wzrostu cen. Bierze się ona z trzech głównych źródeł: "
+            },
+            {
+              "type": "list",
+              "items": [
+                "Nadmiaru pieniądza w gospodarce",
+                "Rosnących kosztów produkcji",
+                "Wysokiego popytu "
+              ]
+            },
+            {
+              "type": "divider"
+            },
+            {
+              "type": "text",
+              "text": "W efekcie za tę samą kwotę pieniędzy po kilku latach można kupić znacznie mniej niż dzisiaj — spada tzw. **siła nabywcza**. Jeśli Twoje oszczędności leżą na nieoprocentowanym koncie (0%), a ceny rosną o 3–5% rocznie, realna wartość tych pieniędzy każdego roku **maleje** dokładnie o tyle, ile wynosi **inflacja**."
             }
           ]
         }

@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "invest",
-  "title": "Podstawy inwestowania",
+  "title": "Podstawy Inwestowania",
   "shortName": "Podstawy",
   "color": "#0E4A55",
   "art": "Portfolio",
@@ -14,7 +14,7 @@
     "compound"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T19:20:00Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-20T21:11:18Z"
   }
 }
