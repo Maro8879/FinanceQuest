@@ -75,5 +75,9 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Treść składana automatycznie z plików JSON (Content) – nie trzymamy jej w repo, bo robiłaby konflikty.
-/Assets/FinanceQuest/Resources/Content/
-/Assets/FinanceQuest/Resources/Content.meta
+/Assets/FinKit/Resources/Content/
+/Assets/FinKit/Resources/Content.meta
+
+# Pliki, które aplikacja Claude zapisuje w projekcie (np. FinKit.zip) – nie do repo.
+/Claude outputs/
+FinKit.zip

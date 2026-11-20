@@ -7,13 +7,13 @@ using UnityEngine;
 
 namespace FinanceQuest.EditorTools
 {
-    // Importer treści: pliki JSON z Assets/FinanceQuest/Content -> jeden asset ContentDatabase w Resources.
+    // Importer treści: pliki JSON z Assets/FinKit/Content -> jeden asset ContentDatabase w Resources.
     // Działa sam po każdej zmianie JSON-a (np. po zapisie w edytorze HTML albo po „Pull” z GitHuba).
     // Układ plików: Content/<kurs>/course.json + Content/<kurs>/<rozdział>.json (jeden rozdział = jeden plik).
     public class ContentImporter : AssetPostprocessor
     {
-        public const string ContentDir = "Assets/FinanceQuest/Content";
-        const string DbDir = "Assets/FinanceQuest/Resources/Content";
+        public const string ContentDir = "Assets/FinKit/Content";
+        const string DbDir = "Assets/FinKit/Resources/Content";
         const string DbPath = DbDir + "/ContentDatabase.asset";
         static bool scheduled;
 

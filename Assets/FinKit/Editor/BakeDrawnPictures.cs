@@ -11,7 +11,7 @@ namespace FinanceQuest.EditorTools
     // żeby wypieczona grafika wyglądała i układała się identycznie.
     public static class BakeDrawnPictures
     {
-        const string Dir = "Assets/FinanceQuest/Resources/" + DrawnPictures.Folder;
+        const string Dir = "Assets/FinKit/Resources/" + DrawnPictures.Folder;
 
         [MenuItem("Finance Quest/Bake Drawn Pictures")]
         static void Bake()
