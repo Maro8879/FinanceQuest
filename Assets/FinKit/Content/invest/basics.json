@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T20:40:06Z"
+    "editedAt": "2026-11-20T20:53:22Z"
   },
   "levels": [
     {
@@ -17,7 +17,7 @@
           "blocks": [
             {
               "type": "heading",
-              "text": "treolo"
+              "text": "Dlaczego gotówka traci wartość w czasie"
             },
             {
               "type": "image",
@@ -28,22 +28,19 @@
             },
             {
               "type": "text",
-              "text": "Gotówka traci wartość w czasie z powodu inflacji, czyli systematycznego wzrostu cen. Bierze się ona z trzech głównych źródeł: nadmiaru pieniądza w gospodarce (gdy banki centralne lub rządy wpuszczają na rynek więcej gotówki, niż przybywa towarów), rosnących kosztów produkcji (np. droższej energii, surowców i pracy, które firmy przerzucają na ceny w sklepach) oraz wysokiego popytu (gdy konsumenci chcą kupić więcej produktów, niż rynek jest w stanie dostarczyć).\nW efekcie za tę samą kwotę pieniędzy po kilku latach można kupić znacznie mniej niż dzisiaj — spada tzw. siła nabywcza. Jeśli Twoje oszczędności leżą na nieoprocentowanym koncie (0%), a ceny rosną o 3–5% rocznie, realna wartość tych pieniędzy każdego roku maleje dokładnie o tyle, ile wynosi inflacja.\n"
+              "text": "Gotówka traci wartość w czasie z powodu inflacji, czyli systematycznego wzrostu cen. \nBierze się ona z trzech głównych źródeł:\n- dupa"
             },
             {
-              "type": "divider"
-            },
-            {
-              "type": "callout",
-              "text": "Dupa"
-            },
-            {
-              "type": "space",
-              "size": 16
+              "type": "list",
+              "items": [
+                "Nadmiaru pieniądza w gospodarce ",
+                "Rosnących kosztów produkcji ",
+                "Wysokiego popytu."
+              ]
             },
             {
               "type": "text",
-              "text": "cwe"
+              "text": "W efekcie za tę samą kwotę pieniędzy po kilku latach można kupić znacznie mniej niż dzisiaj — spada tzw. **siła nabywcza**. Jeśli Twoje oszczędności leżą na nieoprocentowanym koncie (0%), a ceny rosną o 3–5% rocznie, realna wartość tych pieniędzy każdego roku **maleje** dokładnie o tyle, ile wynosi **inflacja**."
             }
           ]
         }
