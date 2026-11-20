@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace FinanceQuest
 {
-    // Tło „Myśli na dziś”: nocna Wall Street w perspektywie z dołu – gmach giełdy z kolumnadą
+    // Tło „Myśli na dziś”: Wall Street (wersja dzienna i nocna – przełącza je „Tryb ciemny”) w perspektywie z dołu – gmach giełdy z kolumnadą
     // (ogólny styl, bez napisów i logo), za nim wieżowce typowe dla tej ulicy, na balkonie 3 flagi USA.
     // Rysunek w polu 358 x 230 jednostek (oś Y w dół), jedna tekstura = jedno wywołanie rysowania.
     public static class WallStreetArt
@@ -11,23 +11,45 @@ namespace FinanceQuest
         const float PPU = 2.5f;                       // pikseli na jednostkę – ostro na telefonie, a liczy się szybko
         const float VPX = 179f, VPY = -620f, G = 230f; // punkt zbiegu pionów (widok z dołu) i linia ziemi
 
-        // Kolory wersji nocnej.
-        static readonly Color Sky = Palette.Hex("0B2F37");
-        static readonly Color Glass = Palette.Hex("123F49"), GlassHi = Palette.Hex("1B5260"), Mullion = A(Palette.Hex("24606C"), 0.8f);
-        static readonly Color White = Palette.Hex("2A5E68"), Ribbon = Palette.Hex("174650");
-        static readonly Color StoneT = Palette.Hex("24555E"), StoneTSh = Palette.Hex("1C4952"), WinT = Palette.Hex("173F48");
-        static readonly Color Deco = Palette.Hex("1E4F58"), DecoSh = Palette.Hex("18434C"), Copper = Palette.Hex("3F7F74"), CopperSh = Palette.Hex("2F6A60");
+        // Kolory zależne od pory dnia – ustawia je SetScheme przed rysowaniem (rysujemy zawsze na głównym wątku).
+        static Color Sky, Glass, GlassHi, Mullion, White, Ribbon, StoneT, StoneTSh, WinT, Deco, DecoSh, Copper, CopperSh, Lit, LitDoor;
+
+        static void SetScheme(bool night)
+        {
+            if (night)
+            {
+                Sky = Palette.Hex("0B2F37");
+                Glass = Palette.Hex("123F49"); GlassHi = Palette.Hex("1B5260"); Mullion = A(Palette.Hex("24606C"), 0.8f);
+                White = Palette.Hex("2A5E68"); Ribbon = Palette.Hex("174650");
+                StoneT = Palette.Hex("24555E"); StoneTSh = Palette.Hex("1C4952"); WinT = Palette.Hex("173F48");
+                Deco = Palette.Hex("1E4F58"); DecoSh = Palette.Hex("18434C"); Copper = Palette.Hex("3F7F74"); CopperSh = Palette.Hex("2F6A60");
+                Lit = Palette.Accent; LitDoor = Palette.Accent;      // w nocy okna i wejścia świecą
+            }
+            else
+            {
+                // Dzień: jasne, stonowane barwy pod paletę aplikacji (wariant C).
+                Sky = Palette.Hex("DCE7E6");
+                Glass = Palette.Hex("9DB5B8"); GlassHi = Palette.Hex("BCD0D2"); Mullion = A(Palette.Hex("AFC3C5"), 0.8f);
+                White = Palette.Hex("F2EFE8"); Ribbon = Palette.Hex("D6D1C6");
+                StoneT = Palette.Hex("D9D0BF"); StoneTSh = Palette.Hex("C5BBA8"); WinT = Palette.Hex("A6B6B5");
+                Deco = Palette.Hex("D3C8B3"); DecoSh = Palette.Hex("BFB39C"); Copper = Palette.Hex("7FAE9F"); CopperSh = Palette.Hex("6B998B");
+                Lit = Palette.Hex("B7CBCB"); LitDoor = Palette.Hex("57503F");   // w dzień okna odbijają niebo, wejścia są ciemne
+            }
+        }
+
         static readonly Color StoneF = Palette.Hex("D9CBAA"), ShadeF = Palette.Hex("B8A77F"), DarkF = Palette.Hex("3C3420");
-        static readonly Color Lit = Palette.Accent;
         static readonly Color Red = Palette.Hex("B83A33"), FlagWhite = Palette.Hex("F4F1EA"), Navy = Palette.Hex("24406E");
         static readonly Color Pole = Palette.Hex("7B8284"), Finial = Palette.Hex("D8B45A"), Bracket = Palette.Hex("6E7577"), Bolt = Palette.Hex("A9B0B2");
 
         // Duży rysunek (ok. 0,8 s liczenia) – w grze wczytywany z PNG po „Bake Drawn Pictures”.
-        public static Sprite Night { get { return DrawnPictures.Get("wallstreet_night", DrawNight); } }
+        public static Sprite Night { get { return DrawnPictures.Get("wallstreet_night", () => Draw(true)); } }
+        public static Sprite Day { get { return DrawnPictures.Get("wallstreet_day", () => Draw(false)); } }
+        public static Sprite Current { get { return Settings.DarkMode ? Night : Day; } }
 
-        static Sprite DrawNight()
+        static Sprite Draw(bool night)
         {
             {
+                SetScheme(night);
                 var c = new ColorCanvas(W, H, PPU);
                 c.Clear(Sky);
                 DecoTower(c, 214, 300, 70);
@@ -43,7 +65,7 @@ namespace FinanceQuest
                     Rect(c, x - 3, 193, 6, 5, 1, Bracket);
                     Circle(c, V(x, 195), 1.4f, Bolt);
                 }
-                return Sprite.Create(c.ToTexture("fq_wallstreet_night"), new UnityEngine.Rect(0, 0, c.Width, c.Height),
+                return Sprite.Create(c.ToTexture(night ? "fq_wallstreet_night" : "fq_wallstreet_day"), new UnityEngine.Rect(0, 0, c.Width, c.Height),
                     new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
             }
         }
@@ -160,7 +182,7 @@ namespace FinanceQuest
             for (int k = 0; k < 7; k++)
             {
                 float x = 76 + k * 32;
-                Rect(c, x, 219, 14, 11, 2, Lit);           // podświetlone wejścia
+                Rect(c, x, 219, 14, 11, 2, LitDoor);           // podświetlone wejścia
                 Rect(c, x - 2, 216, 18, 2.5f, 0, StoneF);
             }
         }

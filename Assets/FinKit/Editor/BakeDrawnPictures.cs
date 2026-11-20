@@ -53,7 +53,7 @@ namespace FinanceQuest.EditorTools
         {
             foreach (IconId id in System.Enum.GetValues(typeof(IconId))) ProceduralSprites.Icon(id);
             var unused = ProceduralSprites.Rounded; unused = ProceduralSprites.Ring; unused = ProceduralSprites.Candles;
-            unused = WallStreetArt.Night;
+            unused = WallStreetArt.Night; unused = WallStreetArt.Day;
             TrophyArt.Locked();
             TrophyArt.Earned(Palette.Accent, Palette.AccentLip, Palette.Brand);
             // Te same kursy co w grze: z zaimportowanych plików JSON, a gdy ich brak – demo.

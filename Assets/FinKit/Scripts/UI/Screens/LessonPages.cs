@@ -264,20 +264,13 @@ namespace FinanceQuest
             return Mathf.Max(0f, y - start - between);
         }
 
-        // Kropkowana linia na 70% szerokości – oddziela części strony, nie przyciągając uwagi.
+        // Zwykła cienka linia na całą szerokość – oddziela części strony, nie przyciągając uwagi.
         static float Divider(RectTransform parent, float x, float y, float w)
         {
-            const float d = 3f, step = 7f;
-            float lw = w * 0.7f, lx = x + (w - lw) * 0.5f;
-            var row = Ui.Rect("Divider", parent);
-            Ui.Place(row, lx, y, lw, d);
-            int n = Mathf.FloorToInt(lw / step);
-            for (int i = 0; i < n; i++)
-            {
-                var dotImg = Ui.Rounded("D", row, Palette.CardEdge, d * 0.5f);
-                Ui.Place(dotImg.rectTransform, i * step, 0, d, d);
-            }
-            return d;
+            const float t = 2f;
+            var line = Ui.Rounded("Divider", parent, Palette.CardEdge, t * 0.5f);
+            Ui.Place(line.rectTransform, x, y, w, t);
+            return t;
         }
     }
 }

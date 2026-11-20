@@ -134,7 +134,7 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .bl{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .bli{display:flex;gap:9px;align-items:baseline;font-size:14px;line-height:1.45}
 .blc{width:7px;height:7px;border-radius:4px;background:var(--y);flex:none;transform:translateY(-2px)}
-.bd{width:70%;margin:6px auto 18px;border-top:3px dotted var(--pedge)}
+.bd{margin:6px 0 18px;border-top:2px solid var(--pedge)}
 .drop{border:2px dashed var(--edge);border-radius:12px;background:#fff;padding:10px;display:flex;gap:12px;align-items:center;cursor:pointer;min-height:70px}
 .drop:hover{border-color:var(--pet)}
 .drop.over,.card.over{border-color:var(--y);background:#FFF8D6}
@@ -770,7 +770,7 @@ function blockForm(bl, bind, p, j){
     <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
     <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
   if (bl.type === "space") f = `<input type="number" step="4" min="0" max="200" data-bind="${bind}.size" data-num="1" value="${esc(bl.size)}">`;
-  if (bl.type === "divider") f = `<div class="sub">Kropkowana linia oddzielająca części strony.</div>`;
+  if (bl.type === "divider") f = `<div class="sub">Cienka linia oddzielająca części strony.</div>`;
   return head + `<div style="margin-top:6px">${f}</div>`;
 }
 
