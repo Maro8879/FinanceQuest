@@ -222,7 +222,7 @@ namespace FinanceQuest
             return s;
         }
 
-        // Ramka „ważne”: biała karta z żółtą obwódką i żółtą wargą, żarówka w kółku po lewej.
+        // Ramka „ważne”: biała karta z żółtą obwódką i żółtą wargą, wykrzyknik w kółku po lewej.
         static float Callout(RectTransform parent, BlockDef b, float x, float y, float w)
         {
             const float lip = 5f, border = 2f, pad = 13f, icon = 34f, gap = 11f;
@@ -235,7 +235,7 @@ namespace FinanceQuest
             var card = LipCard.Create(parent, "Callout", x, y, w, h, Palette.CardFill, Palette.Accent, Palette.AccentLip, 16f, lip, border);
             var circle = Ui.Rounded("IconBg", card.Content, Palette.Accent, icon * 0.5f);
             Ui.Place(circle.rectTransform, pad, pad - 1f + (inner - icon) * 0.5f, icon, icon);
-            var ic = Ui.Icon("Bulb", circle.transform, IconId.Bulb, Palette.OnAccent, 20f);
+            var ic = Ui.Icon("Exclaim", circle.transform, IconId.Exclaim, Palette.OnAccent, 20f);
             Ui.Center(ic.rectTransform, 20f, 20f);
 
             probe.transform.SetParent(card.Content, false);
@@ -243,29 +243,23 @@ namespace FinanceQuest
             return h;
         }
 
-        // Lista: każdy punkt to mała karta z „ptaszkiem” w kółku.
+        // Lista punktowana: żółta kropka i tekst – lekka, nie konkuruje z ramką „Ważne”.
         static float BulletList(RectTransform parent, BlockDef b, float x, float y, float w)
         {
-            const float lip = 3f, border = 2f, padX = 10f, padY = 8f, dot = 22f, gap = 10f, between = 8f;
+            const float size = 15.5f, dot = 8f, gap = 11f, between = 7f;
             float start = y;
             foreach (var item in b.items)
             {
                 if (string.IsNullOrEmpty(item)) continue;
-                float tw = w - 2 * padX - dot - gap;
-                var t = RichText("Text", parent, item, 15f, FontWeight.Regular);
+                float tw = w - dot - gap;
+                var t = RichText("Text", parent, item, size, FontWeight.Regular);
                 t.lineSpacing = 2f;
                 float th = Ui.TextHeight(t, tw);
-                float inner = Mathf.Max(dot, th);
-                float h = inner + 2 * padY + lip;
-
-                var card = LipCard.Create(parent, "Item", x, y, w, h, Palette.CardFill, Palette.CardEdge, Palette.CardLip, 12f, lip, border);
-                var circle = Ui.Rounded("Dot", card.Content, Palette.Brand, dot * 0.5f);
-                Ui.Place(circle.rectTransform, padX, padY + (inner - dot) * 0.5f, dot, dot);
-                var ic = Ui.Icon("Check", circle.transform, IconId.Check, Color.white, 14f);
-                Ui.Center(ic.rectTransform, 14f, 14f);
-                t.transform.SetParent(card.Content, false);
-                Ui.Place(t.rectTransform, padX + dot + gap, padY + (inner - th) * 0.5f, tw, th);
-                y += h + between;
+                Ui.Place(t.rectTransform, x + dot + gap, y, tw, th);
+                // Kropka na wysokości środka pierwszej linii (nie całego punktu).
+                var d = Ui.Rounded("Dot", parent, Palette.Accent, dot * 0.5f);
+                Ui.Place(d.rectTransform, x, y + size * 0.62f - dot * 0.5f, dot, dot);
+                y += th + between;
             }
             return Mathf.Max(0f, y - start - between);
         }

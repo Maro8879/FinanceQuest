@@ -1,9 +1,9 @@
 {
   "format": 1,
   "id": "invest",
-  "title": "Inflacja i procent składany",
+  "title": "Podstawy inwestowania",
   "shortName": "Podstawy",
-  "color": "#9C7A2E",
+  "color": "#0E4A55",
   "art": "Portfolio",
   "icon": "Chart",
   "order": 1,
@@ -14,7 +14,7 @@
     "compound"
   ],
   "meta": {
-    "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T20:40:05Z"
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
   }
 }
