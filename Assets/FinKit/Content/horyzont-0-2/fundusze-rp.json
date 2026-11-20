@@ -1,0 +1,36 @@
+{
+  "format": 1,
+  "id": "fundusze-rp",
+  "title": "Fundusze rynku pieniężnego",
+  "color": "#3F6B5C",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:36:05Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
