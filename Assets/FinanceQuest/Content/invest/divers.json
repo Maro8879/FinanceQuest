@@ -1,0 +1,89 @@
+{
+  "format": 1,
+  "id": "divers",
+  "title": "Dywersyfikacja",
+  "color": "#3F6B5C",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Wprowadzenie",
+      "pages": [
+        {
+          "text": "Dywersyfikacja – pierwsze kroki.\nTa lekcja to przykładowa treść do podmiany w edytorze.",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "kind": "minigame",
+      "title": "Mini gra",
+      "minigame": {
+        "game": "sortowanie",
+        "settings": [
+          {
+            "key": "czas",
+            "value": "60"
+          }
+        ]
+      }
+    },
+    {
+      "id": "l3",
+      "kind": "task",
+      "title": "Sprawdź się",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Przykładowe pytanie o: Dywersyfikacja",
+          "multi": false,
+          "options": [
+            {
+              "text": "Poprawna odpowiedź",
+              "correct": true
+            },
+            {
+              "text": "Błędna odpowiedź",
+              "correct": false
+            },
+            {
+              "text": "Inna błędna",
+              "correct": false
+            }
+          ],
+          "explain": "Tu wpisz wyjaśnienie po złej odpowiedzi.",
+          "fact": "Tu wpisz ciekawostkę po dobrej odpowiedzi."
+        }
+      ]
+    },
+    {
+      "id": "l4",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Pytanie testowe: Dywersyfikacja",
+          "multi": false,
+          "options": [
+            {
+              "text": "Tak",
+              "correct": true
+            },
+            {
+              "text": "Nie",
+              "correct": false
+            }
+          ],
+          "explain": "Wyjaśnienie.",
+          "fact": "Ciekawostka."
+        }
+      ]
+    }
+  ]
+}

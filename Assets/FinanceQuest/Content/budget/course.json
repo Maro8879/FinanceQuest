@@ -1,0 +1,21 @@
+{
+  "format": 1,
+  "id": "budget",
+  "title": "Budżet domowy",
+  "shortName": "Budżet",
+  "color": "#9C7A2E",
+  "art": "Wallet",
+  "icon": "Wallet",
+  "order": 4,
+  "chapters": [
+    "income",
+    "plan",
+    "save",
+    "goals",
+    "habits"
+  ],
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
+  }
+}

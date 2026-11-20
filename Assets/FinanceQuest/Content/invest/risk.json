@@ -1,0 +1,195 @@
+{
+  "format": 1,
+  "id": "risk",
+  "title": "Zarządzanie ryzykiem",
+  "color": "#0E4A55",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Czym jest ryzyko",
+      "pages": [
+        {
+          "text": "Ryzyko to szansa, że wynik inwestycji będzie inny, niż zakładasz.\nMoże być lepszy – ale może też być gorszy.",
+          "image": ""
+        },
+        {
+          "text": "Zwykle wyższy możliwy zysk oznacza wyższe ryzyko.\nNie ma inwestycji z wysokim zyskiem i zerowym ryzykiem.",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "id": "l2",
+      "kind": "minigame",
+      "title": "Bezpieczne czy ryzykowne?",
+      "minigame": {
+        "game": "sortowanie",
+        "settings": [
+          {
+            "key": "czas",
+            "value": "60"
+          }
+        ]
+      }
+    },
+    {
+      "id": "l3",
+      "kind": "task",
+      "title": "Dywersyfikacja w praktyce",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Co to jest dywersyfikacja?",
+          "multi": false,
+          "options": [
+            {
+              "text": "Rozłożenie pieniędzy na różne aktywa",
+              "correct": true
+            },
+            {
+              "text": "Kupno jednej, najlepszej spółki",
+              "correct": false
+            },
+            {
+              "text": "Trzymanie oszczędności w gotówce",
+              "correct": false
+            }
+          ],
+          "explain": "Dywersyfikacja to podział pieniędzy między różne aktywa,\nżeby jedna strata nie zjadła całego portfela.",
+          "fact": "Nawet fundusz indeksowy to już dywersyfikacja – kupujesz kilkaset spółek naraz."
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Akcja",
+              "right": "Udział w firmie"
+            },
+            {
+              "left": "Obligacja",
+              "right": "Pożyczka dla firmy lub państwa"
+            },
+            {
+              "left": "Lokata",
+              "right": "Pieniądze w banku na stały procent"
+            }
+          ],
+          "explain": "Akcja daje udział w firmie, obligacja to pożyczka, a lokata – depozyt w banku.",
+          "fact": "Obligacje skarbowe kupisz już od 100 zł."
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Nie wkładaj wszystkich jajek do jednego ___.",
+          "mode": "type",
+          "answers": [
+            "koszyka",
+            "koszyczka"
+          ],
+          "wrong": [],
+          "explain": "To stare powiedzenie o dywersyfikacji: koszyk = jedna inwestycja.",
+          "fact": "To powiedzenie znane jest w wielu językach."
+        }
+      ]
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Twój profil ryzyka",
+      "pages": [
+        {
+          "text": "Profil ryzyka zależy od celu, czasu i tego, jak znosisz spadki.\nIm dłuższy horyzont, tym więcej wahań możesz przeczekać.",
+          "image": ""
+        }
+      ]
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "Wyższy zysk zwykle oznacza wyższe ryzyko",
+          "extra": [
+            "niższe",
+            "zawsze"
+          ],
+          "explain": "Zysk i ryzyko zwykle idą w parze.",
+          "fact": "Inwestorzy nazywają to premią za ryzyko."
+        },
+        {
+          "type": "choice",
+          "prompt": "Które działania zmniejszają ryzyko portfela?",
+          "multi": true,
+          "options": [
+            {
+              "text": "Różne klasy aktywów",
+              "correct": true
+            },
+            {
+              "text": "Inwestowanie na dłuższy czas",
+              "correct": true
+            },
+            {
+              "text": "Kredyt na zakup akcji",
+              "correct": false
+            }
+          ],
+          "explain": "Kredyt na akcje zwiększa ryzyko – możesz stracić więcej, niż masz.",
+          "fact": "Długi horyzont pozwala przeczekać spadki."
+        },
+        {
+          "type": "zones",
+          "prompt": "Przeciągnij aktywa do właściwej strefy",
+          "image": "",
+          "zones": [
+            {
+              "id": "low",
+              "label": "Niskie ryzyko",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "high",
+              "label": "Wysokie ryzyko",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Lokata",
+              "zone": "low"
+            },
+            {
+              "text": "Obligacje skarbowe",
+              "zone": "low"
+            },
+            {
+              "text": "Kryptowaluty",
+              "zone": "high"
+            },
+            {
+              "text": "Akcje jednej spółki",
+              "zone": "high"
+            }
+          ],
+          "explain": "Lokaty i obligacje skarbowe mają małe wahania, kryptowaluty i pojedyncze akcje – duże.",
+          "fact": "Nawet bezpieczne aktywa mają ryzyko inflacji."
+        }
+      ]
+    }
+  ]
+}

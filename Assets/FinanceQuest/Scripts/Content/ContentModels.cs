@@ -15,6 +15,8 @@ namespace FinanceQuest
         public string Id;      // unikalny w całej aplikacji, bo po nim zapisujemy postęp
         public int Number;
         public LevelKind Kind;
+        public string Title;     // z pliku treści (może być puste – wtedy „Level N”)
+        public LevelDef Def;     // pełna treść levelu (strony, mini gra, zadania) – używana przez ekran levelu
     }
 
     public class ChapterData

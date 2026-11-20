@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "id": "platform",
+  "title": "Obsługa platformy inwestycyjnej",
+  "shortName": "Platforma",
+  "color": "#3F6B5C",
+  "art": "Laptop",
+  "icon": "Phone",
+  "order": 3,
+  "chapters": [
+    "account",
+    "orders",
+    "fees"
+  ],
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
+  }
+}

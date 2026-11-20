@@ -56,7 +56,8 @@ namespace FinanceQuest.EditorTools
             unused = WallStreetArt.Night;
             TrophyArt.Locked();
             TrophyArt.Earned(Palette.Accent, Palette.AccentLip, Palette.Brand);
-            foreach (var course in DemoContent.Build())
+            // Te same kursy co w grze: z zaimportowanych plików JSON, a gdy ich brak – demo.
+            foreach (var course in ContentLoader.Load() ?? DemoContent.Build())
             {
                 Illustrations.Get(course.Art, course.Color);
                 TrophyArt.Earned(course.Color, Palette.Darker(course.Color, 0.78f), Palette.Accent);

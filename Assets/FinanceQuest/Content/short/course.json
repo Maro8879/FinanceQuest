@@ -1,0 +1,19 @@
+{
+  "format": 1,
+  "id": "short",
+  "title": "Inwestowanie krótkoterminowe",
+  "shortName": "Trading",
+  "color": "#4A5D73",
+  "art": "Magnifier",
+  "icon": "Chart",
+  "order": 2,
+  "chapters": [
+    "trading",
+    "ta",
+    "position"
+  ],
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
+  }
+}

@@ -50,7 +50,8 @@ namespace FinanceQuest
             // Telefony domyślnie trzymają 30 FPS – animacje sprężynek wyglądają wtedy szarpanie.
             Application.targetFrameRate = 60;
 
-            Courses = DemoContent.Build();
+            // Treść z importera (pliki JSON); dopóki jej nie ma – przykładowa treść z kodu.
+            Courses = ContentLoader.Load() ?? DemoContent.Build();
             swipe = new SwipeInput();
             Progress = ProgressStore.Load();
             BuildCanvas();

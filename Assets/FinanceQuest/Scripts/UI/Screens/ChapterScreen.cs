@@ -85,7 +85,7 @@ namespace FinanceQuest
             float textX = pad + icon + 14f;
             var t = Ui.Text("Title", card.Content, "Level " + level.Number, 17f, title, FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
             Ui.Place(t.rectTransform, textX, 11, w - textX - 100, 24);
-            var s = Ui.Text("Kind", card.Content, ContentText.KindLabel(level.Kind), 12.5f, sub, FontWeight.SemiBold, TextAlignmentOptions.TopLeft);
+            var s = Ui.Text("Kind", card.Content, (string.IsNullOrEmpty(level.Title) ? ContentText.KindLabel(level.Kind) : level.Title), 12.5f, sub, FontWeight.SemiBold, TextAlignmentOptions.TopLeft);
             Ui.Place(s.rectTransform, textX, 34, w - textX - 100, 18);
 
             System.Action open = () => app.Push(r => LevelScreen.Build(r, app, course, chapterIndex, levelIndex));

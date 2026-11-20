@@ -1,0 +1,20 @@
+{
+  "format": 1,
+  "id": "invest",
+  "title": "Podstawy inwestowania",
+  "shortName": "Podstawy",
+  "color": "#0E4A55",
+  "art": "Portfolio",
+  "icon": "Chart",
+  "order": 1,
+  "chapters": [
+    "basics",
+    "risk",
+    "divers",
+    "compound"
+  ],
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T19:20:00Z"
+  }
+}
