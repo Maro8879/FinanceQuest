@@ -1,8 +1,8 @@
 {
   "format": 1,
   "id": "budget",
-  "title": "Budżet domowy",
-  "shortName": "Budżet",
+  "title": "HORYZONT DŁUGI (10–40+ lat) – budowanie majątku i emerytura",
+  "shortName": "Długi",
   "color": "#9C7A2E",
   "art": "Wallet",
   "icon": "Wallet",
@@ -15,7 +15,7 @@
     "habits"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T19:20:00Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-20T22:49:52Z"
   }
 }
