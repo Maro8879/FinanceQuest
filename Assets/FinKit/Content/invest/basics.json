@@ -4,8 +4,8 @@
   "title": "Inflacja i procent składany",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T14:09:43Z"
+    "editedBy": "Jan",
+    "editedAt": "2026-11-21T17:18:24Z"
   },
   "levels": [
     {
@@ -328,6 +328,26 @@
         "game": "",
         "settings": []
       }
+    },
+    {
+      "id": "l7",
+      "kind": "minigame",
+      "title": "",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "12-miesiecy",
+        "settings": []
+      },
+      "tasks": []
     }
   ]
 }
