@@ -19,6 +19,9 @@ namespace FinanceQuest
         CanvasGroup frontGroup, backGroup;
         Image frontIcon, backIcon;
         Action onRight;
+        Action onDev;
+        LipCard devButton;
+        float titleW;
         CanvasGroup buttonGroup;
         bool frontButton = true, backButton = true;   // czy przycisk jest na nowym / starym ekranie
         bool swapping;
@@ -50,6 +53,15 @@ namespace FinanceQuest
             h.buttonGroup = b.gameObject.AddComponent<CanvasGroup>();
             // Przycisk woła aktualną akcję – ekran ustawia ją przy każdym Set().
             b.SetClickable(() => { if (h.onRight != null) h.onRight(); });
+
+            // Przycisk deweloperski (pomiń level na 100%) – obok przycisku po prawej, tylko gdy ekran go ustawi.
+            h.titleW = width - 2 * Margin - Btn - 8f;
+            h.devButton = LipCard.Create(h.Root, "DevButton", width - Margin - 2 * Btn - 8f, 16, Btn, Btn + 3,
+                Palette.Brick, Palette.Brick, Palette.Darker(Palette.Brick, 0.7f), 12f, 3f, 0f);
+            var dl = Ui.Text("Label", h.devButton.Content, "DEV", 11f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+            Ui.Stretch(dl.rectTransform);
+            h.devButton.SetClickable(() => { if (h.onDev != null) h.onDev(); });
+            h.devButton.gameObject.SetActive(false);
             return h;
         }
 
@@ -82,9 +94,21 @@ namespace FinanceQuest
             frontIcon.sprite = ProceduralSprites.Icon(icon);
             frontIcon.color = iconColor;
             onRight = onRightClick;
+            SetDev(null);   // każdy ekran sam decyduje, czy pokazać przycisk DEV
             // Bez akcji = bez przycisku (np. menu – ustawienia są w kokpicie).
             frontButton = onRightClick != null;
             if (!swapping) ApplyButton(frontButton ? 1f : 0f);
+        }
+
+        // DEV: tylko w Unity Editorze i w buildzie deweloperskim – w zwykłym buildzie dla użytkowników go nie ma.
+        public void SetDev(Action onClick)
+        {
+            onDev = Debug.isDebugBuild ? onClick : null;
+            bool on = onDev != null;
+            devButton.gameObject.SetActive(on);
+            // Tytuł kończy się przed przyciskiem DEV, żeby na niego nie wchodził.
+            var r = front.rectTransform;
+            r.sizeDelta = new Vector2(on ? titleW - Btn - 8f : titleW, r.sizeDelta.y);
         }
 
         void ApplyButton(float alpha)

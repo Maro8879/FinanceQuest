@@ -56,6 +56,8 @@ namespace FinanceQuest
                 }
                 else app.Back();
             };
+            // DEV: pomija level i zalicza go na 100% (3 gwiazdki, gdy level je daje), potem dalej jak po zwykłym ukończeniu.
+            app.Header.SetDev(() => finish(ProgressStore.GivesStars(level) ? 3 : -1));
             int best = app.Progress.Stars(level);
             if (level.Kind == LevelKind.Lesson && def != null && def.pages != null && def.pages.Count > 0)
             {
