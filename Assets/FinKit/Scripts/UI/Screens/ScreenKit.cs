@@ -92,6 +92,16 @@ namespace FinanceQuest
             return star + 3f + tw;
         }
 
+        // To samo, ale wyrównane do prawej krawędzi (right = x prawego brzegu).
+        public static void StarCountRight(Transform parent, float right, float y, int got, int max, Color starColor, Color textColor)
+        {
+            if (max <= 0) return;
+            var probe = Ui.Text("Probe", parent, got + "/" + max, 12.5f, textColor, FontWeight.ExtraBold);
+            float tw = probe.GetPreferredValues(probe.text, 1000f, 0f).x;
+            UnityEngine.Object.DestroyImmediate(probe.gameObject);
+            StarCount(parent, right - (13f + 3f + tw), y, got, max, starColor, textColor);
+        }
+
         public static string Pct(float v) { return Mathf.RoundToInt(v * 100f) + "%"; }
     }
 }

@@ -33,10 +33,14 @@ namespace FinanceQuest
                 ScreenKit.CardRadius, ScreenKit.Lip, 0f);
             var label = Ui.Text("Label", head.Content, "ROZDZIAŁ " + (chapterIndex + 1), 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
             Ui.Place(label.rectTransform, pad, pad - 2, cw - 2 * pad, 18);
+            // Gwiazdki rozdziału w prawym górnym rogu, w linii z „ROZDZIAŁ N”.
+            int sg, sm;
+            app.Progress.StarTotals(ch, out sg, out sm);
+            ScreenKit.StarCountRight(head.Content, cw - pad, pad - 2, sg, sm, Palette.Accent, Color.white);
             float th = ScreenKit.TitleBlock(head.Content, pad, pad + 17, cw - 2 * pad, ch.Title, 19f, null, Color.white, Color.white);
             float barY = pad + 17 + th + 10;
-            ScreenKit.BarRow(head.Content, pad, barY, cw - 2 * pad, app.Progress.ChapterProgress(ch), Palette.TrackOnColor,
-                Color.white, app.Progress.DoneCount(ch) + "/" + ch.Levels.Count);
+            // Sam pasek na całą szerokość – bez licznika leveli obok (ile leveli zostało, widać po kafelkach).
+            ProgressBar.Create(head.Content, pad, barY, cw - 2 * pad, 16f, Palette.TrackOnColor, app.Progress.ChapterProgress(ch));
             float headFace = barY + 16 + pad;
             ((RectTransform)head.transform).sizeDelta = new Vector2(cw, headFace + ScreenKit.Lip);
             head.AddBackgroundBars(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.06f), chapterIndex);
