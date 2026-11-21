@@ -53,7 +53,7 @@ namespace FinanceQuest.EditorTools
         {
             foreach (IconId id in System.Enum.GetValues(typeof(IconId))) ProceduralSprites.Icon(id);
             var unused = ProceduralSprites.Rounded; unused = ProceduralSprites.Ring; unused = ProceduralSprites.Candles;
-            unused = WallStreetArt.Night; unused = WallStreetArt.Day;
+            unused = WallStreetArt.Day;
             TrophyArt.Locked();
             foreach (TrophyKind k in System.Enum.GetValues(typeof(TrophyKind))) TrophyArt.Locked(k);
             TrophyArt.Earned(TrophyKind.Start, Palette.Text);

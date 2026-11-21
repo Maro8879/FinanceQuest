@@ -14,9 +14,6 @@ namespace FinanceQuest
             var content = ScreenKit.Scroll(screen, W, 0f);
             float m = ScreenKit.Margin, cw = W - 2 * m, y = 6f, step = SettingRow.Height + 12f;
 
-            SettingRow.Create(content, m, y, cw, "Dark mode", on => on ? IconId.Sun : IconId.Moon, null,
-                Settings.DarkMode, v => Settings.DarkMode = v);
-            y += step;
             SettingRow.Create(content, m, y, cw, "Sounds", on => on ? IconId.Sound : IconId.SoundOff, null,
                 Settings.Sound, v => Settings.Sound = v);
             y += step;

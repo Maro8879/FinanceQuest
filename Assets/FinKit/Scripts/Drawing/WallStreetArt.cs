@@ -11,21 +11,11 @@ namespace FinanceQuest
         const float PPU = 2.5f;                       // pikseli na jednostkę – ostro na telefonie, a liczy się szybko
         const float VPX = 179f, VPY = -620f, G = 230f; // punkt zbiegu pionów (widok z dołu) i linia ziemi
 
-        // Kolory zależne od pory dnia – ustawia je SetScheme przed rysowaniem (rysujemy zawsze na głównym wątku).
+        // Kolory rysunku – ustawia je SetScheme przed rysowaniem (rysujemy zawsze na głównym wątku). Tylko wersja dzienna.
         static Color Sky, Glass, GlassHi, Mullion, White, Ribbon, StoneT, StoneTSh, WinT, Deco, DecoSh, Copper, CopperSh, Lit, LitDoor;
 
-        static void SetScheme(bool night)
+        static void SetScheme()
         {
-            if (night)
-            {
-                Sky = Palette.Hex("0B2F37");
-                Glass = Palette.Hex("123F49"); GlassHi = Palette.Hex("1B5260"); Mullion = A(Palette.Hex("24606C"), 0.8f);
-                White = Palette.Hex("2A5E68"); Ribbon = Palette.Hex("174650");
-                StoneT = Palette.Hex("24555E"); StoneTSh = Palette.Hex("1C4952"); WinT = Palette.Hex("173F48");
-                Deco = Palette.Hex("1E4F58"); DecoSh = Palette.Hex("18434C"); Copper = Palette.Hex("3F7F74"); CopperSh = Palette.Hex("2F6A60");
-                Lit = Palette.Accent; LitDoor = Palette.Accent;      // w nocy okna i wejścia świecą
-            }
-            else
             {
                 // Dzień: jasne, stonowane barwy pod paletę aplikacji (wariant C).
                 Sky = Palette.Hex("DCE7E6");
@@ -46,14 +36,12 @@ namespace FinanceQuest
         static readonly Color Pole = Palette.Hex("7B8284"), Finial = Palette.Hex("D8B45A"), Bracket = Palette.Hex("6E7577"), Bolt = Palette.Hex("A9B0B2");
 
         // Duży rysunek (ok. 0,8 s liczenia) – w grze wczytywany z PNG po „Bake Drawn Pictures”.
-        public static Sprite Night { get { return DrawnPictures.Get("wallstreet_night_poles", () => Draw(true)); } }
-        public static Sprite Day { get { return DrawnPictures.Get("wallstreet_day_poles", () => Draw(false)); } }
-        public static Sprite Current { get { return Settings.DarkMode ? Night : Day; } }
+        public static Sprite Day { get { return DrawnPictures.Get("wallstreet_day_poles", () => Draw()); } }
 
-        static Sprite Draw(bool night)
+        static Sprite Draw()
         {
             {
-                SetScheme(night);
+                SetScheme();
                 var c = new ColorCanvas(W, H, PPU);
                 c.Clear(Sky);
                 DecoTower(c, 214, 300, 70);
@@ -69,7 +57,7 @@ namespace FinanceQuest
                     Rect(c, x - 3, 193, 6, 5, 1, Bracket);
                     Circle(c, V(x, 195), 1.4f, Bolt);
                 }
-                return Sprite.Create(c.ToTexture(night ? "fq_wallstreet_night" : "fq_wallstreet_day"), new UnityEngine.Rect(0, 0, c.Width, c.Height),
+                return Sprite.Create(c.ToTexture("fq_wallstreet_day"), new UnityEngine.Rect(0, 0, c.Width, c.Height),
                     new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);
             }
         }

@@ -6,13 +6,7 @@ namespace FinanceQuest
     // Na razie tylko zapamiętujemy wybór – tryb ciemny, dźwięki i przypomnienia podepniemy w swoich etapach.
     public static class Settings
     {
-        const string DarkKey = "fq.set.dark", SoundKey = "fq.set.sound", RemindKey = "fq.set.remind";
-
-        public static bool DarkMode
-        {
-            get { return PlayerPrefs.GetInt(DarkKey, 0) == 1; }
-            set { PlayerPrefs.SetInt(DarkKey, value ? 1 : 0); PlayerPrefs.Save(); }
-        }
+        const string SoundKey = "fq.set.sound", RemindKey = "fq.set.remind";
 
         public static bool Sound
         {

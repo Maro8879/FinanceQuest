@@ -4,8 +4,8 @@
   "title": "Financial scams",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T13:52:20Z"
+    "editedBy": "Maro",
+    "editedAt": "2026-11-21T21:27:35Z"
   },
   "levels": [
     {
@@ -46,7 +46,9 @@
       ],
       "minigame": {
         "game": "",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       },
       "tasks": []
     },
@@ -90,7 +92,9 @@
       ],
       "minigame": {
         "game": "",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       },
       "tasks": []
     },
@@ -134,14 +138,16 @@
       ],
       "minigame": {
         "game": "",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       },
       "tasks": []
     },
     {
       "id": "l6",
       "kind": "lesson",
-      "title": "phishing video",
+      "title": "Phishing video",
       "pages": [
         {
           "blocks": [
@@ -156,7 +162,9 @@
       ],
       "minigame": {
         "game": "",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       },
       "tasks": []
     },
@@ -200,7 +208,9 @@
       ],
       "minigame": {
         "game": "",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       },
       "tasks": []
     },
@@ -352,8 +362,34 @@
       "pages": [],
       "minigame": {
         "game": "",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       }
+    },
+    {
+      "id": "l7",
+      "kind": "minigame",
+      "title": "Swipe the scam",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "prawda-czy-pulapka",
+        "settings": []
+      },
+      "tasks": []
     }
   ]
 }
