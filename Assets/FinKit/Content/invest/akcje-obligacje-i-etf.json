@@ -1,0 +1,152 @@
+{
+  "format": 1,
+  "id": "akcje-obligacje-i-etf",
+  "title": "Akcje, obligacje i ETF",
+  "color": "#0E4A55",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T08:21:41Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Co to jest akcja?",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Co to jest akcja?"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-co-to-jest-akcja.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Akcja to papier wartościowy potwierdzający, że jesteś współwłaścicielem konkretnej firmy (spółki akcyjnej). Kupując choćby jedną akcję, nabywasz ułamek jej majątku i zyskujesz prawo do udziału w jej przyszłych zyskach."
+            },
+            {
+              "type": "text",
+              "text": "Możesz na niej zarobić na dwa sposoby: przez wzrost jej kursu (gdy firma dobrze się rozwija i inni chcą odkupić od Ciebie udział drożej) lub przez dywidendę."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Co to jest dywidenda?",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Co to jest dywidenda?"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-co-to-jest-dywidenda.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Dywidenda to część zysku netto, którą spółka giełdowa decyduje się wypłacić swoim akcjonariuszom w formie gotówki (lub rzadziej dodatkowych akcji). Jest to bezpośrednia nagroda za posiadanie udziałów w firmie i powierzenie jej swojego kapitału."
+            },
+            {
+              "type": "text",
+              "text": "Wysokość dywidendy oraz to, czy w ogóle zostanie wypłacona, zależy od decyzji zarządu i walnego zgromadzenia akcjonariuszy — młode, szybko rosnące firmy zazwyczaj reinwestują cały zysk w rozwój, natomiast dojrzałe, stabilne przedsiębiorstwa regularnie dzielą się nim z inwestorami (np. raz w roku lub co kwartał), pozwalając budować regularny dochód pasywny."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Co to jest ETF?",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Co to jest ETF?"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-co-to-jest-etf.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "ETF (ang. Exchange-Traded Fund) to fundusz inwestycyjny notowany na giełdzie, który działa jak gotowy „koszyk” zawierający dziesiątki, setki, a nawet tysiące różnych aktywów (najczęściej akcji lub obligacji). Kupując jedną jednostkę ETF-u, jednym kliknięciem stajesz się współwłaścicielem wszystkich firm wchodzących w jego skład."
+            },
+            {
+              "type": "text",
+              "text": "Większość ETF-ów to fundusze pasywne — nie próbują „przechytrzyć” rynku, lecz wiernie naśladują wyniki konkretnego indeksu giełdowego (np. S&P 500 czy MSCI World). Dzięki temu zapewniają natychmiastową dywersyfikację i bardzo niskie opłaty za zarządzanie w porównaniu z tradycyjnymi funduszami, choć ich wartość nadal waha się razem z całym rynkiem."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Co to jest obligacja?",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Co to jest obligacja?"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-co-to-jest-obligacja.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Obligacja to papier wartościowy, który działa jak oficjalna pożyczka — kupując ją, pożyczasz swoje pieniądze państwu (obligacje skarbowe), samorządowi lub firmie (obligacje korporacyjne). W przeciwieństwie do akcji, nie stajesz się współwłaścicielem podmiotu, lecz jego wierzycielem."
+            },
+            {
+              "type": "text",
+              "text": "W zamian za pożyczony kapitał emitent zobowiązuje się, że w ściśle określonym terminie (tzw. dniu wykupu) zwróci Ci całą pożyczoną kwotę wraz z ustalonym wynagrodzeniem w postaci odsetek (kuponów). Obligacje uznaje się za bezpieczniejsze i bardziej przewidywalne niż akcje, jednak poziom ich bezpieczeństwa zawsze zależy od wiarygodności finansowej i wypłacalności podmiotu, który je wystawia."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}

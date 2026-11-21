@@ -1,11 +1,11 @@
 {
   "format": 1,
   "id": "risk",
-  "title": "Akcje, obligacje, ETF",
+  "title": "Ryzyko i dywersyfikacja",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T22:20:18Z"
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T08:21:41Z"
   },
   "levels": [
     {
@@ -120,6 +120,76 @@
         "game": "",
         "settings": []
       }
+    },
+    {
+      "id": "l6",
+      "kind": "lesson",
+      "title": "Nie wkładaj wszystkich jajek do jednego koszyka",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Nie wkładaj wszystkich jajek do jednego koszyka"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-nie-wkladaj-jajek-do-jednego.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Dywersyfikacja to strategia polegająca na dzieleniu kapitału między różne, niepowiązane ze sobą inwestycje, aby ograniczyć ryzyko. Jej główna zasada brzmi: „nie wkładaj wszystkich jajek do jednego koszyka”."
+            },
+            {
+              "type": "text",
+              "text": "Jeśli jedna firma zbankrutuje lub dana branża wpadnie w kryzys, straty z tego obszaru zostaną zrównoważone przez zyski z pozostałych elementów portfela."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l7",
+      "kind": "lesson",
+      "title": "Skuteczna dywersyfikacja",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Skuteczna dywersyfikacja"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-skuteczna-dywersyfikacja.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Skuteczną dywersyfikację buduje się na kilku poziomach: poprzez kupowanie akcji firm z różnych branż (np. technologia, medycyna, energetyka), inwestowanie na różnych rynkach geograficznych (np. USA, Europa, rynki wschodzące) oraz łączenie różnych klas aktywów (np. akcji, obligacji i gotówki)."
+            },
+            {
+              "type": "text",
+              "text": "Dzięki temu portfel staje się bardziej odporny na nagłe załamania jednego sektora i daje stabilniejsze wyniki w długim terminie."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
     },
     {
       "id": "l2",

@@ -23,7 +23,7 @@
               "type": "image",
               "image": "obrazki/1-krachy-w-historii.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -58,7 +58,7 @@
               "type": "image",
               "image": "obrazki/2-emocje-vs-plan.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -93,7 +93,7 @@
               "type": "image",
               "image": "obrazki/3-koszt-pominiecia-najlepszych.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -128,7 +128,7 @@
               "type": "image",
               "image": "obrazki/4-co-robic-podczas-krachu.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {

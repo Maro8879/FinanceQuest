@@ -23,7 +23,7 @@
               "type": "image",
               "image": "obrazki/1-jak-dziala-obligacja.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -58,7 +58,7 @@
               "type": "image",
               "image": "obrazki/2-rzadowe-vs-korporacyjne.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -93,7 +93,7 @@
               "type": "image",
               "image": "obrazki/3-stale-vs-zmienne-oprocentowa.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -128,7 +128,7 @@
               "type": "image",
               "image": "obrazki/4-jak-obligacje-stabilizuja-po.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {

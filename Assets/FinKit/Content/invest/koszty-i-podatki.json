@@ -1,0 +1,152 @@
+{
+  "format": 1,
+  "id": "koszty-i-podatki",
+  "title": "Koszty i podatki",
+  "color": "#0E4A55",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T08:21:41Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Prowizje i opłaty",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Prowizje i opłaty"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-prowizje-i-oplaty.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Prowizje i opłaty to ukryte koszty inwestowania, które bezpośrednio pomniejszają Twój zysk — niezależnie od tego, czy rynek rośnie, czy spada. Wśród najważniejszych opłat wyróżniamy prowizję maklerską (pobieraną jednorazowo przy zakupie lub sprzedaży akcji i ETF-ów) oraz TER (ang. Total Expense Ratio), czyli roczny koszt zarządzania funduszem ETF, automatycznie odliczany od jego wyniku."
+            },
+            {
+              "type": "text",
+              "text": "W perspektywie wieloletniej nawet pozornie niewielka różnica w opłatach (np. 0,2% w pasywnym ETF-ie kontra 2,0% w tradycyjnym funduszu) potrafi „zjeść” znaczną część zysków przez działanie procentu składanego. Zrozumienie struktury opłat pozwala unikać kosztownych produktów i świadomie wybierać rozwiązania (np. promocyjne plany oszczędnościowe bez prowizji za zakup), dzięki czemu większa część kapitału pracuje na Twoje cele."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Opłaty kontra zysk na długi termin",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Opłaty kontra zysk na długi termin"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-oplaty-kontra-zysk.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Opłaty i prowizje w długim terminie działają jak „odwrócony procent składany” — nie pomniejszają Twojego wyniku liniowo, lecz z roku na rok odbierają Ci nie tylko samą kwotę prowizji, ale również wszystkie przyszłe zyski, które ta kwota mogłaby wypracować."
+            },
+            {
+              "type": "text",
+              "text": "Przy jednorazowym zakupie 1% lub 2% wydaje się niewielkim kosztem, jednak w horyzoncie 20–30 lat różnica między tanim funduszem pasywnym (np. ETF z opłatą 0,2% rocznie) a drogim funduszem zarządzanym aktywnie (np. 2,0% rocznie) potrafi pochłonąć od jednej trzeciej do nawet połowy wypracowanego kapitału. Dlatego minimalizowanie kosztów stałych (takich jak wskaźnik TER czy prowizje za zakup) jest jednym z najpewniejszych sposobów na zwiększenie końcowego zysku bez dodatkowego ryzyka."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Podatek od zysków",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Podatek od zysków"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-podatek-od-zyskow.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Podatek od zysków kapitałowych (w Polsce podatek Belki, w Niemczech Abgeltungsteuer) to obowiązkowa opłata od dochodu z inwestycji, m.in. sprzedaży akcji i ETF-ów, otrzymanych dywidend oraz odsetek z lokat."
+            },
+            {
+              "type": "text",
+              "text": "Płacisz go wyłącznie od wypracowanego zysku (a nie od całej kwoty) i dopiero w momencie jego realizacji, czyli sprzedaży aktywów lub wypłaty odsetek. Dopóki trzymasz rosnące inwestycje na rachunku, podatek nie jest pobierany, dzięki czemu cały kapitał pracuje dalej na procent składany."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Ulgi podatkowe",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Ulgi podatkowe"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-ulgi-podatkowe.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Ulgi i zwolnienia podatkowe w inwestowaniu to legalne rozwiązania przygotowane przez państwo, które pozwalają zmniejszyć lub całkowicie uniknąć podatku od zysków kapitałowych, aby zachęcić obywateli do długoterminowego oszczędzania (np. na emeryturę)."
+            },
+            {
+              "type": "text",
+              "text": "W Polsce tę rolę pełnią specjalne konta emerytalne (IKE oraz IKZE), a w Niemczech m.in. roczna kwota wolna od zysków kapitałowych (Sparer-Pauschbetrag). Korzystanie z nich sprawia, że zamiast oddawać część zysku urzędowi skarbowemu, więcej wypracowanych odsetek i dywidend zostaje w Twoim portfelu i napędza procent składany."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
