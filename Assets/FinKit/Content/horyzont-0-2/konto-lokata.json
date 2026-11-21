@@ -4,8 +4,8 @@
   "title": "Savings account and fixed deposit",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "Jan",
-    "editedAt": "2026-11-21T12:43:36Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T21:56:27Z"
   },
   "levels": [
     {
@@ -79,6 +79,13 @@
             {
               "type": "callout",
               "text": "Don't keep spare money in your current account – there **inflation eats it**."
+            },
+            {
+              "type": "image",
+              "image": "obrazki/c584ed85-3331-4ad2-a1f4-213cbf.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             }
           ]
         }
