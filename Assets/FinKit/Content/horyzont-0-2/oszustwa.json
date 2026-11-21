@@ -5,7 +5,7 @@
   "color": "#3F6B5C",
   "meta": {
     "editedBy": "Maro",
-    "editedAt": "2026-11-21T21:27:35Z"
+    "editedAt": "2026-11-21T21:33:31Z"
   },
   "levels": [
     {
@@ -387,7 +387,9 @@
       ],
       "minigame": {
         "game": "prawda-czy-pulapka",
-        "settings": []
+        "settings": [],
+        "cards": [],
+        "shuffle": false
       },
       "tasks": []
     }
