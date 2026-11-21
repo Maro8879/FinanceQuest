@@ -17,9 +17,13 @@ namespace FinanceQuest
     [Serializable]
     public class TaskDef
     {
-        public string type;                                   // choice | tiles | pairs | zones | gap
+        public string type;                                   // choice | truefalse | tiles | pairs | zones | gap
         public string prompt;
         // choice: odpowiedzi; multi = kilka poprawnych
+        // truefalse: prompt to stwierdzenie, truth = czy jest prawdziwe (w aplikacji dwie odpowiedzi: True / False)
+        public bool truth;
+        // Tylko w pamięci (nie z JSON-a): odpowiedzi w stałej kolejności, bez tasowania (np. True zawsze nad False).
+        [NonSerialized] public bool keepOrder;
         public List<OptionDef> options = new List<OptionDef>();
         public bool multi;
         // tiles: zdanie do ułożenia z kafelków + słowa-pułapki

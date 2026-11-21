@@ -9,7 +9,7 @@ namespace FinanceQuest
         {
             float W = app.ScreenWidth;
             // Zębatka w prawym górnym rogu otwiera ekran ustawień.
-            app.Header.Set("an easy and fun way to learn finance", true, IconId.Gear, Palette.TextMuted,
+            app.Header.Set("Investing for everyone", true, IconId.Gear, Palette.TextMuted,
                 () => app.Push(r => SettingsScreen.Build(r, app)));
 
             var content = ScreenKit.Scroll(screen, W, 0f);

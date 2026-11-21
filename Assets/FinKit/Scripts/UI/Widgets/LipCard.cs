@@ -144,6 +144,36 @@ namespace FinanceQuest
             return line;
         }
 
+        // Bardzo duży, półprzezroczysty numer na środku karty, w tle pod napisami (kafelki leveli).
+        // Wyśrodkowany po kształcie cyfr (MidlineGeoAligned), a nie po linii tekstu – inaczej cyfra siedziałaby za wysoko.
+        public TMPro.TextMeshProUGUI AddBackgroundNumberCenter(string text, float radius, Color color, float size)
+        {
+            var t = Ui.Text("BgNumber", BackgroundLayer(radius), text, size, color, FontWeight.ExtraBold, TMPro.TextAlignmentOptions.MidlineGeoAligned);
+            t.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
+            t.overflowMode = TMPro.TextOverflowModes.Overflow;
+            t.characterSpacing = -6f;
+            var rt = t.rectTransform;
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.sizeDelta = new Vector2(size * 2f, size * 1.4f);
+            // Środek twarzy karty (bez cienia pod spodem). Poprawka -1.6% rozmiaru zmierzona na screenie z Unity:
+            // bez niej cyfra była 2.5 px nad środkiem (10 px odstępu u góry, 15 px u dołu).
+            rt.anchoredPosition = new Vector2(0f, LipHeight * 0.5f - size * 0.016f);
+            return t;
+        }
+
+        // Łamana linia „giełdowa” od połowy karty w prawo, z kropką (karty rozdziałów i nagłówek rozdziału).
+        public TrendLine AddBackgroundTrend(float radius, Color color, int seed)
+        {
+            var go = Ui.Rect("BgTrend", BackgroundLayer(radius)).gameObject;
+            go.AddComponent<CanvasRenderer>();
+            var line = go.AddComponent<TrendLine>();
+            line.Seed = seed;
+            line.color = color;
+            line.raycastTarget = false;
+            Ui.Stretch(line.rectTransform);
+            return line;
+        }
+
         // Duży, półprzezroczysty numer w prawym dolnym rogu, przycięty przez kartę (karty leveli).
         public TMPro.TextMeshProUGUI AddBackgroundNumber(string text, float radius, Color color, float size)
         {

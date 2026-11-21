@@ -43,7 +43,7 @@ namespace FinanceQuest
             ProgressBar.Create(head.Content, pad, barY, cw - 2 * pad, 16f, Palette.TrackOnColor, app.Progress.ChapterProgress(ch));
             float headFace = barY + 16 + pad;
             ((RectTransform)head.transform).sizeDelta = new Vector2(cw, headFace + ScreenKit.Lip);
-            head.AddBackgroundBars(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.06f), chapterIndex);
+            head.AddBackgroundTrend(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.18f), chapterIndex);
 
             float y = 4 + headFace + ScreenKit.Lip + 14f;
             float half = (cw - Gap) * 0.5f;
@@ -92,8 +92,8 @@ namespace FinanceQuest
             return fh;
         }
 
-        // Kafelek levelu: duży numer w lewym górnym rogu, tytuł przy dolnej krawędzi.
-        // Ukończony – w kolorze rozdziału z ptaszkiem; aktualny – żółty ze START; zablokowany – szary z kłódką.
+        // Kafelek levelu: bardzo duży numer w tle na środku, tytuł przy dolnej krawędzi.
+        // Ukończony – w kolorze rozdziału z ptaszkiem; aktualny – w kolorze rozdziału z żółtym START; zablokowany – szary z kłódką.
         static float LevelTile(RectTransform parent, float x, float y, float w, float h, FinanceQuestApp app,
             CourseData course, int chapterIndex, int levelIndex, ItemState? force)
         {
@@ -106,7 +106,7 @@ namespace FinanceQuest
             switch (state)
             {
                 case ItemState.Done: fill = ch.Color; lip = Palette.Darker(ch.Color); text = Color.white; break;
-                case ItemState.Current: fill = Palette.Accent; lip = Palette.AccentLip; text = Palette.OnAccent; break;
+                case ItemState.Current: fill = ch.Color; lip = Palette.Darker(ch.Color); text = Color.white; break;   // też w kolorze rozdziału; wyróżnia go żółty START
                 default: fill = Palette.LockedFill; lip = Palette.LockedLip; text = Palette.TextLocked; break;
             }
 
@@ -125,17 +125,21 @@ namespace FinanceQuest
             var card = LipCard.Create(parent, "Level_" + level.Number, x, y, w, h + ScreenKit.Lip, fill, fill, lip,
                 18f, ScreenKit.Lip, 0f);
 
-            var num = Ui.Text("Number", card.Content, level.Number.ToString(), 34f, text, FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
-            num.textWrappingMode = TextWrappingModes.NoWrap;
-            Ui.Place(num.rectTransform, pad, pad - 2f, 80f, numberH);
+            // Numer levelu jako bardzo duża cyfra w tle, na środku kafelka – w odcieniu jak pole pod wykresem rozdziału
+            // (biały 7%). Na szarym (zablokowanym) kafelku biały byłby niewidoczny, więc tam kolor cienia kafelka.
+            // Dwie cyfry (10+) są mniejsze, żeby zmieściły się w szerokości kafelka.
+            string ns = level.Number.ToString();
+            float nsize = Mathf.Min(h * 1.15f, w * (ns.Length > 1 ? 0.8f : 1.3f));
+            Color nc = state != ItemState.Locked ? new Color(1f, 1f, 1f, 0.072f)
+                : Palette.LockedLip;   // zablokowany: pełny beż jak cień kafelka – cyfra wygląda na „wytłoczoną”
+            card.AddBackgroundNumberCenter(ns, 18f, nc, nsize);
 
             // Level z gwiazdkami (test, zadania, mini gra): od początku trzy puste gwiazdki – widać, że jest o co grać.
             // Po ukończeniu zamiast ptaszka najlepszy wynik.
             int stars = state == ItemState.Done ? app.Progress.Stars(level) : -1;
             if (stars >= 0 || ProgressStore.GivesStars(level))
             {
-                Color empty = state == ItemState.Done ? new Color(1f, 1f, 1f, 0.3f)
-                    : state == ItemState.Current ? new Color(Palette.OnAccent.r, Palette.OnAccent.g, Palette.OnAccent.b, 0.22f)
+                Color empty = state != ItemState.Locked ? new Color(1f, 1f, 1f, 0.3f)
                     : new Color(Palette.LockedIcon.r, Palette.LockedIcon.g, Palette.LockedIcon.b, 0.55f);
                 StarRow(card.Content, w - pad, pad, Mathf.Max(0, stars), empty);
             }
@@ -157,11 +161,11 @@ namespace FinanceQuest
             System.Action open = () => Open(app, course, chapterIndex, levelIndex, false);
             if (state == ItemState.Current)
             {
-                // START jako ciemna plakietka pod tytułem; kliknąć można cały kafelek.
+                // START jako żółta plakietka pod tytułem (jedyny żółty element = „tu grasz dalej”); kliknąć można cały kafelek.
                 Ui.Place(t.rectTransform, pad, h - pad - sh - 8f - th, tw, th);
-                var pill = Ui.Rounded("StartPill", card.Content, Palette.Text, 8f);
+                var pill = Ui.Rounded("StartPill", card.Content, Palette.Accent, 8f);
                 Ui.Place(pill.rectTransform, pad, h - pad - sh, sw, sh);
-                var st = Ui.Text("Label", pill.transform, "START", 12f, Palette.Accent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+                var st = Ui.Text("Label", pill.transform, "START", 12f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
                 Ui.Stretch(st.rectTransform);
             }
             else Ui.Place(t.rectTransform, pad, h - pad - th, tw, th);

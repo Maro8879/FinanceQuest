@@ -79,7 +79,7 @@ namespace FinanceQuest
         {
             this.screen = screen;
             this.app = app;
-            this.tasks = tasks;
+            this.tasks = tasks.ConvertAll(Prepare);
             this.isTest = isTest;
             this.best = bestStars;
             this.onFinish = onFinish;
@@ -87,6 +87,17 @@ namespace FinanceQuest
             m = ScreenKit.Margin;
             cw = W - 2 * m;
             StartTask(0);
+        }
+
+        // Zadanie „prawda / fałsz” pokazujemy jako zwykły wybór z dwiema odpowiedziami – dzięki temu ma te same
+        // animacje, sprawdzanie i podsumowanie co reszta. Robimy kopię, żeby nie zmieniać treści wczytanej z pliku.
+        static TaskDef Prepare(TaskDef t)
+        {
+            if (t.type != "truefalse") return t;
+            var c = new TaskDef { type = "choice", prompt = t.prompt, explain = t.explain, fact = t.fact, keepOrder = true };
+            c.options.Add(new OptionDef { text = "True", correct = t.truth });
+            c.options.Add(new OptionDef { text = "False", correct = !t.truth });
+            return c;
         }
 
         // ---------------- przebieg ----------------
@@ -106,7 +117,8 @@ namespace FinanceQuest
             switch (t.type)
             {
                 case "choice":
-                    order = Shuffled(t.options.Count, false);
+                    if (t.keepOrder) for (int k = 0; k < t.options.Count; k++) order.Add(k);
+                    else order = Shuffled(t.options.Count, false);
                     break;
                 case "gap":
                     if (t.mode != "type")

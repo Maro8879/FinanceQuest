@@ -137,9 +137,9 @@ namespace FinanceQuest
             }
             ((RectTransform)card.transform).sizeDelta = new Vector2(w, face + ScreenKit.Lip);
 
-            // Rosnące słupki w prawym dolnym rogu (białe, delikatne). Na zablokowanych kartach bez nich.
+            // Linia wykresu od połowy karty (biała, delikatna). Na zablokowanych kartach bez niej.
             if (state != ItemState.Locked)
-                card.AddBackgroundBars(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.06f), index);
+                card.AddBackgroundTrend(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.18f), index);
 
             if (state != ItemState.Current)
             {

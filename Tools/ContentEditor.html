@@ -197,7 +197,7 @@ const ARTS = {Portfolio:"Wykres kołowy", Magnifier:"Lupa nad świecami", Laptop
   Candles:"Wykres świecowy", Platform:"Telefon przed monitorem", Sprout:"Kiełek (krótki horyzont)", Sapling:"Drzewko (średni horyzont)", Tree:"Drzewo (długi horyzont)"};
 const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
-const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
+const TYPES = {choice:"Wybór odpowiedzi", truefalse:"Prawda / fałsz", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
 // „Prawda czy Pułapka?”: rodzaje kart (tylko wygląd w aplikacji) i odpowiedzi.
 const SCAM_TYPES = {sms:"SMS", social:"Reklama w social mediach", bank:"Aplikacja bankowa", article:"Artykuł sponsorowany", product:"Karta produktu", call:"Telefon"};
 const SCAM_ANS = {trap:"✕ PUŁAPKA", safe:"✓ BEZPIECZNE"};
@@ -528,6 +528,8 @@ function normalizeTask(t){
   for (const k of ["options","extra","pairs","zones","items","answers","wrong"]) t[k] = t[k] || [];
   for (const k of ["prompt","answer","image","text","mode","explain","fact"]) t[k] = t[k] ?? "";
   t.multi = !!t.multi;
+  // „truth” tylko w zadaniach prawda/fałsz – w innych typach nie dopisujemy pola, żeby nie zmieniać ich plików.
+  if (t.type === "truefalse") t.truth = !!t.truth;
 }
 
 function orderChapters(courseFile, chapters){
@@ -914,6 +916,7 @@ function taskWarnings(t){
     if (!t.options.some(o=>o.correct)) w.push("Zaznacz poprawną odpowiedź (✓).");
     if (!t.multi && t.options.filter(o=>o.correct).length > 1) w.push("Kilka poprawnych – włącz „kilka poprawnych”.");
   }
+  if (t.type === "truefalse" && t.prompt.trim() && /\?\s*$/.test(t.prompt)) w.push("Polecenie ma być stwierdzeniem (bez „?”), które jest prawdziwe albo fałszywe.");
   if (t.type === "tiles" && !t.answer.trim()) w.push("Wpisz zdanie do ułożenia.");
   if (t.type === "pairs" && t.pairs.filter(p=>p.left.trim()&&p.right.trim()).length < 2) w.push("Potrzebne co najmniej 2 pełne pary.");
   if (t.type === "zones"){
@@ -1011,7 +1014,7 @@ function renderTree(){
         cd.levels.forEach((l, li) => {
           const lw = levelWarnings(l).length;
           h += `<div class="row indent2 ${S.sel.lv === li && S.sel.part === "level" ? "sel" : ""}" data-act="sel" data-c="${ci}" data-ch="${chi}" data-lv="${li}">
-            <span class="grow">${li+1} · ${esc(l.title || KINDS[l.kind])}</span><span class="sub">${KINDS[l.kind] || ""}</span>${lw ? `<span class="st warn">⚠</span>` : ""}</div>`;
+            <span class="grow">${li+1} · ${esc(l.title || KINDS[l.kind])}</span><span class="sub">${KINDS[l.kind] || ""}</span>${moveBtns("tree-move-level", li, cd.levels.length, `data-c="${ci}" data-ch="${chi}" data-lv="${li}"`)}${lw ? `<span class="st warn">⚠</span>` : ""}</div>`;
           if (S.sel.lv === li && (l.kind === "task" || l.kind === "test" || l.tasks.length))
             l.tasks.forEach((t, ti) => h += `<div class="row indent3 sub ${S.sel.part === "task" && S.sel.idx === ti ? "sel" : ""}" data-act="sel-task" data-i="${ti}">
               <span class="grow">${ti+1} · ${esc(TYPES[t.type] || t.type)}</span>${taskWarnings(t).length ? '<span class="st warn">⚠</span>' : ""}</div>`);
@@ -1189,6 +1192,11 @@ function taskForm(){
   if (t.type === "choice"){
     body = `<label>Odpowiedzi <span class="hint">✓ = poprawna</span></label>` + t.options.map((o,i) => `<div class="line"><button class="ck ${o.correct?"on":""}" data-act="correct" data-i="${i}">✓</button><div class="f">${one(`${b}.options.${i}.text`, o.text, "Odpowiedź")}</div><button class="mini" data-act="opt" data-i="${i}" data-dir="-1">↑</button><button class="mini" data-act="opt" data-i="${i}" data-dir="1">↓</button><button class="mini x" data-act="opt" data-i="${i}" data-dir="0">✕</button></div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-opt">+ odpowiedź</button><label style="margin:0 0 0 12px;display:flex;gap:6px;align-items:center"><input type="checkbox" data-check="${b}.multi" ${t.multi?"checked":""}> kilka poprawnych</label></div>`;
+  } else if (t.type === "truefalse"){
+    // Polecenie (wyżej) to stwierdzenie; tu tylko, czy jest prawdziwe. W aplikacji gracz wybiera True albo False.
+    body = `<label>To stwierdzenie jest <span class="hint">w aplikacji gracz wybiera True / False</span></label>
+      <div class="btns"><button class="btn small ${t.truth ? "main" : ""}" data-act="tf" data-v="1">✓ Prawdziwe</button>
+      <button class="btn small ${t.truth ? "" : "main"}" data-act="tf" data-v="0">✕ Fałszywe</button></div>`;
   } else if (t.type === "tiles"){
     body = `<label>Zdanie do ułożenia <span class="hint">słowa rozdzielone spacją = kafelki</span></label>${one(`${b}.answer`, t.answer)}
       <label>Słowa-pułapki <span class="hint">po przecinku</span></label>${listIn(`${b}.extra`, t.extra, "np. zawsze, nigdy")}`;
@@ -1314,6 +1322,8 @@ function taskPreview(t){
   if (t.type === "choice"){
     body = t.options.map(o => `<div class="pa ${show && o.correct ? "ok" : ""} ${S.mode==="bad" && !o.correct && o === t.options.find(x=>!x.correct) ? "bad" : ""}">${esc(o.text)}</div>`).join("");
     if (t.multi) body = `<div class="sub" style="color:var(--pmut);margin:-6px 0 10px">Zaznacz wszystkie poprawne</div>` + body;
+  } else if (t.type === "truefalse"){
+    body = [["True", t.truth], ["False", !t.truth]].map(([txt, ok]) => `<div class="pa ${show && ok ? "ok" : ""} ${S.mode==="bad" && !ok ? "bad" : ""}">${txt}</div>`).join("");
   } else if (t.type === "tiles"){
     const words = t.answer.split(/\s+/).filter(Boolean), all = [...words, ...t.extra].sort((a,b)=>(a.length*7+a.charCodeAt(0))%5-(b.length*7+b.charCodeAt(0))%5);
     body = `<div class="slot">${show ? words.map(w=>`<span class="tile">${esc(w)}</span>`).join("") : ""}</div><div class="tiles">${(show ? t.extra : all).map(w=>`<span class="tile">${esc(w)}</span>`).join("")}</div>`;
@@ -1389,6 +1399,7 @@ function moveIn(arr, i, dir){
 }
 function newTask(type){ const t = {type, prompt:"", explain:"", fact:""}; normalizeTask(t);
   if (type === "choice") t.options = [{text:"",correct:true},{text:"",correct:false},{text:"",correct:false}];
+  if (type === "truefalse") t.truth = true;
   if (type === "pairs") t.pairs = [{left:"",right:""},{left:"",right:""},{left:"",right:""}];
   if (type === "gap"){ t.text = "Tekst z ___ luką."; t.mode = "type"; }
   if (type === "zones"){ t.zones = [{id:"a",label:"Strefa A",x:0.04,y:0.1,w:0.44,h:0.8},{id:"b",label:"Strefa B",x:0.52,y:0.1,w:0.44,h:0.8}]; t.items = [{text:"",zone:"a"}]; }
@@ -1457,6 +1468,7 @@ document.addEventListener("click", async e => {
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
     case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();
     case "task-list": if (moveIn(l.tasks, i, dir)) changed(); return;
+    case "tf": t.truth = a.dataset.v === "1"; return changed();
     case "level-list": if (moveIn(curChapter().levels, i, dir)){ clampSel(); changed(); } return;
     case "add-level": {
       const d = curChapter(), kind = a.dataset.kind || "lesson";
@@ -1498,6 +1510,19 @@ document.addEventListener("click", async e => {
       c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,""));
       markDirty(c.file);
       if (selCh) S.sel.ch = c.chapters.indexOf(selCh);
+      return renderAll();
+    }
+    case "tree-move-level": {
+      // Kolejność leveli to kolejność w tablicy „levels” pliku rozdziału – zmienia się tylko ten jeden plik.
+      // Postęp graczy jest zapisany po id levelu, więc przestawienie go nie gubi.
+      const cf = S.courses[Number(a.dataset.c)].chapters[Number(a.dataset.ch)], lv = cf.data.levels;
+      const li = Number(a.dataset.lv), to = li + Number(a.dataset.dir);
+      if (to < 0 || to >= lv.length) return;
+      const here = S.sel.c === Number(a.dataset.c) && S.sel.ch === Number(a.dataset.ch);
+      const selLv = here ? lv[S.sel.lv] : null;
+      [lv[li], lv[to]] = [lv[to], lv[li]];
+      markDirty(cf);
+      if (selLv) S.sel.lv = lv.indexOf(selLv);
       return renderAll();
     }
     case "add-chapter": {
