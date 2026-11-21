@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "marek",
-    "editedAt": "2026-11-21T13:44:11Z"
+    "editedAt": "2026-11-21T13:46:30Z"
   },
   "levels": [
     {
@@ -125,6 +125,36 @@
             {
               "type": "callout",
               "text": "Wartość ETF-u nadal **waha się razem z rynkiem**."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l6",
+      "kind": "lesson",
+      "title": "flimik etf",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            },
+            {
+              "type": "video",
+              "video": "filmy/etf-bez-napisow.mp4",
+              "videoSub": "filmy/etf-z-napisami.mp4",
+              "caption": ""
             }
           ]
         }
@@ -310,9 +340,9 @@
       }
     },
     {
-      "id": "l6",
+      "id": "l7",
       "kind": "lesson",
-      "title": "flimik etf",
+      "title": "filmik akcja vs obligacja",
       "pages": [
         {
           "blocks": [
@@ -321,13 +351,9 @@
               "text": ""
             },
             {
-              "type": "text",
-              "text": ""
-            },
-            {
               "type": "video",
-              "video": "filmy/etf-bez-napisow.mp4",
-              "videoSub": "filmy/etf-z-napisami.mp4",
+              "video": "filmy/akcja-vs-obligacja-bez-napisow.mp4",
+              "videoSub": "filmy/akcja-vs-obligacja-z-napisami.mp4",
               "caption": ""
             }
           ]
