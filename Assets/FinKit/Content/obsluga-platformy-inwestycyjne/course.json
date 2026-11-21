@@ -2,7 +2,7 @@
   "format": 1,
   "id": "obsluga-platformy-inwestycyjne",
   "title": "Obsługa platformy inwestycyjnej",
-  "shortName": "OPI",
+  "shortName": "Obsługa Platformy",
   "color": "#9C7A2E",
   "art": "Platform",
   "icon": "Chart",
@@ -10,6 +10,6 @@
   "chapters": [],
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-21T07:40:10Z"
+    "editedAt": "2026-11-21T12:50:13Z"
   }
 }
