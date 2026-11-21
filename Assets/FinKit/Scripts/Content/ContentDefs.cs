@@ -44,7 +44,7 @@ namespace FinanceQuest
     // Blok treści na stronie lekcji. Jedna klasa na wszystkie rodzaje (jak w zadaniach) – typ mówi, których pól używać.
     // W tekście **słowo** = pogrubienie.
     // Wiersz tabelki (JsonUtility nie umie list w listach, więc wiersz to osobna klasa).
-    [Serializable] public class TableRowDef { public List<string> cells = new List<string>(); }
+    [Serializable] public class TableRowDef { public List<string> cells = new List<string>(); public float height; }   // height: min. wysokość wiersza, 0 = sama się dobiera
 
     [Serializable]
     public class BlockDef
@@ -60,6 +60,7 @@ namespace FinanceQuest
         public float size = 16f;                              // space: wysokość odstępu
         public List<TableRowDef> rows = new List<TableRowDef>();   // table: wiersze (pierwszy = nagłówek, gdy header)
         public bool header = true;                            // table: pierwszy wiersz to nagłówek
+        public List<float> colWidths = new List<float>();     // table: szerokość kolumn w % szerokości tabelki, 0 / brak = sama się dobiera
         public string style = "a";                            // table: a = karta z ciemnym nagłówkiem, b = bez ramki, same linie
         // Obrazek podpięty przez importer (nie ma go w JSON). Dzięki temu obrazki leżą obok treści,
         // a do gry trafiają razem z bazą treści – bez kopiowania do Resources.

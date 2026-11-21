@@ -43,8 +43,8 @@ namespace FinanceQuest
                 Ui.Place(host, x, y, w, 100);
             }
 
-            // Szerokości kolumn: według najdłuższego tekstu w kolumnie, dopasowane do szerokości tabelki.
-            var widths = ColumnWidths(host, rows, cols, inner, header, a);
+            // Szerokości kolumn: ustawione w edytorze (%) albo według najdłuższego tekstu, dopasowane do szerokości tabelki.
+            var widths = ColumnWidths(host, rows, cols, inner, header, b.colWidths);
 
             float cy = 0f;
             for (int r = 0; r < rows.Count; r++)
@@ -61,6 +61,7 @@ namespace FinanceQuest
                     texts[c] = t;
                 }
                 rowH += 2 * PadY;
+                rowH = Mathf.Max(rowH, b.rows[r].height);   // wysokość z edytora to minimum – dłuższy tekst i tak się zmieści
 
                 // Tło wiersza (pod tekstem – dodajemy je i przesuwamy na spód).
                 Color bg = a ? (head ? Palette.Brand : ((r - (header ? 1 : 0)) % 2 == 0 ? Palette.CardFill : Palette.Background)) : Color.clear;
@@ -111,7 +112,7 @@ namespace FinanceQuest
             return t;
         }
 
-        static float[] ColumnWidths(Transform host, List<List<string>> rows, int cols, float total, bool header, bool styleA)
+        static float[] ColumnWidths(Transform host, List<List<string>> rows, int cols, float total, bool header, List<float> percent)
         {
             var pref = new float[cols];
             var probe = Ui.Text("Probe", host, "", BodySize, Palette.Text, FontWeight.ExtraBold);
@@ -125,19 +126,39 @@ namespace FinanceQuest
                 }
             Object.DestroyImmediate(probe.gameObject);
 
-            // Mieści się – dzielimy zapas po równo. Nie mieści się – kolumny proporcjonalnie, ale nie węższe niż MinCol.
-            float sum = 0f;
-            for (int c = 0; c < cols; c++) { pref[c] = Mathf.Max(pref[c], MinCol); sum += pref[c]; }
             var w = new float[cols];
-            if (sum <= total)
+            var auto = new List<int>();
+            float fixedSum = 0f;
+            for (int c = 0; c < cols; c++)
             {
-                float extra = (total - sum) / cols;
-                for (int c = 0; c < cols; c++) w[c] = pref[c] + extra;
+                float p = percent != null && c < percent.Count ? percent[c] : 0f;
+                if (p > 0f) { w[c] = total * p / 100f; fixedSum += w[c]; }
+                else auto.Add(c);
+            }
+
+            // Kolumny z ustawionym % dostają swoją szerokość; jeśli razem nie wychodzi równo (np. 30% + 30%
+            // bez kolumn „auto” albo ponad 100%), skalujemy je, żeby tabelka zawsze miała pełną szerokość.
+            float room = total - MinCol * auto.Count;
+            if (fixedSum > 0f && (auto.Count == 0 || fixedSum > room))
+            {
+                float k = (auto.Count == 0 ? total : Mathf.Max(0f, room)) / fixedSum;
+                for (int c = 0; c < cols; c++) if (!auto.Contains(c)) w[c] *= k;
+                fixedSum *= k;
+            }
+            if (auto.Count == 0) return w;
+
+            // Pozostałe kolumny jak dotąd: mieści się – zapas po równo, nie mieści się – proporcjonalnie, ale nie węższe niż MinCol.
+            float left = total - fixedSum, sum = 0f;
+            foreach (int c in auto) { pref[c] = Mathf.Max(pref[c], MinCol); sum += pref[c]; }
+            if (sum <= left)
+            {
+                float extra = (left - sum) / auto.Count;
+                foreach (int c in auto) w[c] = pref[c] + extra;
             }
             else
             {
-                float fixedMin = MinCol * cols, rest = total - fixedMin, over = sum - fixedMin;
-                for (int c = 0; c < cols; c++) w[c] = MinCol + (over > 0f ? (pref[c] - MinCol) / over * rest : rest / cols);
+                float fixedMin = MinCol * auto.Count, rest = left - fixedMin, over = sum - fixedMin;
+                foreach (int c in auto) w[c] = MinCol + (over > 0f ? (pref[c] - MinCol) / over * rest : rest / auto.Count);
             }
             return w;
         }

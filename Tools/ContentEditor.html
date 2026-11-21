@@ -156,6 +156,8 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .tgrid{display:grid;gap:5px;align-items:center;margin-bottom:6px}
 .tgrid input{padding:6px 8px;font-size:13px;border-radius:8px}
 .tgrid input.thc{background:#E7F0F1;font-weight:800}.tgrid input.c0{font-weight:700}
+.tgrid input.tsz{padding:4px 6px;font-size:11.5px;background:#F5F3EE;text-align:center}
+.tgrid .tsl{font-size:10.5px;font-weight:700;color:#6F7A7C;text-align:center}
 .btab{margin-bottom:14px}.btab table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
 .btab th,.btab td{text-align:left;padding:7px 6px;vertical-align:top;white-space:pre-wrap}.btab td:first-child{font-weight:800}.btab b{font-weight:800}
 .ta{border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;overflow:hidden;background:var(--pcard)}
@@ -916,6 +918,7 @@ function levelWarnings(l){
       if (b.type === "video" && !String(b.video).trim()) w.push(pre + "filmik bez ścieżki.");
       if (b.type === "list" && !b.items.some(x => x.trim())) w.push(pre + "pusta lista.");
       if (b.type === "table" && !b.rows.some(r => r.cells.some(c => String(c).trim()))) w.push(pre + "pusta tabelka.");
+      if (b.type === "table" && (b.colWidths || []).reduce((s, x) => s + (Number(x) || 0), 0) > 100) w.push(pre + "kolumny tabelki mają razem ponad 100% – w aplikacji zostaną zwężone.");
       if (/\*\*/.test((b.text || "") + (b.items || []).join(" ")) && (((b.text || "") + (b.items || []).join(" ")).match(/\*\*/g).length % 2)) w.push(pre + "niesparowane ** (pogrubienie).");
     }
   });
@@ -1118,11 +1121,15 @@ function blockForm(bl, bind, p, j){
     const cols = Math.max(1, ...bl.rows.map(r => r.cells.length));
     f = `<div class="grid2" style="margin-bottom:8px"><div><span class="sub">Wygląd</span>${sel(`${bind}.style`, bl.style, {a:"A – karta z ciemnym nagłówkiem", b:"B – bez ramki, same linie"})}</div>
       <div style="display:flex;align-items:flex-end"><label style="margin:0;display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" data-check="${bind}.header" ${bl.header ? "checked" : ""}> pierwszy wiersz = nagłówek</label></div></div>
-      <div class="tgrid" style="grid-template-columns:repeat(${cols}, minmax(70px,1fr)) 30px">
+      <div class="sub" style="margin-bottom:4px">Szerokość kolumny w % (puste = sama się dobiera) · wysokość wiersza = minimum (puste = sama się dobiera)</div>
+      <div class="tgrid" style="grid-template-columns:repeat(${cols}, minmax(70px,1fr)) 54px 30px">
+      ${Array.from({length: cols}, (_, ci) => { const cw = Number((bl.colWidths || [])[ci]) || 0;
+          return `<input type="number" class="tsz" min="0" max="100" step="5" placeholder="szer. %" title="Szerokość kolumny w % szerokości tabelki (puste = sama się dobiera)" data-bind="${bind}.colWidths.${ci}" data-num="1" value="${cw || ""}">`; }).join("")}<span class="tsl">wys.</span><span></span>
       ${bl.rows.map((r, ri) => Array.from({length: cols}, (_, ci) =>
           `<input type="text" class="${bl.header && ri === 0 ? "thc" : ""} ${ci === 0 ? "c0" : ""}" data-bind="${bind}.rows.${ri}.cells.${ci}" value="${esc(r.cells[ci] ?? "")}">`).join("")
+          + `<input type="number" class="tsz" min="0" max="300" step="5" placeholder="auto" title="Minimalna wysokość wiersza (puste = sama się dobiera)" data-bind="${bind}.rows.${ri}.height" data-num="1" value="${Number(r.height) || ""}">`
           + `<button class="mini x" data-act="trow" data-p="${p}" data-b="${j}" data-i="${ri}" title="Usuń wiersz">✕</button>`).join("")}
-      ${Array.from({length: cols}, (_, ci) => `<button class="mini x" style="width:100%" data-act="tcol" data-p="${p}" data-b="${j}" data-i="${ci}" title="Usuń kolumnę">✕</button>`).join("")}<span></span></div>
+      ${Array.from({length: cols}, (_, ci) => `<button class="mini x" style="width:100%" data-act="tcol" data-p="${p}" data-b="${j}" data-i="${ci}" title="Usuń kolumnę">✕</button>`).join("")}<span></span><span></span></div>
       <div class="btns"><button class="btn small" data-act="tadd-row" data-p="${p}" data-b="${j}">+ wiersz</button><button class="btn small" data-act="tadd-col" data-p="${p}" data-b="${j}">+ kolumna</button></div>`;
   }
   if (bl.type === "space") f = `<input type="number" step="4" min="0" max="200" data-bind="${bind}.size" data-num="1" value="${esc(bl.size)}">`;
@@ -1218,7 +1225,10 @@ function blockPreview(b){
     case "divider": return `<div class="bd"></div>`;
     case "table": {
       const cols = Math.max(1, ...b.rows.map(r => r.cells.length)), head = b.header && b.rows.length > 1;
-      return `<div class="btab ${b.style === "b" ? "tb" : "ta"}"><table>${b.rows.map((r, ri) => "<tr>" + Array.from({length: cols}, (_, ci) => {
+      // Szerokości kolumn (%) i minimalne wysokości wierszy jak w aplikacji (ekran ~0.77 skali).
+      const cw = Array.from({length: cols}, (_, ci) => Number((b.colWidths || [])[ci]) || 0);
+      const cg = cw.some(x => x > 0) ? `<colgroup>${cw.map(x => x > 0 ? `<col style="width:${x}%">` : "<col>").join("")}</colgroup>` : "";
+      return `<div class="btab ${b.style === "b" ? "tb" : "ta"}"><table>${cg}${b.rows.map((r, ri) => `<tr${Number(r.height) > 0 ? ` style="height:${Math.round(r.height * 0.77)}px"` : ""}>` + Array.from({length: cols}, (_, ci) => {
         const tag = head && ri === 0 ? "th" : "td"; return `<${tag}>${rich(r.cells[ci] ?? "")}</${tag}>`; }).join("") + "</tr>").join("")}</table></div>`;
     }
     case "space": return `<div style="height:${Math.min(200, Number(b.size)||0)}px"></div>`;
@@ -1276,6 +1286,8 @@ document.addEventListener("input", e => {
   if (t.dataset.bind){
     let v = t.value; if (t.dataset.num) v = v === "" ? 0 : Number(v);
     setPath(f.data, t.dataset.bind, v); markDirty(f); trackPage(t.dataset.bind);
+    // Szerokość np. tylko 3. kolumny zostawiłaby „dziury” w liście (null w JSON) – Unity by tego nie wczytało.
+    if (/\.colWidths\.\d+$/.test(t.dataset.bind)){ const cw = getPath(f.data, t.dataset.bind.replace(/\.\d+$/, "")); for (let k = 0; k < cw.length; k++) cw[k] = Number(cw[k]) || 0; }
     if (t.tagName === "TEXTAREA") autoGrow(t);
     if (t.tagName === "SELECT" || /\.(type|kind|mode)$/.test(t.dataset.bind) || /\.(id|label)$/.test(t.dataset.bind) && t.dataset.bind.includes("zones")) { if (t.tagName === "SELECT") { if (/\.type$/.test(t.dataset.bind)) normalizeTask(getPath(f.data, t.dataset.bind.replace(/\.type$/,""))); renderForm(); } }
     renderPreview(); renderBanner();
@@ -1366,7 +1378,7 @@ document.addEventListener("click", async e => {
       if (act === "tadd-row") tb.rows.push({cells: Array(cols).fill("")});
       if (act === "tadd-col") tb.rows.forEach(r => { while (r.cells.length < cols) r.cells.push(""); r.cells.push(""); });
       if (act === "trow"){ if (tb.rows.length <= 1 || !confirm("Usunąć wiersz?")) return; tb.rows.splice(i, 1); }
-      if (act === "tcol"){ if (cols <= 1 || !confirm("Usunąć kolumnę?")) return; tb.rows.forEach(r => r.cells.splice(i, 1)); }
+      if (act === "tcol"){ if (cols <= 1 || !confirm("Usunąć kolumnę?")) return; tb.rows.forEach(r => r.cells.splice(i, 1)); if (tb.colWidths) tb.colWidths.splice(i, 1); }
       S.page = pi; return changed();
     }
     case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
