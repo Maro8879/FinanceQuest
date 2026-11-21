@@ -41,7 +41,9 @@ namespace FinanceQuest
                     case CourseArt.Sapling: Sapling(c); break;
                     case CourseArt.Tree: Tree(c); break;
                 }
-                return Sprite.Create(c.ToTexture("fq_" + key), new Rect(0, 0, c.Width, c.Height), new Vector2(0.5f, 0.5f),
+                // Przycięta do samego rysunku – na karcie dopasowujemy ją do pola z zachowaniem proporcji.
+                var tex = c.ToTexture("fq_" + key, true);
+                return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.5f),
                     100f, 0, SpriteMeshType.FullRect);
             });
         }
@@ -172,11 +174,12 @@ namespace FinanceQuest
             Pot(c);
             Line(c, 66, 60, 66, 30, 1f, W4);
             Line(c, 66, 46, 56, 38, 0.75f, W4);
-            Circle(c, V(66, 24), 15, Y);
-            Circle(c, V(54, 30), 11, Y);
-            Circle(c, V(78, 30), 11, Y);
-            Circle(c, V(66, 34), 11, Y);
-            Circle(c, V(60, 22), 6, YL);    // odblask
+            // Korona większa niż doniczka – drzewko ma być wyraźnie „pomiędzy” kiełkiem a drzewem.
+            Circle(c, V(66, 22), 19, Y);
+            Circle(c, V(50, 31), 14, Y);
+            Circle(c, V(82, 31), 14, Y);
+            Circle(c, V(66, 38), 13, Y);
+            Circle(c, V(58, 17), 7, YL);    // odblask
         }
 
         static void Tree(ColorCanvas c)

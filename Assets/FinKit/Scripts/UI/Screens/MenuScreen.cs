@@ -44,11 +44,10 @@ namespace FinanceQuest
             var ordered = new System.Collections.Generic.List<CourseData>();
             foreach (var id in recommended) foreach (var c in app.Courses) if (c.Id == id) ordered.Add(c);
             foreach (var c in app.Courses) if (!ordered.Contains(c)) ordered.Add(c);
+            // Wszystkie karty mają tę samą wysokość – liczoną dla najwyższego przypadku (plakietka + 2 linie tytułu).
+            var layout = CardLayout.Measure(content, cw, recommended.Count > 0);
             foreach (var course in ordered)
-            {
-                bool rec = recommended.Contains(course.Id);
-                y += CourseCard(content, ScreenKit.Margin, y + (rec ? 4f : 0f), cw, course, app, rec) + 14f + (rec ? 8f : 0f);
-            }
+                y += CourseCard(content, ScreenKit.Margin, y, cw, course, app, recommended.Contains(course.Id), layout) + 14f;
             ScreenKit.SetContentHeight(content, y + 24f);
         }
 
@@ -86,33 +85,63 @@ namespace FinanceQuest
             return bh;
         }
 
-        static float CourseCard(RectTransform parent, float x, float y, float w, CourseData course, FinanceQuestApp app, bool recommended)
+        // Wymiary wspólne dla wszystkich kart kursów (liczone raz na ekran).
+        class CardLayout
         {
-            const float pad = 16f, artMargin = 10f, gap = 8f;
-            float artW = Illustrations.BoxW, artH = Illustrations.BoxH;
-            float textW = w - pad - artW - artMargin - gap;
-            float value = app.Progress.CourseProgress(course);
+            public const float Pad = 16f, ArtMargin = 10f, Gap = 8f, TagGap = 8f, TagH = 22f, TitleSize = 17f;
+            public float TextW, TwoLines, Face;
 
-            // Najpierw karta o tymczasowej wysokości – wysokość znamy dopiero po zmierzeniu tytułu.
-            var card = LipCard.Create(parent, "Course_" + course.Id, x, y, w, 100,
+            public static CardLayout Measure(Transform parent, float w, bool anyTag)
+            {
+                var l = new CardLayout();
+                l.TextW = w - Pad - Illustrations.BoxW - ArtMargin - Gap;
+                // Wysokość dwóch linii tytułu mierzymy na próbce – zależy od fontu i rozmiaru.
+                var probe = Ui.Text("Probe", parent, "Ag\nAg", TitleSize, Color.white);
+                l.TwoLines = Ui.TextHeight(probe, l.TextW);
+                Object.DestroyImmediate(probe.gameObject);
+                // plakietka (jeśli jakaś karta ją ma) + 2 linie tytułu + podpis + odstęp + pasek
+                float h = Pad + (anyTag ? TagH + TagGap : 0f) + l.TwoLines + 19f + 12f + 16f + Pad;
+                l.Face = Mathf.Max(h, Illustrations.BoxH + 16f);
+                return l;
+            }
+        }
+
+        static float CourseCard(RectTransform parent, float x, float y, float w, CourseData course, FinanceQuestApp app, bool recommended,
+            CardLayout l)
+        {
+            const float pad = CardLayout.Pad;
+            float value = app.Progress.CourseProgress(course);
+            var card = LipCard.Create(parent, "Course_" + course.Id, x, y, w, l.Face + ScreenKit.Lip,
                 course.Color, course.Color, Palette.Darker(course.Color), ScreenKit.CardRadius, ScreenKit.Lip, 0f);
 
+            // Góra: plakietka „★ POLECANY DLA CIEBIE” (tylko polecane), pod nią tytuł (najwyżej 2 linie, dłuższy z „…”) i podpis.
+            float top = pad;
+            if (recommended) top += RecommendedTag(card.Content, pad, pad - 2f) + CardLayout.TagGap;
+            var t = Ui.Text("Title", card.Content, course.Title, CardLayout.TitleSize, Color.white);
+            t.overflowMode = TMPro.TextOverflowModes.Ellipsis;
+            t.maxVisibleLines = 2;
+            float th = Mathf.Min(Ui.TextHeight(t, l.TextW), l.TwoLines);
+            Ui.Place(t.rectTransform, pad, top, l.TextW, th);
             string sub = ContentText.Plural(course.Chapters.Count, "rozdział", "rozdziały", "rozdziałów") + " · " +
                          ContentText.Plural(course.LevelCount, "level", "levele", "leveli");
-            // Polecany kurs: plakietka „★ POLECANY DLA CIEBIE” nad tytułem (po lewej – nie wchodzi na grafikę), tytuł niżej o jej wysokość.
-            float top = pad;
-            if (recommended) top += RecommendedTag(card.Content, pad, pad - 2f) + 8f;
-            float th = ScreenKit.TitleBlock(card.Content, pad, top, textW, course.Title, 17f, sub, Color.white, Palette.WhiteSoft);
-            float barY = top + th + 9f;
-            ScreenKit.BarRow(card.Content, pad, barY, textW, value, Palette.TrackOnColor, Color.white, ScreenKit.Pct(value));
+            var st = Ui.Text("Subtitle", card.Content, sub, 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
+            Ui.Place(st.rectTransform, pad, top + th + 1f, l.TextW, 18f);
 
-            // Karta musi pomieścić ilustrację z marginesem 8 u góry i u dołu.
-            float face = Mathf.Max(barY + 16f + pad, artH + 16f);
-            ((RectTransform)card.transform).sizeDelta = new Vector2(w, face + ScreenKit.Lip);
-            card.AddIllustration(Illustrations.Get(course.Art, course.Color), artW, artH, artMargin);
+            // Dół: pasek zawsze przy dolnej krawędzi – procenty w kolejnych kartach stoją w jednej linii.
+            ScreenKit.BarRow(card.Content, pad, l.Face - pad - 16f, l.TextW, value, Palette.TrackOnColor, Color.white, ScreenKit.Pct(value));
+
+            // Ilustracja wyśrodkowana w pionie (AddIllustration kotwiczy ją do środka prawej krawędzi).
+            // Ilustracje są przycięte do rysunku, a tu wpasowane w pole z zachowaniem proporcji –
+            // dzięki temu mała sadzonka i szeroki wykres zajmują podobnie dużo miejsca.
+            var art = card.AddIllustration(Illustrations.Get(course.Art, course.Color), Illustrations.BoxW, Illustrations.BoxH, CardLayout.ArtMargin);
+            art.preserveAspect = true;
+            // preserveAspect dosuwa obrazek do strony pivota – przy pivocie z prawej wąskie ilustracje (kiełek, drzewo)
+            // lądowały przy prawej krawędzi. Pivot na środku = każda ilustracja wyśrodkowana w swoim polu.
+            art.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            art.rectTransform.anchoredPosition = new Vector2(-CardLayout.ArtMargin - Illustrations.BoxW * 0.5f, 0f);
 
             card.SetClickable(() => app.Push(r => CourseScreen.Build(r, app, course)));
-            return face + ScreenKit.Lip;
+            return l.Face + ScreenKit.Lip;
         }
     }
 }

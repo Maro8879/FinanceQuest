@@ -57,6 +57,13 @@ namespace FinanceQuest
         RectTransform bar;
         TMP_InputField input;
 
+        // Animacja przy najbliższej przebudowie ekranu: Slide = następne zadanie / wynik, Answer = po SPRAWDŹ.
+        // Zwykłe stuknięcia (zaznaczanie odpowiedzi) przebudowują ekran bez animacji.
+        enum Fx { None, Slide, Answer }
+        Fx fx = Fx.None;
+        ProgressBar progress;          // pasek postępu bieżącego widoku (null na ekranie wyniku)
+        float progressValue, shownProgress;   // docelowa wartość i to, co pasek pokazywał poprzednio
+
         public static void Build(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, int bestStars, Action<int> onFinish)
         {
             new QuizScreen(screen, app, tasks, isTest, bestStars, onFinish);
@@ -128,11 +135,13 @@ namespace FinanceQuest
             if (lastCorrect) score++;
             answered = true;
             Haptics.Tap();
+            fx = Fx.Answer;
             Show(false);
         }
 
         void Next()
         {
+            fx = Fx.Slide;
             if (index < tasks.Count - 1) StartTask(index + 1);
             else { finished = true; Show(true); }
         }
@@ -141,6 +150,7 @@ namespace FinanceQuest
         {
             score = 0;
             finished = false;
+            fx = Fx.Slide;
             StartTask(0);
         }
 
@@ -151,9 +161,25 @@ namespace FinanceQuest
             Vector2 keep = Vector2.zero;
             var old = screen.Find("Scroll/Content") as RectTransform;
             if (old != null && !toTop) keep = old.anchoredPosition;
-            for (int i = screen.childCount - 1; i >= 0; i--) UnityEngine.Object.Destroy(screen.GetChild(i).gameObject);
+            var anim = fx;
+            fx = Fx.None;
+            // Przy animacji stary widok nie znika od razu: przenosimy go na osobną warstwę, która płynnie odjeżdża / blednie.
+            RectTransform oldLayer = null;
+            if (anim != Fx.None && screen.childCount > 0)
+            {
+                oldLayer = Ui.Rect("Old", screen);
+                Ui.Stretch(oldLayer);
+                for (int i = screen.childCount - 1; i >= 0; i--)
+                {
+                    var ch = screen.GetChild(i);
+                    if (ch != oldLayer) ch.SetParent(oldLayer, false);
+                }
+            }
+            else
+                for (int i = screen.childCount - 1; i >= 0; i--) UnityEngine.Object.Destroy(screen.GetChild(i).gameObject);
             input = null;
             bar = null;
+            progress = null;
             app.SwipeForward = null;
 
             var content = ScreenKit.Scroll(screen, W, 0f);
@@ -165,13 +191,117 @@ namespace FinanceQuest
             ((RectTransform)content.parent).offsetMin = new Vector2(0f, barH);
             // Swipe w lewo = DALEJ, ale dopiero po sprawdzeniu odpowiedzi.
             if (!finished && answered) app.SwipeForward = Next;
+
+            if (anim != Fx.None) Animate(anim, oldLayer, content, barH);
+
+            // Pasek postępu dojeżdża płynnie od poprzedniej wartości (zamiast skoczyć).
+            if (progress != null)
+            {
+                float from = shownProgress, to = progressValue;
+                var pb = progress;
+                if (anim != Fx.None && Mathf.Abs(to - from) > 0.001f)
+                {
+                    var fxr = Fx_(screen);
+                    fxr.Add(0.1f, 0.45f, t => pb.SetValue(Mathf.Lerp(from, to, QuizFx.EaseOut(t))), null);
+                }
+                shownProgress = to;
+            }
+        }
+
+        // ---------------- animacje ----------------
+
+        // GetComponent w Unity zwraca „udawany null”, którego ?? nie łapie – dlatego zwykłe sprawdzenie.
+        static QuizFx Fx_(RectTransform screen)
+        {
+            var f = screen.GetComponent<QuizFx>();
+            if (f == null) f = screen.gameObject.AddComponent<QuizFx>();
+            return f;
+        }
+
+        void Animate(Fx anim, RectTransform oldLayer, RectTransform content, float barH)
+        {
+            var scrollRoot = (RectTransform)content.parent;
+            var fxr = Fx_(screen);
+            if (oldLayer != null)
+            {
+                oldLayer.SetAsLastSibling();   // stary widok na wierzchu, ale nieklikalny – nowy już działa pod spodem
+                var g = oldLayer.gameObject.AddComponent<CanvasGroup>();
+                g.blocksRaycasts = false;
+                g.interactable = false;
+                // Stary widok tylko blednie w miejscu – przycisk na dole płynnie zmienia napis, nic nie jeździ.
+                fxr.Add(0f, anim == Fx.Slide ? 0.15f : 0.16f, t => g.alpha = 1f - t,
+                    () => UnityEngine.Object.Destroy(oldLayer.gameObject));
+            }
+
+            if (anim == Fx.Slide)
+            {
+                // Kaskada jak w reszcie aplikacji: elementy zadania wskakują po kolei od góry (ten sam wiersz = razem).
+                // Pasek postępu stoi w miejscu (tylko się napełnia), dolny pasek z przyciskiem też się nie rusza.
+                var tops = new List<float>();
+                for (int i = 0; i < content.childCount; i++)
+                {
+                    float top = -((RectTransform)content.GetChild(i)).anchoredPosition.y;
+                    if (!tops.Contains(top)) tops.Add(top);
+                }
+                tops.Sort();
+                for (int i = 0; i < content.childCount; i++)
+                {
+                    var rt = (RectTransform)content.GetChild(i);
+                    if (progress != null && rt == progress.transform) continue;
+                    int rank = Mathf.Min(tops.IndexOf(-rt.anchoredPosition.y), 8);
+                    var g = rt.GetComponent<CanvasGroup>();
+                    if (g == null) g = rt.gameObject.AddComponent<CanvasGroup>();
+                    var basePos = rt.anchoredPosition;
+                    fxr.Add(0.08f + rank * 0.045f, 0.3f, t =>
+                    {
+                        float e = QuizFx.BackOut(t);
+                        g.alpha = Mathf.Clamp01(t * 1.6f);
+                        rt.anchoredPosition = basePos - new Vector2(0f, 16f * (1f - e));
+                    }, null);
+                }
+                return;
+            }
+
+            // Po SPRAWDŹ: przycisk zostaje w tym samym miejscu (zmienia się tylko napis i kolor – stary blednie na wierzchu),
+            // a karta z wynikiem wysuwa się zza niego do góry. Karta leży pod przyciskiem, więc „wychodzi” spod niego.
+            var card = bar != null ? bar.Find("Feedback") as RectTransform : null;
+            if (card != null)
+            {
+                var cg = card.GetComponent<CanvasGroup>();
+                if (cg == null) cg = card.gameObject.AddComponent<CanvasGroup>();
+                var basePos = card.anchoredPosition;
+                var size = card.sizeDelta;
+                bool pop = lastCorrect;   // dobra odpowiedź: dodatkowo lekkie „wyskoczenie” (rośnie z 90%)
+                fxr.Add(0.05f, 0.34f, t =>
+                {
+                    float e = QuizFx.BackOut(t);
+                    cg.alpha = Mathf.Clamp01(t * 2f);
+                    float k = pop ? 0.9f + 0.1f * e : 1f;
+                    card.localScale = new Vector3(k, k, 1f);
+                    // Punkt zaczepienia karty jest w lewym górnym rogu – korekta, żeby rosła od środka.
+                    var grow = new Vector2(size.x * (1f - k) * 0.5f, -size.y * (1f - k) * 0.5f);
+                    card.anchoredPosition = basePos + grow - new Vector2(0f, 28f * (1f - e));
+                }, null);
+            }
+            if (lastCorrect) return;
+            if (scrollRoot != null)
+            {
+                // Źle: zadanie krótko „kręci głową” na boki (drganie wygasa).
+                var basePos = scrollRoot.anchoredPosition;
+                fxr.Add(0.05f, 0.4f, t =>
+                {
+                    float x = Mathf.Sin(t * Mathf.PI * 6f) * 10f * (1f - t);
+                    scrollRoot.anchoredPosition = basePos + new Vector2(x, 0f);
+                }, () => { if (scrollRoot != null) scrollRoot.anchoredPosition = basePos; });
+            }
         }
 
         float BuildTask(RectTransform c)
         {
             var t = tasks[index];
             float y = 6f;
-            ProgressBar.Create(c, m, y, cw, 12f, Palette.Track, (index + (answered ? 1f : 0f)) / Mathf.Max(1, tasks.Count));
+            progressValue = (index + (answered ? 1f : 0f)) / Mathf.Max(1, tasks.Count);
+            progress = ProgressBar.Create(c, m, y, cw, 12f, Palette.Track, progressValue);
             y += 12f + 22f;
 
             if (index == 0 && best >= 0 && best < 3) y += BestNote(c, y);
@@ -965,6 +1095,48 @@ namespace FinanceQuest
                 field.onSubmit.AddListener(v => { typed = v; Check(); });
                 input = field;
             }
+        }
+    }
+
+    // Proste animacje ekranu zadań (kilka naraz). Działa tylko, gdy coś się animuje – potem się wyłącza.
+    public class QuizFx : MonoBehaviour
+    {
+        class Tween { public float Delay, Dur, T; public Action<float> Step; public Action Done; }
+        readonly List<Tween> list = new List<Tween>();
+
+        public void Add(float delay, float dur, Action<float> step, Action done)
+        {
+            list.Add(new Tween { Delay = delay, Dur = dur, Step = step, Done = done });
+            step(0f);
+            enabled = true;
+        }
+
+        void Update()
+        {
+            float dt = Time.unscaledDeltaTime;
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                var tw = list[i];
+                if (tw.Delay > 0f) { tw.Delay -= dt; continue; }
+                tw.T += dt;
+                float t = Mathf.Clamp01(tw.T / tw.Dur);
+                // Obiekt mógł zniknąć (np. szybkie DALEJ) – wtedy po prostu kończymy tę animację.
+                try { tw.Step(t); } catch (Exception) { t = 1f; }
+                if (t >= 1f)
+                {
+                    list.RemoveAt(i);
+                    if (tw.Done != null) try { tw.Done(); } catch (Exception) { }
+                }
+            }
+            if (list.Count == 0) enabled = false;
+        }
+
+        public static float EaseOut(float t) { t = 1f - t; return 1f - t * t * t; }
+        public static float BackOut(float t)
+        {
+            const float s = 1.7f;
+            t -= 1f;
+            return t * t * ((s + 1f) * t + s) + 1f;
         }
     }
 }

@@ -154,9 +154,10 @@ namespace FinanceQuest
 
         static void Flag(ColorCanvas c, Color g, Color gd, Color gl)
         {
-            Line(c, 14, 33, 14, 4, 1f, gd);
-            Poly(c, new[] { V(15, 5), V(32, 10), V(15, 16) }, g);
-            Circle(c, V(14, 4), 2f, gl);
+            // Maszt dokładnie na środku cokołu (x = 20), płachta powiewa w prawo.
+            Line(c, 20, 33, 20, 4, 1f, gd);
+            Poly(c, new[] { V(21, 5), V(36, 10), V(21, 16) }, g);
+            Circle(c, V(20, 4), 2f, gl);
         }
 
         // Skarbonka od przodu: okrągłe ciało, dwa uszy, duży ryjek, szczelina na monety.

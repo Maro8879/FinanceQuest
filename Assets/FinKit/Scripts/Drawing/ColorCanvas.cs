@@ -62,15 +62,43 @@ namespace FinanceQuest
             }
         }
 
-        public Texture2D ToTexture(string name)
+        public Texture2D ToTexture(string name) { return ToTexture(name, false); }
+
+        // crop = przycinamy przezroczyste brzegi (zostawiając 2 px), żeby różne ilustracje dało się
+        // dopasować do tego samego pola i wszystkie wyglądały na podobnie duże.
+        public Texture2D ToTexture(string name, bool crop)
         {
-            var px = new Color32[a.Length];
-            for (int i = 0; i < px.Length; i++)
+            int cx0 = 0, cy0 = 0, cw = Width, ch = Height;
+            if (crop)
             {
-                float al = a[i];
-                if (al <= 0.0001f) continue;
-                px[i] = new Color32(To8(r[i] / al), To8(g[i] / al), To8(b[i] / al), To8(al));
+                int minX = Width, minY = Height, maxX = -1, maxY = -1;
+                for (int y = 0; y < Height; y++)
+                    for (int x = 0; x < Width; x++)
+                        if (a[y * Width + x] > 0.02f)
+                        {
+                            if (x < minX) minX = x; if (x > maxX) maxX = x;
+                            if (y < minY) minY = y; if (y > maxY) maxY = y;
+                        }
+                if (maxX >= 0)
+                {
+                    cx0 = Mathf.Max(0, minX - 2); cy0 = Mathf.Max(0, minY - 2);
+                    cw = Mathf.Min(Width - 1, maxX + 2) - cx0 + 1; ch = Mathf.Min(Height - 1, maxY + 2) - cy0 + 1;
+                }
             }
+            var px = new Color32[cw * ch];
+            for (int y = 0; y < ch; y++)
+                for (int x = 0; x < cw; x++)
+                {
+                    int i = (y + cy0) * Width + x + cx0;
+                    float al = a[i];
+                    if (al <= 0.0001f) continue;
+                    px[y * cw + x] = new Color32(To8(r[i] / al), To8(g[i] / al), To8(b[i] / al), To8(al));
+                }
+            return Finish(name, px, cw, ch);
+        }
+
+        Texture2D Finish(string name, Color32[] px, int Width, int Height)
+        {
             // Przezroczyste piksele przy krawędziach dostają kolor sąsiada – inaczej filtrowanie robi ciemne obwódki.
             var src = (Color32[])px.Clone();
             for (int y = 0; y < Height; y++)
