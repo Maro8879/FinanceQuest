@@ -4,8 +4,8 @@
   "title": "Financial scams",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T13:52:20Z"
+    "editedBy": "Jan",
+    "editedAt": "2026-11-21T20:41:49Z"
   },
   "levels": [
     {
@@ -141,7 +141,7 @@
     {
       "id": "l6",
       "kind": "lesson",
-      "title": "phishing video",
+      "title": "Phishing video",
       "pages": [
         {
           "blocks": [
