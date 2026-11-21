@@ -12,13 +12,11 @@ namespace FinanceQuest
     public static class DailyHero
     {
         const float Radius = 22f;
-        static readonly Color PanelNight = new Color(8f / 255f, 32f / 255f, 38f / 255f, 0.78f);
         static readonly Color PanelDay = new Color(1f, 1f, 1f, 0.84f);
 
         // Zwraca wysokość karty.
         public static float Build(RectTransform parent, float x, float y, float w)
         {
-            bool night = Settings.DarkMode;
             // Wysokość z proporcji rysunku, żeby obraz się nie rozciągał.
             float h = Mathf.Round(w * WallStreetArt.H / WallStreetArt.W);
             var root = Ui.Rect("DailyThought", parent);
@@ -29,7 +27,7 @@ namespace FinanceQuest
             Ui.Stretch(mask.rectTransform);
             mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
             var art = Ui.Rect("Art", mask.transform).gameObject.AddComponent<Image>();
-            art.sprite = night ? WallStreetArt.Night : WallStreetArt.Day;
+            art.sprite = WallStreetArt.Day;
             art.raycastTarget = false;
             Ui.Stretch(art.rectTransform);
 
@@ -39,13 +37,13 @@ namespace FinanceQuest
             // Panel z cytatem – półprzezroczysty, żeby wysokie budynki mogły sięgać pod tekst.
             // RectMask2D przycina tekst, który przy zmianie cytatu wyjeżdża poza panel.
             const float inset = 10f, pad = 12f;
-            var panel = Ui.Rounded("Panel", root, night ? PanelNight : PanelDay, 14f);
+            var panel = Ui.Rounded("Panel", root, PanelDay, 14f);
             panel.gameObject.AddComponent<RectMask2D>();
             float tw = w - 2 * inset - 2 * pad;
-            var quote = Ui.Text("Quote", panel.transform, "\u201C" + DailyThoughts.Today() + "\u201D", 18f, night ? Color.white : Palette.Text,
+            var quote = Ui.Text("Quote", panel.transform, "\u201C" + DailyThoughts.Today() + "\u201D", 18f, Palette.Text,
                 FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
             var author = Ui.Text("Author", panel.transform, "— " + DailyThoughts.TodayAuthor(), 13f,
-                night ? new Color(1f, 1f, 1f, 0.7f) : Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.TopLeft);
+                Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.TopLeft);
 
             var swap = panel.gameObject.AddComponent<QuoteSwap>();
             swap.Init(panel.rectTransform, quote, author, inset, pad, w, tw);
