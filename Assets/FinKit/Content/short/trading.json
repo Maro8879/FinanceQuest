@@ -1,0 +1,84 @@
+{
+  "format": 1,
+  "id": "trading",
+  "title": "Konto oszczędnościowe i lokata",
+  "color": "#4A5D73",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:54:57Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Dlaczego giełda nie lubi pośpiechu",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Konto bieżące vs oszczędnościowe",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Lokata terminowa",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": ""
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}

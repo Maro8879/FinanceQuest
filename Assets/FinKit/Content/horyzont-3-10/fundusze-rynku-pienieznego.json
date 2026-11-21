@@ -1,0 +1,84 @@
+{
+  "format": 1,
+  "id": "fundusze-rynku-pienieznego",
+  "title": "Fundusze rynku pieniężnego",
+  "color": "#4A5D73",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-20T22:54:59Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Czym jest fundusz rynku pieniężnego",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Czym jest fundusz rynku pieniężnego"
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Lokata vs fundusz",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Lokata vs fundusz"
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Kiedy to ma sens",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Kiedy to ma sens"
+            },
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
