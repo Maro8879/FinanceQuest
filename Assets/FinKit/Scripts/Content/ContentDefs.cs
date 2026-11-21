@@ -85,6 +85,21 @@ namespace FinanceQuest
     {
         public string game;
         public List<SettingDef> settings = new List<SettingDef>();
+        // „Prawda czy Pułapka?”: własne karty z edytora (puste = karty domyślne) i losowa kolejność.
+        public List<ScamCardDef> cards = new List<ScamCardDef>();
+        public bool shuffle;
+    }
+
+    // Karta mini gry „Prawda czy Pułapka?”. type: sms | social | bank | article | product | call; answer: safe | trap.
+    [Serializable]
+    public class ScamCardDef
+    {
+        public string type;
+        public string from;
+        public string text;
+        public string answer;
+        public string explain;
+        public List<string> flags = new List<string>();
     }
 
     [Serializable]

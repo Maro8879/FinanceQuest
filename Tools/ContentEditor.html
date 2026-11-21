@@ -198,8 +198,21 @@ const ARTS = {Portfolio:"Wykres kołowy", Magnifier:"Lupa nad świecami", Laptop
 const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
+// „Prawda czy Pułapka?”: rodzaje kart (tylko wygląd w aplikacji) i odpowiedzi.
+const SCAM_TYPES = {sms:"SMS", social:"Reklama w social mediach", bank:"Aplikacja bankowa", article:"Artykuł sponsorowany", product:"Karta produktu", call:"Telefon"};
+const SCAM_ANS = {trap:"✕ PUŁAPKA", safe:"✓ BEZPIECZNE"};
+// Te same 6 kart, które aplikacja bierze, gdy level nie ma własnych (ScamDeck.Default) – tu do wstawienia i edycji.
+const SCAM_DEFAULT = [
+  {type:"social", from:"InvestAI · Sponsorowane", text:"Odkryj sekretny algorytm AI! Zainwestuj 250 € i odbierz gwarantowane 1 500 € zysku w 7 dni. Bez ryzyka!", answer:"trap", explain:"Red flag! Na legalnym rynku wysoki zysk zawsze oznacza ryzyko. Nikt nie może zagwarantować 500% zwrotu w tydzień.", flags:["gwarantowany zysk","bez ryzyka"]},
+  {type:"bank", from:"Twój bank · oferta", text:"Lokata terminowa na 6 miesięcy: stałe oprocentowanie 4,0% w skali roku. Depozyt chroniony do 100 000 €.", answer:"safe", explain:"Dobry wybór! To standardowa, legalna oferta bankowa ze znanym z góry oprocentowaniem i ustawową gwarancją kapitału.", flags:[]},
+  {type:"sms", from:"BANK-INFO", text:"Twoje konto zostało zablokowane ze względów bezpieczeństwa. Kliknij link bit.ly/bank-verify-99 w ciągu 15 minut, aby odblokować dostęp.", answer:"trap", explain:"Phishing i presja czasu! Prawdziwy bank nigdy nie wysyła skróconych linków do logowania SMS-em i nie straszy blokadą w 15 minut.", flags:["skrócony link","presja czasu"]},
+  {type:"article", from:"Portal Newsy24 · Artykuł sponsorowany", text:"Znany prezenter telewizyjny ujawnia w wywiadzie: „Rząd chce ukryć tę platformę, dzięki której każdy obywatel zarabia 500 € dziennie”.", answer:"trap", explain:"Fałszywy wizerunek (deepfake)! Oszuści bezprawnie wykorzystują zdjęcia znanych osób, aby wzbudzić Twoje zaufanie.", flags:["wizerunek celebryty"]},
+  {type:"product", from:"Karta produktu · ETF", text:"Globalny ETF na 1 500 największych firm świata. Opłata roczna (TER): 0,20%. Historyczny średni zwrot: ok. 7–8% rocznie (brak gwarancji zysku).", answer:"safe", explain:"Uczciwa oferta! Niska opłata za zarządzanie, szeroka dywersyfikacja i uczciwa informacja o braku gwarancji zysku to cechy dobrego produktu.", flags:[]},
+  {type:"call", from:"Nieznany numer · „Dział bezpieczeństwa”", text:"Dzwonię z działu bezpieczeństwa. Ktoś próbuje ukraść Twoje środki – zainstaluj aplikację AnyDesk, abym mógł przelać je na konto techniczne.", answer:"trap", explain:"Spoofing telefoniczny! Żaden pracownik banku nigdy nie prosi o instalację programu do zdalnego pulpitu ani o przelew na „konto techniczne”.", flags:["zdalny dostęp","konto techniczne"]},
+];
+
 // Mini gry: id w treści → nazwa w edytorze. Gotowa (zrobiona w aplikacji) jest na razie tylko „12-miesiecy”.
-const GAMES = {"12-miesiecy":"Pierwsze 12 miesięcy po zakupie (symulacja inwestowania)", sortowanie:"sortowanie (jeszcze nie ma)", budzet:"budzet (jeszcze nie ma)", wydatki:"wydatki (jeszcze nie ma)", inna:"inna (jeszcze nie ma)"};
+const GAMES = {"12-miesiecy":"Pierwsze 12 miesięcy po zakupie (symulacja inwestowania)", "prawda-czy-pulapka":"Prawda czy Pułapka? (oszustwa – przesuń kartę)", sortowanie:"sortowanie (jeszcze nie ma)", budzet:"budzet (jeszcze nie ma)", wydatki:"wydatki (jeszcze nie ma)", inna:"inna (jeszcze nie ma)"};
 const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", video:"Filmik", callout:"Ważne", list:"Lista", table:"Tabelka", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
@@ -480,6 +493,8 @@ function normalizeChapter(d, name){
     l.pages = l.pages || []; l.tasks = l.tasks || []; l.minigame = l.minigame || {game:"", settings:[]};
     for (const pg of l.pages) normalizePage(pg);
     l.minigame.settings = l.minigame.settings || [];
+    l.minigame.cards = l.minigame.cards || []; l.minigame.shuffle = !!l.minigame.shuffle;
+    for (const c of l.minigame.cards){ c.flags = c.flags || []; c.answer = c.answer || "trap"; c.type = c.type || "sms"; }
     for (const t of l.tasks) normalizeTask(t);
   }
 }
@@ -916,6 +931,11 @@ function taskWarnings(t){
 function levelWarnings(l){
   const w = [];
   if ((l.kind === "task" || l.kind === "test") && !l.tasks.length) w.push("Level bez zadań.");
+  if (l.kind === "minigame" && l.minigame.game === "prawda-czy-pulapka")
+    l.minigame.cards.forEach((c, i) => {
+      if (!String(c.text).trim()) w.push("Karta " + (i+1) + ": brak treści.");
+      if (!String(c.explain).trim()) w.push("Karta " + (i+1) + ": brak wyjaśnienia.");
+    });
   if (l.kind === "lesson" && !l.pages.length) w.push("Lekcja bez stron.");
   if (l.kind === "lesson") l.pages.forEach((pg, i) => {
     const pre = "Strona " + (i+1) + ": ";
@@ -1079,6 +1099,21 @@ function levelForm(){
       + `<div class="btns"><button class="btn small" data-act="add-page">+ strona</button></div>`
       + `<label>Zadania na koniec lekcji <span class="hint">opcjonalnie – po stronach; trzeba odpowiedzieć poprawnie, żeby przejść dalej</span></label>`
       + taskList(l);
+  } else if (l.kind === "minigame" && l.minigame.game === "prawda-czy-pulapka"){
+    // Karty gry „Prawda czy Pułapka?” – każda: rodzaj (wygląd), nadawca, treść, poprawna odpowiedź, wyjaśnienie.
+    const mg = `${b}.minigame`;
+    body = `<label>Mini gra</label>${sel(`${mg}.game`, l.minigame.game, Object.fromEntries([["","— wybierz —"], ...Object.entries(GAMES)]))}
+      <label>Karty <span class="hint">bez kart gra pokaże 6 przykładowych · w aplikacji: w lewo = pułapka, w prawo = bezpieczne</span></label>`
+      + l.minigame.cards.map((c,i) => `<div class="card">
+        <div class="line"><b style="flex:1">Karta ${i+1}</b><button class="mini" data-act="scam-card" data-i="${i}" data-dir="-1">↑</button><button class="mini" data-act="scam-card" data-i="${i}" data-dir="1">↓</button><button class="mini x" data-act="scam-card" data-i="${i}" data-dir="0">✕</button></div>
+        <div class="grid2"><div><label>Rodzaj</label>${sel(`${mg}.cards.${i}.type`, c.type, SCAM_TYPES)}</div><div><label>Poprawna odpowiedź</label>${sel(`${mg}.cards.${i}.answer`, c.answer, SCAM_ANS)}</div></div>
+        <label>Nadawca / nagłówek <span class="hint">np. BANK-INFO, Nieznany numer – bez prawdziwych numerów i linków</span></label>${one(`${mg}.cards.${i}.from`, c.from, "Nadawca")}
+        <label>Treść karty</label>${multi(`${mg}.cards.${i}.text`, c.text, "Treść wiadomości / oferty")}
+        <label>Wyjaśnienie po decyzji <span class="hint">1–2 zdania</span></label>${multi(`${mg}.cards.${i}.explain`, c.explain, "Dlaczego to pułapka / dlaczego bezpieczne")}
+        <label>Czerwone flagi <span class="hint">po przecinku, opcjonalnie</span></label>${listIn(`${mg}.cards.${i}.flags`, c.flags, "np. presja czasu, skrócony link")}
+      </div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-scam-card">+ karta</button><button class="btn small" data-act="scam-defaults">Wstaw 6 przykładowych</button>
+        <label style="margin:0 0 0 12px;display:flex;gap:6px;align-items:center"><input type="checkbox" data-check="${mg}.shuffle" ${l.minigame.shuffle?"checked":""}> losowa kolejność</label></div>`;
   } else if (l.kind === "minigame"){
     body = `<label>Mini gra</label>${sel(`${b}.minigame.game`, l.minigame.game, Object.fromEntries([["","— wybierz —"], ...Object.entries(GAMES)]))}
       <label>Ustawienia <span class="hint">klucz → wartość</span></label>` + l.minigame.settings.map((s,i) => `<div class="line"><div class="f">${one(`${b}.minigame.settings.${i}.key`, s.key, "klucz")}</div><div class="f">${one(`${b}.minigame.settings.${i}.value`, s.value, "wartość")}</div><button class="mini x" data-act="setting" data-i="${i}" data-dir="0">✕</button></div>`).join("")
@@ -1218,6 +1253,13 @@ function previewBody(){
       <div class="pscroll">${p.blocks.map(blockPreview).join("") || '<div class="sub">(pusta strona)</div>'}</div>
       ${n > 1 ? `<div class="pdots">${l.pages.map((_,i)=>`<i class="${i===pi?"on":""}" data-act="ppage" data-i="${i}"></i>`).join("")}</div>` : ""}
       <div class="pbtn y" data-act="ppage" data-i="${last ? pi : pi+1}">${!last ? "DALEJ" : l.tasks.length ? "DO ZADAŃ" : "UKOŃCZ"}</div>`;
+  }
+  if (s.part === "level" && l.kind === "minigame" && l.minigame.game === "prawda-czy-pulapka"){
+    const cs = l.minigame.cards.length ? l.minigame.cards : SCAM_DEFAULT, c = cs[0];
+    return `<div class="pk">KARTA 1 Z ${cs.length}${l.minigame.cards.length ? "" : " · przykładowe"}</div>
+      <div class="pa"><span class="sub" style="color:var(--pmut)">${esc(SCAM_TYPES[c.type] || c.type)} · ${esc(c.from)}</span><br>${esc(c.text)}</div>
+      <div style="display:flex;gap:8px">${[["#B8432D","#8C3322","✕ PUŁAPKA"],["#2F7D51","#235E3D","✓ BEZPIECZNE"]].map(([bg,lip,t]) => `<div style="flex:1;text-align:center;font-weight:800;color:#fff;border-radius:12px;padding:12px 4px;background:${bg};box-shadow:0 4px 0 ${lip}">${t}</div>`).join("")}</div>
+      <div class="sub" style="color:var(--pmut);margin-top:8px">Poprawnie: ${esc(SCAM_ANS[c.answer] || c.answer)} — ${esc(c.explain)}</div>`;
   }
   if (s.part === "level" && l.kind === "minigame")
     return `<div class="pk">MINI GRA</div><div class="pq">${esc(l.title || "Mini gra")}</div><div class="pa">Gra: <b>${esc(GAMES[l.minigame.game] || l.minigame.game || "—")}</b>${l.minigame.settings.map(x=>`<br>${esc(x.key)}: ${esc(x.value)}`).join("")}</div>
@@ -1407,6 +1449,11 @@ document.addEventListener("click", async e => {
     case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
     case "pick-video": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b), field: a.dataset.field}; $("vidpick").click(); return;
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
+    case "add-scam-card": l.minigame.cards.push({type:"sms", from:"", text:"", answer:"trap", explain:"", flags:[]}); return changed();
+    case "scam-card": if (moveIn(l.minigame.cards, i, dir)) changed(); return;
+    case "scam-defaults":
+      if (l.minigame.cards.length && !confirm("Zastąpić obecne karty 6 przykładowymi?")) return;
+      l.minigame.cards = clone(SCAM_DEFAULT); return changed();
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
     case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();
     case "task-list": if (moveIn(l.tasks, i, dir)) changed(); return;
