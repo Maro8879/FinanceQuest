@@ -2,7 +2,7 @@
   "format": 1,
   "id": "credit",
   "title": "INWESTOWANIE KRÓTKOTERMINOWE (obarczone dużym ryzykiem)",
-  "shortName": "Trading",
+  "shortName": "IK",
   "color": "#4A5D73",
   "art": "Candles",
   "icon": "Chart",
@@ -13,7 +13,7 @@
     "zarzadzanie-kapitalem"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T07:40:11Z"
   }
 }
