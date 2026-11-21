@@ -343,6 +343,14 @@ namespace FinanceQuest
                     c.Add(p => SdfCanvas.Polygon(p, new[] { V(9.6f, 3.5f), V(14.4f, 3.5f), V(13.3f, 15.2f), V(10.7f, 15.2f) }) - 0.6f);
                     c.Add(p => SdfCanvas.Circle(p, V(12, 19.6f), 2.3f));
                     break;
+                case IconId.Play:
+                    // Trójkąt odtwarzania z lekko zaokrąglonymi rogami (filmik w lekcji).
+                    c.Add(p => SdfCanvas.Polygon(p, new[] { V(7, 4.5f), V(19.5f, 12), V(7, 19.5f) }) - 1f);
+                    break;
+                case IconId.Pause:
+                    c.Add(p => SdfCanvas.RoundRect(p, V(8.5f, 12), V(4.4f, 15f), 1.2f));
+                    c.Add(p => SdfCanvas.RoundRect(p, V(15.5f, 12), V(4.4f, 15f), 1.2f));
+                    break;
                 case IconId.Spark:
                 {
                     var s = new[] { V(12, 0.5f), V(14.4f, 9.6f), V(23.5f, 12), V(14.4f, 14.4f), V(12, 23.5f), V(9.6f, 14.4f), V(0.5f, 12), V(9.6f, 9.6f) };

@@ -1,0 +1,320 @@
+using System;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using UnityEngine.Video;
+
+namespace FinanceQuest
+{
+    // Filmik w lekcji: obraz w karcie z wargą, pod nim pasek (play/pauza, przewijanie, czas).
+    // Tap w obraz = pełny ekran, tap na pełnym ekranie = z powrotem w treść.
+    // Przy przełączaniu przenosimy ten sam obiekt (nie tworzymy drugiego odtwarzacza),
+    // więc filmik gra dalej bez przerwy i bez ponownego wczytywania.
+    public class VideoBlock : MonoBehaviour, IPointerClickHandler
+    {
+        const float BarH = 36f, Lip = 4f, Border = 2f, Radius = 16f;
+        const float MaxInlineH = 260f;   // pionowy filmik nie zajmie całej strony
+        const float PlayW = 42f, TimeW = 84f, Big = 54f;
+
+        VideoPlayer player;
+        RawImage picture;
+        RectTransform stage, home, overlay, bar, track, fill, knob, bigPlay;
+        Image playIcon;
+        TextMeshProUGUI timeLabel;
+        Vector2 inlineSize;
+        float aspect, trackW, shownK = -1f, dragK;
+        double length;
+        bool full, dragging, shownPlaying;
+        int shownSec = -1;
+
+        // Zwraca wysokość bloku razem z podpisem.
+        public static float Build(RectTransform parent, BlockDef b, float x, float y, float cw)
+        {
+            var clip = b.clip;
+            float aspect = clip != null && clip.height > 0 ? (float)clip.width / clip.height : 16f / 9f;
+            float w = cw;
+            float vh = (w - 2 * Border) / aspect;
+            if (vh > MaxInlineH)
+            {
+                vh = MaxInlineH;
+                // Węższa karta dla pionowego filmiku, ale nie tak wąska, żeby pasek stał się nieczytelny.
+                w = Mathf.Clamp(vh * aspect + 2 * Border, Mathf.Min(cw, 230f), cw);
+            }
+            float h = vh + BarH + 2 * Border;
+            float px = x + (cw - w) * 0.5f;
+            var card = LipCard.Create(parent, "Video", px, y, w, h + Lip, Palette.CardFill, Palette.CardEdge, Palette.CardLip, Radius, Lip, Border);
+
+            if (clip == null)
+            {
+                var miss = Ui.Text("Missing", card.Content, "Brak filmiku\n" + b.video, 12.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
+                Ui.Stretch(miss.rectTransform, 10, 10, 10, 10);
+            }
+            else
+            {
+                // Zaokrąglona maska, żeby rogi filmu nie wystawały poza kartę.
+                var mask = Ui.Rounded("Mask", card.Face, Color.white, Radius - Border);
+                Ui.Stretch(mask.rectTransform, Border, Border, Border, Border);
+                mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
+                var vb = Ui.Rect("Stage", mask.transform).gameObject.AddComponent<VideoBlock>();
+                vb.Init(clip, aspect, mask.rectTransform, new Vector2(w - 2 * Border, vh + BarH));
+            }
+
+            float used = h + Lip;
+            if (!string.IsNullOrEmpty(b.caption))
+            {
+                var c = Ui.Text("Caption", parent, ContentBlocks.Rich(b.caption), 12.5f, Palette.TextMuted, FontWeight.SemiBold);
+                c.richText = true;
+                float ch = Ui.TextHeight(c, cw);
+                Ui.Place(c.rectTransform, x, y + used + 6f, cw, ch);
+                used += 6f + ch;
+            }
+            return used;
+        }
+
+        void Init(VideoClip clip, float aspect, RectTransform home, Vector2 size)
+        {
+            this.aspect = aspect;
+            this.home = home;
+            inlineSize = size;
+            length = clip.length;
+            stage = (RectTransform)transform;
+            Ui.Stretch(stage);
+
+            // Ciemne tło łapie tap w obraz (także w pasach po bokach węższego filmiku).
+            var bg = gameObject.AddComponent<Image>();
+            bg.color = Palette.Text;
+
+            picture = Ui.Rect("Picture", stage).gameObject.AddComponent<RawImage>();
+            picture.raycastTarget = false;
+            picture.color = Color.clear;   // do pierwszej klatki – inaczej byłby biały prostokąt
+
+            var circle = Ui.Rounded("BigPlay", stage, Palette.Accent, Big * 0.5f);
+            bigPlay = circle.rectTransform;
+            var bi = Ui.Icon("Icon", bigPlay, IconId.Play, Palette.OnAccent, 26f);
+            Ui.Center(bi.rectTransform, 26f, 26f, 2f, 0f);   // trójkąt optycznie w środku koła
+
+            bar = Ui.Rect("Bar", stage);
+            var barBg = bar.gameObject.AddComponent<Image>();
+            barBg.color = new Color(0f, 0f, 0f, 0.28f);
+            bar.gameObject.AddComponent<TapCatcher>();   // tap w pasek nie przełącza pełnego ekranu
+
+            var playHit = Ui.Rect("Play", bar);
+            playHit.gameObject.AddComponent<Image>().color = Color.clear;
+            playHit.gameObject.AddComponent<TapCatcher>().OnTap = TogglePlay;
+            Ui.Place(playHit, 0, 0, PlayW, BarH);
+            playIcon = Ui.Icon("Icon", playHit, IconId.Play, Color.white, 18f);
+            Ui.Center(playIcon.rectTransform, 18f, 18f, 2f, 0f);
+
+            track = Ui.Rect("Track", bar);
+            track.gameObject.AddComponent<Image>().color = Color.clear;   // cała wysokość paska łapie palec, nie tylko cienka linia
+            track.gameObject.AddComponent<Scrubber>().OnScrub = Scrub;
+            var line = Ui.Rounded("Line", track, new Color(1f, 1f, 1f, 0.3f), 2f);
+            fill = Ui.Rounded("Fill", track, Palette.Accent, 2f).rectTransform;
+            knob = Ui.Rounded("Knob", track, Palette.Accent, 7f).rectTransform;
+
+            timeLabel = Ui.Text("Time", bar, "", 12f, Color.white, FontWeight.SemiBold, TextAlignmentOptions.MidlineRight);
+
+            player = gameObject.AddComponent<VideoPlayer>();
+            player.playOnAwake = false;
+            player.source = VideoSource.VideoClip;
+            player.clip = clip;
+            // APIOnly: bierzemy gotową teksturę dekodera, bez dodatkowej kopii do RenderTexture – mniej pracy dla telefonu.
+            player.renderMode = VideoRenderMode.APIOnly;
+            player.audioOutputMode = VideoAudioOutputMode.Direct;
+            player.isLooping = false;
+            player.skipOnDrop = true;   // na słabszym telefonie lepiej zgubić klatkę, niż rozjechać obraz z dźwiękiem
+            player.loopPointReached += p => { p.Pause(); p.time = 0; };   // po końcu wracamy na start, gotowi do ponownego obejrzenia
+            player.Prepare();   // pierwsza klatka służy za okładkę, zanim ktoś kliknie
+
+            // Gdy ekran lekcji znika (np. przebudowa), pełny ekran musi zniknąć razem z nim – inaczej filmik zostałby na wierzchu.
+            home.gameObject.AddComponent<Guard>().Owner = this;
+
+            Layout(inlineSize.x, inlineSize.y);
+        }
+
+        // Rozkład wewnątrz „sceny” o rozmiarze w×h: obraz (z zachowaniem proporcji) i pasek na dole.
+        void Layout(float w, float h)
+        {
+            float vh = h - BarH;
+            float pw = w, ph = w / aspect;
+            if (ph > vh) { ph = vh; pw = vh * aspect; }
+            Ui.Place(picture.rectTransform, (w - pw) * 0.5f, (vh - ph) * 0.5f, pw, ph);
+            Ui.Place(bigPlay, (w - Big) * 0.5f, (vh - Big) * 0.5f, Big, Big);
+
+            Ui.Place(bar, 0, vh, w, BarH);
+            trackW = Mathf.Max(20f, w - PlayW - TimeW - 14f);
+            Ui.Place(track, PlayW, 0, trackW, BarH);
+            Ui.Place((RectTransform)track.Find("Line"), 0, BarH * 0.5f - 2f, trackW, 4f);
+            Ui.Place(timeLabel.rectTransform, w - TimeW - 12f, 0, TimeW, BarH);
+            shownK = -1f;
+            shownPlaying = !player.isPlaying;   // wymusza odświeżenie ikon przy najbliższym Update
+            Update();
+        }
+
+        void Update()
+        {
+            if (player == null) return;
+            var tex = player.texture;
+            if (tex != picture.texture)
+            {
+                picture.texture = tex;
+                picture.color = tex != null ? Color.white : Color.clear;
+            }
+
+            bool playing = player.isPlaying;
+            if (playing != shownPlaying)
+            {
+                shownPlaying = playing;
+                playIcon.sprite = ProceduralSprites.Icon(playing ? IconId.Pause : IconId.Play);
+                bigPlay.gameObject.SetActive(!playing && !full);
+            }
+
+            // Pozycja suwaka: przy przeciąganiu palec, inaczej czas filmu. Przesuwamy tylko, gdy coś się zmieniło.
+            double t = dragging ? dragK * length : player.time;
+            float k = length > 0 ? Mathf.Clamp01((float)(t / length)) : 0f;
+            if (Mathf.Abs(k - shownK) * trackW > 0.5f)
+            {
+                shownK = k;
+                Ui.Place(fill, 0, BarH * 0.5f - 2f, Mathf.Max(4f, k * trackW), 4f);
+                Ui.Place(knob, k * trackW - 7f, BarH * 0.5f - 7f, 14f, 14f);
+            }
+            int sec = (int)t;
+            if (sec != shownSec)
+            {
+                shownSec = sec;
+                timeLabel.text = Clock(t) + " / " + Clock(length);
+            }
+
+            // Na pełnym ekranie poziomy ruch palca to przewijanie filmu, nie zmiana strony.
+            if (full) SwipeInput.Suppress = true;
+        }
+
+        static string Clock(double s)
+        {
+            int t = Mathf.Max(0, (int)s);
+            return (t / 60) + ":" + (t % 60).ToString("00");
+        }
+
+        public void OnPointerClick(PointerEventData e)
+        {
+            if (full) Minimize();
+            else
+            {
+                Haptics.Tap();
+                Maximize();
+                if (!player.isPlaying) player.Play();
+            }
+        }
+
+        void TogglePlay()
+        {
+            Haptics.Tap();
+            if (player.isPlaying) player.Pause();
+            else player.Play();
+        }
+
+        void Scrub(float k, bool done)
+        {
+            dragging = !done;
+            dragK = k;
+            // Szukamy w filmie dopiero po puszczeniu – skakanie co klatkę przy przeciąganiu zacina słabsze telefony.
+            if (done && player.canSetTime) player.time = k * length;
+        }
+
+        void Maximize()
+        {
+            var canvas = home.GetComponentInParent<Canvas>().rootCanvas;
+            var root = (RectTransform)canvas.transform;
+            overlay = Ui.Rect("VideoFullscreen", root);
+            Ui.Stretch(overlay);
+            overlay.gameObject.AddComponent<Image>().color = Color.black;
+            overlay.gameObject.AddComponent<TapCatcher>().OnTap = Minimize;   // tap w czarne pole obok obrazu też wraca
+
+            // Obraz i pasek tylko w bezpiecznym obszarze (notch, zaokrąglone rogi); czarne tło na cały ekran.
+            float s = canvas.scaleFactor;
+            Rect safe = Screen.safeArea;
+            float l = safe.xMin / s, r = (Screen.width - safe.xMax) / s, bt = safe.yMin / s, tp = (Screen.height - safe.yMax) / s;
+            Vector2 size = root.rect.size - new Vector2(l + r, tp + bt);
+
+            // Poziomy filmik na pionowym ekranie obracamy o 90° – wystarczy obrócić telefon w lewo.
+            // Aplikacja zostaje w pionie, bo zmiana orientacji przebudowałaby lekcję od pierwszej strony.
+            bool rotate = aspect > 1.05f && size.y > size.x;
+            float sw = rotate ? size.y : size.x, sh = rotate ? size.x : size.y;
+            stage.SetParent(overlay, false);
+            Ui.Center(stage, sw, sh, (l - r) * 0.5f, (bt - tp) * 0.5f);
+            stage.localRotation = Quaternion.Euler(0f, 0f, rotate ? -90f : 0f);
+            full = true;
+            Layout(sw, sh);
+
+            var app = FinanceQuestApp.Instance;
+            if (app != null) app.BackOverride = OnBack;   // „wstecz” na Androidzie najpierw zamyka pełny ekran
+        }
+
+        void Minimize()
+        {
+            if (!full) return;
+            Haptics.Tap();
+            full = false;
+            stage.SetParent(home, false);
+            stage.localRotation = Quaternion.identity;
+            Ui.Stretch(stage);
+            Layout(inlineSize.x, inlineSize.y);
+            if (overlay != null) Destroy(overlay.gameObject);
+            overlay = null;
+            ReleaseBack();
+        }
+
+        bool OnBack() { Minimize(); return true; }
+
+        void ReleaseBack()
+        {
+            var app = FinanceQuestApp.Instance;
+            if (app != null && app.BackOverride == (Func<bool>)OnBack) app.BackOverride = null;
+        }
+
+        void HomeGone()
+        {
+            if (overlay != null) Destroy(overlay.gameObject);   // razem z nim znika scena i odtwarzacz
+            overlay = null;
+            ReleaseBack();
+        }
+
+        void OnDestroy() { ReleaseBack(); }
+
+        // Pilnuje karty w treści: gdy znika, sprząta pełny ekran.
+        class Guard : MonoBehaviour
+        {
+            public VideoBlock Owner;
+            void OnDestroy() { if (Owner != null) Owner.HomeGone(); }
+        }
+
+        // Łapie tap (bez niego tap „przeleciałby” wyżej i przełączył pełny ekran). Przewijanie listy działa dalej.
+        class TapCatcher : MonoBehaviour, IPointerClickHandler
+        {
+            public Action OnTap;
+            public void OnPointerClick(PointerEventData e) { if (OnTap != null) OnTap(); }
+        }
+
+        // Suwak czasu: palec na pasku = pozycja w filmie (działa też na obróconym pełnym ekranie).
+        class Scrubber : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
+        {
+            public Action<float, bool> OnScrub;
+            public void OnPointerDown(PointerEventData e) { SwipeInput.Suppress = true; Send(e, false); }
+            public void OnBeginDrag(PointerEventData e) { SwipeInput.Suppress = true; }
+            public void OnDrag(PointerEventData e) { SwipeInput.Suppress = true; Send(e, false); }
+            public void OnEndDrag(PointerEventData e) { Send(e, true); }
+            public void OnPointerUp(PointerEventData e) { Send(e, true); }
+            public void OnPointerClick(PointerEventData e) { }
+
+            void Send(PointerEventData e, bool done)
+            {
+                var rt = (RectTransform)transform;
+                Vector2 local;
+                if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rt, e.position, e.pressEventCamera, out local)) return;
+                Rect r = rt.rect;
+                if (OnScrub != null) OnScrub(Mathf.Clamp01((local.x - r.xMin) / Mathf.Max(1f, r.width)), done);
+            }
+        }
+    }
+}

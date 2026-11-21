@@ -147,10 +147,17 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .drop .dt{font-size:13px;font-weight:600;color:var(--mut);line-height:1.4}
 .drop .dt b{color:var(--txt)}
 .bimg img{width:100%;height:100%;object-fit:cover;border-radius:11px;display:block}
+.bvid{margin:0 auto 14px;border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;background:#1D2B2F;overflow:hidden;color:#fff;font-size:11.5px;text-align:center}
+.bvid video{width:100%;max-height:200px;display:block;background:#000}
+.bvid .nov{padding:30px 6px;word-break:break-all}
+.bvid+.bcap{margin-top:-8px}
+.drop video{width:96px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#000}
 .bimg.has{padding:0;background:var(--pcard)}
 .tgrid{display:grid;gap:5px;align-items:center;margin-bottom:6px}
 .tgrid input{padding:6px 8px;font-size:13px;border-radius:8px}
 .tgrid input.thc{background:#E7F0F1;font-weight:800}.tgrid input.c0{font-weight:700}
+.tgrid input.tsz{padding:4px 6px;font-size:11.5px;background:#F5F3EE;text-align:center}
+.tgrid .tsl{font-size:10.5px;font-weight:700;color:#6F7A7C;text-align:center}
 .btab{margin-bottom:14px}.btab table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
 .btab th,.btab td{text-align:left;padding:7px 6px;vertical-align:top;white-space:pre-wrap}.btab td:first-child{font-weight:800}.btab b{font-weight:800}
 .ta{border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;overflow:hidden;background:var(--pcard)}
@@ -176,6 +183,7 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 </div>
 <input type="file" id="pick" webkitdirectory multiple style="display:none">
 <input type="file" id="imgpick" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none">
+<input type="file" id="vidpick" accept="video/mp4,.mp4" style="display:none">
 <script>
 "use strict";
 // ======================= stałe =======================
@@ -187,7 +195,7 @@ const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
 const GAMES = ["sortowanie","budzet","wydatki","inna"];
-const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", callout:"Ważne", list:"Lista", table:"Tabelka", divider:"Linia", space:"Odstęp"};
+const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", video:"Filmik", callout:"Ważne", list:"Lista", table:"Tabelka", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
 // ======================= stan =======================
@@ -484,6 +492,7 @@ function normalizeBlock(b){
   b.type = b.type || "text";
   if (b.type === "heading" || b.type === "text" || b.type === "callout") b.text = b.text ?? "";
   if (b.type === "image"){ b.image = b.image ?? ""; b.width = b.width ?? 1; b.maxHeight = b.maxHeight ?? 220; b.caption = b.caption ?? ""; }
+  if (b.type === "video"){ b.video = b.video ?? ""; b.caption = b.caption ?? ""; }
   if (b.type === "list") b.items = b.items || [];
   if (b.type === "space") b.size = b.size ?? 16;
   if (b.type === "table"){
@@ -642,6 +651,55 @@ async function addImage(file, pageIdx, blockIdx){
 
 let pickTarget = null;
 $("imgpick").addEventListener("change", e => { const file = e.target.files[0]; e.target.value = ""; if (file && pickTarget) addImage(file, pickTarget.p, pickTarget.b); });
+$("vidpick").addEventListener("change", e => { const file = e.target.files[0]; e.target.value = ""; if (file && pickTarget) addVideo(file, pickTarget.p, pickTarget.b); });
+
+// ======================= filmiki =======================
+// Tak samo jak obrazki: plik MP4 leży w repo w Content/<kurs>/filmy, w JSON tylko „filmy/<nazwa>.mp4”.
+// Tylko MP4 (H.264) – ten format odtwarza każdy telefon bez dodatkowych kodeków.
+const VID_DIR = "filmy", VID_WARN = 15 * 1024 * 1024, VID_MAX = 50 * 1024 * 1024;
+const videoCache = {}, videoLoading = {};
+function videoUrl(course, path){
+  if (!course || !Store.kind || !path) return null;
+  const key = course.id + "/" + path;
+  if (videoCache[key]) return videoCache[key];
+  if (!videoLoading[key]){
+    videoLoading[key] = true;
+    (async () => {
+      try { videoCache[key] = URL.createObjectURL(await Store.readBlob(key)); renderForm(); renderPreview(); }
+      catch(e){ /* brak pliku – zostaje zaślepka */ }
+    })();
+  }
+  return null;
+}
+function mb(n){ return (n / 1024 / 1024).toFixed(1).replace(".", ",") + " MB"; }
+
+// Kopiuje filmik do Content/<kurs>/filmy i wpisuje ścieżkę do bloku (albo dodaje nowy blok na końcu strony).
+async function addVideo(file, pageIdx, blockIdx){
+  const course = curCourse(), l = curLevel(), f = curChapterFile();
+  if (!file || !(file.type === "video/mp4" || /\.mp4$/i.test(file.name))){ toast("Filmik musi być w formacie MP4 (np. z telefonu .mov przekonwertuj na .mp4)."); return; }
+  if (!Store.kind){ alert("Filmiki można dodawać po otwarciu folderu Content (Chrome/Edge) albo po połączeniu z GitHubem."); return; }
+  // Duży plik spowalnia repo, pobieranie apki i telefon – przy kilku MB wszystko chodzi płynnie.
+  if (file.size > VID_MAX){ alert("Filmik ma " + mb(file.size) + " – za dużo (maks. " + mb(VID_MAX) + "). Zmniejsz go do 720p albo skróć."); return; }
+  if (file.size > VID_WARN && !confirm("Filmik ma " + mb(file.size) + ". Najlepiej do ~15 MB (720p, krótki). Dodać mimo to?")) return;
+  if (Store.kind === "gh") await Store.refreshTree();
+  const base = slug(file.name.replace(/\.[^.]+$/, "")) || "filmik";
+  let name = base + ".mp4", n = 2;
+  try {
+    toast("Kopiuję filmik…");
+    while (true){   // ta sama nazwa i ten sam rozmiar = ten sam plik, nie kopiujemy drugi raz
+      const size = await Store.size(course.id + "/" + VID_DIR + "/" + name);
+      if (size === file.size) break;
+      if (size < 0){ await Store.writeBlob(course.id + "/" + VID_DIR + "/" + name, file, "Filmik: " + course.id + "/" + VID_DIR + "/" + name + (S.me ? " (" + S.me + ")" : "")); break; }
+      name = base + "-" + (n++) + ".mp4";
+    }
+  } catch(e){ alert("Nie udało się zapisać filmiku: " + e.message); return; }
+  const path = VID_DIR + "/" + name;
+  const page = l.pages[pageIdx];
+  if (blockIdx === "new" || blockIdx == null) page.blocks.push(Object.assign(newBlock("video"), {video: path}));
+  else page.blocks[blockIdx].video = path;
+  S.page = pageIdx; markDirty(f); renderForm(); renderPreview(); renderTree();
+  toast("Dodano filmik " + path);
+}
 
 // Przeciąganie plików z Eksploratora. Bez tego przeglądarka otworzyłaby obrazek zamiast edytora.
 function dropTarget(e){ return e.target.closest?.("[data-drop]"); }
@@ -657,7 +715,10 @@ document.addEventListener("drop", e => {
   const t = dropTarget(e), file = e.dataTransfer?.files?.[0];
   if (!t || !file) return;
   const [p, b] = t.dataset.drop.split(":");
-  addImage(file, Number(p), b === "new" ? "new" : Number(b));
+  // Filmik upuszczony na obrazek (albo odwrotnie) dostaje nowy blok – nie nadpisujemy bloku innego rodzaju.
+  const isVid = file.type.startsWith("video/") || /\.mp4$/i.test(file.name), want = isVid ? "video" : "image";
+  const blk = b === "new" ? null : curLevel()?.pages[Number(p)]?.blocks[Number(b)];
+  (isVid ? addVideo : addImage)(file, Number(p), blk && blk.type === want ? Number(b) : "new");
 });
 
 // ======================= współpraca: cudze zmiany i łączenie =======================
@@ -854,8 +915,10 @@ function levelWarnings(l){
     for (const b of pg.blocks){
       if ((b.type === "text" || b.type === "heading" || b.type === "callout") && !String(b.text).trim()) w.push(pre + "pusty blok „" + BLOCKS[b.type] + "”.");
       if (b.type === "image" && !String(b.image).trim()) w.push(pre + "obrazek bez ścieżki.");
+      if (b.type === "video" && !String(b.video).trim()) w.push(pre + "filmik bez ścieżki.");
       if (b.type === "list" && !b.items.some(x => x.trim())) w.push(pre + "pusta lista.");
       if (b.type === "table" && !b.rows.some(r => r.cells.some(c => String(c).trim()))) w.push(pre + "pusta tabelka.");
+      if (b.type === "table" && (b.colWidths || []).reduce((s, x) => s + (Number(x) || 0), 0) > 100) w.push(pre + "kolumny tabelki mają razem ponad 100% – w aplikacji zostaną zwężone.");
       if (/\*\*/.test((b.text || "") + (b.items || []).join(" ")) && (((b.text || "") + (b.items || []).join(" ")).match(/\*\*/g).length % 2)) w.push(pre + "niesparowane ** (pogrubienie).");
     }
   });
@@ -1046,15 +1109,27 @@ function blockForm(bl, bind, p, j){
     <div class="grid2" style="margin-top:6px"><div><span class="sub">Szerokość (0.3–1)</span><input type="number" step="0.1" min="0.3" max="1" data-bind="${bind}.width" data-num="1" value="${esc(bl.width)}"></div>
     <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
     <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
+  if (bl.type === "video"){
+    const url = bl.video ? videoUrl(curCourse(), bl.video) : null;
+    f = `<div class="drop" data-act="pick-video" data-p="${p}" data-b="${j}" data-drop="${p}:${j}">
+      ${url ? `<video src="${url}" muted preload="metadata"></video>` : `<div style="font-size:28px;flex:none">🎬</div>`}
+      <div class="dt">${bl.video ? `<b>${esc(bl.video)}</b><br>` : ""}Przeciągnij tu filmik MP4 albo kliknij, żeby wybrać.<br><span style="font-weight:600">Edytor skopiuje go do repo (<code>${esc(curCourse()?.id || "")}/filmy</code>). Najlepiej krótki, 720p, do ~15 MB.</span></div></div>
+    <details style="margin-top:6px"><summary class="sub" style="cursor:pointer">ścieżka ręcznie</summary>${one(`${bind}.video`, bl.video, "filmy/nazwa.mp4")}</details>
+    <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod filmikiem (opcjonalnie)")}</div>`;
+  }
   if (bl.type === "table"){
     const cols = Math.max(1, ...bl.rows.map(r => r.cells.length));
     f = `<div class="grid2" style="margin-bottom:8px"><div><span class="sub">Wygląd</span>${sel(`${bind}.style`, bl.style, {a:"A – karta z ciemnym nagłówkiem", b:"B – bez ramki, same linie"})}</div>
       <div style="display:flex;align-items:flex-end"><label style="margin:0;display:flex;gap:6px;align-items:center;font-weight:600"><input type="checkbox" data-check="${bind}.header" ${bl.header ? "checked" : ""}> pierwszy wiersz = nagłówek</label></div></div>
-      <div class="tgrid" style="grid-template-columns:repeat(${cols}, minmax(70px,1fr)) 30px">
+      <div class="sub" style="margin-bottom:4px">Szerokość kolumny w % (puste = sama się dobiera) · wysokość wiersza = minimum (puste = sama się dobiera)</div>
+      <div class="tgrid" style="grid-template-columns:repeat(${cols}, minmax(70px,1fr)) 54px 30px">
+      ${Array.from({length: cols}, (_, ci) => { const cw = Number((bl.colWidths || [])[ci]) || 0;
+          return `<input type="number" class="tsz" min="0" max="100" step="5" placeholder="szer. %" title="Szerokość kolumny w % szerokości tabelki (puste = sama się dobiera)" data-bind="${bind}.colWidths.${ci}" data-num="1" value="${cw || ""}">`; }).join("")}<span class="tsl">wys.</span><span></span>
       ${bl.rows.map((r, ri) => Array.from({length: cols}, (_, ci) =>
           `<input type="text" class="${bl.header && ri === 0 ? "thc" : ""} ${ci === 0 ? "c0" : ""}" data-bind="${bind}.rows.${ri}.cells.${ci}" value="${esc(r.cells[ci] ?? "")}">`).join("")
+          + `<input type="number" class="tsz" min="0" max="300" step="5" placeholder="auto" title="Minimalna wysokość wiersza (puste = sama się dobiera)" data-bind="${bind}.rows.${ri}.height" data-num="1" value="${Number(r.height) || ""}">`
           + `<button class="mini x" data-act="trow" data-p="${p}" data-b="${j}" data-i="${ri}" title="Usuń wiersz">✕</button>`).join("")}
-      ${Array.from({length: cols}, (_, ci) => `<button class="mini x" style="width:100%" data-act="tcol" data-p="${p}" data-b="${j}" data-i="${ci}" title="Usuń kolumnę">✕</button>`).join("")}<span></span></div>
+      ${Array.from({length: cols}, (_, ci) => `<button class="mini x" style="width:100%" data-act="tcol" data-p="${p}" data-b="${j}" data-i="${ci}" title="Usuń kolumnę">✕</button>`).join("")}<span></span><span></span></div>
       <div class="btns"><button class="btn small" data-act="tadd-row" data-p="${p}" data-b="${j}">+ wiersz</button><button class="btn small" data-act="tadd-col" data-p="${p}" data-b="${j}">+ kolumna</button></div>`;
   }
   if (bl.type === "space") f = `<input type="number" step="4" min="0" max="200" data-bind="${bind}.size" data-num="1" value="${esc(bl.size)}">`;
@@ -1150,10 +1225,18 @@ function blockPreview(b){
     case "divider": return `<div class="bd"></div>`;
     case "table": {
       const cols = Math.max(1, ...b.rows.map(r => r.cells.length)), head = b.header && b.rows.length > 1;
-      return `<div class="btab ${b.style === "b" ? "tb" : "ta"}"><table>${b.rows.map((r, ri) => "<tr>" + Array.from({length: cols}, (_, ci) => {
+      // Szerokości kolumn (%) i minimalne wysokości wierszy jak w aplikacji (ekran ~0.77 skali).
+      const cw = Array.from({length: cols}, (_, ci) => Number((b.colWidths || [])[ci]) || 0);
+      const cg = cw.some(x => x > 0) ? `<colgroup>${cw.map(x => x > 0 ? `<col style="width:${x}%">` : "<col>").join("")}</colgroup>` : "";
+      return `<div class="btab ${b.style === "b" ? "tb" : "ta"}"><table>${cg}${b.rows.map((r, ri) => `<tr${Number(r.height) > 0 ? ` style="height:${Math.round(r.height * 0.77)}px"` : ""}>` + Array.from({length: cols}, (_, ci) => {
         const tag = head && ri === 0 ? "th" : "td"; return `<${tag}>${rich(r.cells[ci] ?? "")}</${tag}>`; }).join("") + "</tr>").join("")}</table></div>`;
     }
     case "space": return `<div style="height:${Math.min(200, Number(b.size)||0)}px"></div>`;
+    case "video": {
+      // W aplikacji: tap w obraz = pełny ekran, pasek pod spodem. Tu zwykły odtwarzacz – żeby obejrzeć, co wrzuciłeś.
+      const url = b.video ? videoUrl(curCourse(), b.video) : null;
+      return `<div class="bvid">${url ? `<video src="${url}" controls playsinline preload="metadata"></video>` : `<div class="nov">🎬 ${esc(b.video || "brak filmiku")}</div>`}</div>${b.caption ? `<div class="bcap">${rich(b.caption)}</div>` : ""}`;
+    }
     case "image": {
       const w = Math.max(30, Math.min(100, (Number(b.width)||1)*100)), mh = Number(b.maxHeight) || 220;
       const url = b.image ? imageUrl(curCourse(), b.image) : null, size = url ? imageSize[url] : null;
@@ -1203,6 +1286,8 @@ document.addEventListener("input", e => {
   if (t.dataset.bind){
     let v = t.value; if (t.dataset.num) v = v === "" ? 0 : Number(v);
     setPath(f.data, t.dataset.bind, v); markDirty(f); trackPage(t.dataset.bind);
+    // Szerokość np. tylko 3. kolumny zostawiłaby „dziury” w liście (null w JSON) – Unity by tego nie wczytało.
+    if (/\.colWidths\.\d+$/.test(t.dataset.bind)){ const cw = getPath(f.data, t.dataset.bind.replace(/\.\d+$/, "")); for (let k = 0; k < cw.length; k++) cw[k] = Number(cw[k]) || 0; }
     if (t.tagName === "TEXTAREA") autoGrow(t);
     if (t.tagName === "SELECT" || /\.(type|kind|mode)$/.test(t.dataset.bind) || /\.(id|label)$/.test(t.dataset.bind) && t.dataset.bind.includes("zones")) { if (t.tagName === "SELECT") { if (/\.type$/.test(t.dataset.bind)) normalizeTask(getPath(f.data, t.dataset.bind.replace(/\.type$/,""))); renderForm(); } }
     renderPreview(); renderBanner();
@@ -1219,7 +1304,7 @@ function trackPage(bind){ const m = /\.pages\.(\d+)\./.exec(bind || ""); if (m) 
 document.addEventListener("focusin", e => { const b = e.target.dataset?.bind || e.target.dataset?.lines; if (b && /\.pages\./.test(b)){ const old = S.page; trackPage(b); if (old !== S.page) renderPreview(); } });
 document.addEventListener("change", e => {
   const bd = e.target.dataset?.bind;
-  if (bd && /\.blocks\.\d+\.image$/.test(bd) && curCourse()){
+  if (bd && /\.blocks\.\d+\.(image|video)$/.test(bd) && curCourse()){
     const v = normImagePath(e.target.value, curCourse().id);
     if (v !== e.target.value){ e.target.value = v; e.target.dispatchEvent(new Event("input", {bubbles:true})); renderForm(); }
   } if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", {bubbles:true})); });
@@ -1293,10 +1378,11 @@ document.addEventListener("click", async e => {
       if (act === "tadd-row") tb.rows.push({cells: Array(cols).fill("")});
       if (act === "tadd-col") tb.rows.forEach(r => { while (r.cells.length < cols) r.cells.push(""); r.cells.push(""); });
       if (act === "trow"){ if (tb.rows.length <= 1 || !confirm("Usunąć wiersz?")) return; tb.rows.splice(i, 1); }
-      if (act === "tcol"){ if (cols <= 1 || !confirm("Usunąć kolumnę?")) return; tb.rows.forEach(r => r.cells.splice(i, 1)); }
+      if (act === "tcol"){ if (cols <= 1 || !confirm("Usunąć kolumnę?")) return; tb.rows.forEach(r => r.cells.splice(i, 1)); if (tb.colWidths) tb.colWidths.splice(i, 1); }
       S.page = pi; return changed();
     }
     case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
+    case "pick-video": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("vidpick").click(); return;
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
     case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();

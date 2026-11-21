@@ -119,6 +119,7 @@ namespace FinanceQuest
                     case "heading": y += Heading(parent, b, m, y, cw) + 12f; break;
                     case "text": y += Paragraph(parent, b.text, m, y, cw) + 14f; break;
                     case "image": y += Picture(parent, b, m, y, cw) + 16f; break;
+                    case "video": y += VideoBlock.Build(parent, b, m, y, cw) + 16f; break;
                     case "callout": y += Callout(parent, b, m, y, cw) + 16f; break;
                     case "list": y += BulletList(parent, b, m, y, cw) + 10f; break;
                     case "table": y += TableBlock.Build(parent, b, m, y, cw) + 16f; break;
