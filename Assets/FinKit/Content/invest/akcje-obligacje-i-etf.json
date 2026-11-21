@@ -4,8 +4,8 @@
   "title": "Akcje, obligacje i ETF",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T13:52:15Z"
+    "editedBy": "Maro",
+    "editedAt": "2026-11-21T18:18:07Z"
   },
   "levels": [
     {
@@ -125,6 +125,13 @@
             {
               "type": "callout",
               "text": "Wartość ETF-u nadal **waha się razem z rynkiem**."
+            },
+            {
+              "type": "image",
+              "image": "obrazki/download.jpg",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             }
           ]
         }
