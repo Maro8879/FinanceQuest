@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "marek",
-    "editedAt": "2026-11-21T13:46:30Z"
+    "editedAt": "2026-11-21T13:52:15Z"
   },
   "levels": [
     {
@@ -143,14 +143,6 @@
         {
           "blocks": [
             {
-              "type": "heading",
-              "text": ""
-            },
-            {
-              "type": "text",
-              "text": ""
-            },
-            {
               "type": "video",
               "video": "filmy/etf-bez-napisow.mp4",
               "videoSub": "filmy/etf-z-napisami.mp4",
@@ -197,6 +189,28 @@
             {
               "type": "text",
               "text": "Obligacje są zwykle **bezpieczniejsze i bardziej przewidywalne** niż akcje – ale tylko na tyle, na ile wypłacalny jest emitent."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l7",
+      "kind": "lesson",
+      "title": "filmik akcja vs obligacja",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "video",
+              "video": "filmy/akcja-vs-obligacja-bez-napisow.mp4",
+              "videoSub": "filmy/akcja-vs-obligacja-z-napisami.mp4",
+              "caption": ""
             }
           ]
         }
@@ -338,32 +352,6 @@
         "game": "",
         "settings": []
       }
-    },
-    {
-      "id": "l7",
-      "kind": "lesson",
-      "title": "filmik akcja vs obligacja",
-      "pages": [
-        {
-          "blocks": [
-            {
-              "type": "heading",
-              "text": ""
-            },
-            {
-              "type": "video",
-              "video": "filmy/akcja-vs-obligacja-bez-napisow.mp4",
-              "videoSub": "filmy/akcja-vs-obligacja-z-napisami.mp4",
-              "caption": ""
-            }
-          ]
-        }
-      ],
-      "minigame": {
-        "game": "",
-        "settings": []
-      },
-      "tasks": []
     }
   ]
 }
