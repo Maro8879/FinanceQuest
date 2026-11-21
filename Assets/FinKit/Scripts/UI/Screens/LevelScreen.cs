@@ -79,8 +79,8 @@ namespace FinanceQuest
             }
             if (IsReadyGame(level))
             {
-                // Podsumowanie gry zalicza level od razu; „Zastosuj w praktyce” prowadzi dalej, jak po lekcji.
-                InvestGame.Build(screen, app, () => save(-1), () => finish(-1));
+                // Podsumowanie gry zapisuje gwiazdki i zalicza level od razu; „Kontynuuj” prowadzi dalej, jak po teście.
+                InvestGame.Build(screen, app, save, () => finish(-1));
                 return;
             }
             Placeholder(screen, app, course, ch, level, "Tu pojawi się mini gra.");

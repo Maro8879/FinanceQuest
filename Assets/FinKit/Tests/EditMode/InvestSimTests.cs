@@ -50,6 +50,9 @@ namespace FinanceQuest
             s.Decide(CrashChoice.BuyMore);
             Assert.That(s.Value, Is.EqualTo(before + 100).Within(1e-9));
             Assert.That(s.Paid, Is.EqualTo(1100).Within(1e-9));
+            // Wykres w %: dokupienie nie zamienia spadku w „wzrost” – wynik nadal pod kreską.
+            Assert.That(s.PctAt(4), Is.EqualTo((before + 100) / 1100 - 1).Within(1e-9));
+            Assert.IsTrue(s.PctAt(4) < -0.08);
             s.NextMonth();   // -6.5%
             Assert.That(s.Value, Is.EqualTo((before + 100) * 0.935).Within(1e-6));
             Assert.IsTrue(s.NoPanic);

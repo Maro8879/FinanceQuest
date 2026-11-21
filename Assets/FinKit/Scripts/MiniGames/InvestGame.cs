@@ -24,7 +24,8 @@ namespace FinanceQuest
 
         readonly FinanceQuestApp app;
         readonly RectTransform screen;
-        readonly Action onComplete, onFinish;
+        readonly Action<int> onComplete;    // dostaje zdobyte gwiazdki (1–3)
+        readonly Action onFinish;
         readonly float W, m, cw;
 
         Stage stage = Stage.Intro;
@@ -35,17 +36,19 @@ namespace FinanceQuest
         double minY, maxY;        // zakres wykresu – stały przez całą grę
         bool completed;
 
-        // onComplete: level zaliczony (raz, przy podsumowaniu). onFinish: „Zastosuj w praktyce” – dalej w aplikacji.
-        public static void Build(RectTransform screen, FinanceQuestApp app, Action onComplete, Action onFinish)
+        // onComplete: wynik w gwiazdkach (raz na rozgrywkę, przy podsumowaniu) – liczą się do gwiazdek rozdziału jak w testach.
+        // onFinish: „Kontynuuj” – dalej w aplikacji.
+        public static void Build(RectTransform screen, FinanceQuestApp app, Action<int> onComplete, Action onFinish)
         {
             new InvestGame(screen, app, onComplete, onFinish).Rebuild();
         }
 
-        InvestGame(RectTransform screen, FinanceQuestApp app, Action onComplete, Action onFinish)
+        InvestGame(RectTransform screen, FinanceQuestApp app, Action<int> onComplete, Action onFinish)
         {
             this.screen = screen; this.app = app; this.onComplete = onComplete; this.onFinish = onFinish;
             W = app.ScreenWidth; m = ScreenKit.Margin; cw = W - 2 * m;
             app.SwipeForward = null;
+            screen.gameObject.AddComponent<Ticker>().OnTick = Tick;
         }
 
         // ---------------- budowanie ekranu ----------------
@@ -54,8 +57,9 @@ namespace FinanceQuest
         {
             for (int i = screen.childCount - 1; i >= 0; i--) UnityEngine.Object.Destroy(screen.GetChild(i).gameObject);
             var content = ScreenKit.Scroll(screen, W, 0f);
-            ((RectTransform)content.parent).offsetMin = new Vector2(0f, BarH);   // lista kończy się nad dolnym paskiem
-            var bar = BottomBar();
+            float barH = BarHeight();
+            ((RectTransform)content.parent).offsetMin = new Vector2(0f, barH);   // lista kończy się nad dolnym paskiem
+            var bar = BottomBar(barH);
 
             float y = 8f;
             switch (stage)
@@ -70,14 +74,17 @@ namespace FinanceQuest
         }
 
         // Dolny pasek: stały komunikat o symulacji + miejsce na główny przycisk.
-        RectTransform BottomBar()
+        // Na podsumowaniu dwa przyciski (KONTYNUUJ + ZAGRAJ PONOWNIE), więc pasek jest wyższy.
+        float BarHeight() { return stage == Stage.Summary ? BarH + ButtonH + 10f : BarH; }
+
+        RectTransform BottomBar(float barH)
         {
             var bar = Ui.Rect("BottomBar", screen);
             bar.anchorMin = new Vector2(0f, 0f);
             bar.anchorMax = new Vector2(1f, 0f);
             bar.pivot = new Vector2(0.5f, 0f);
             bar.anchoredPosition = Vector2.zero;
-            bar.sizeDelta = new Vector2(0f, BarH);
+            bar.sizeDelta = new Vector2(0f, barH);
             var d = Ui.Text("Disclaimer", bar, Disclaimer, 10.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
             Ui.Place(d.rectTransform, m, 4f, cw, 28f);
             return bar;
@@ -121,8 +128,8 @@ namespace FinanceQuest
 
         float Intro(RectTransform c, float y, RectTransform bar)
         {
-            y += Kicker(c, "MINI GRA", y);
-            y += Para(c, "Pierwsze 12 miesięcy po zakupie", m, y, cw, 24f, Palette.Text, FontWeight.ExtraBold) + 12f;
+            // Tytuł gry stoi w nagłówku (tytuł levelu) – tu od razu treść.
+            y += 4f;
             y += Para(c, "Dostajesz wirtualne pieniądze. Wybierz, w co je włożyć, i przejdź rok miesiąc po miesiącu. " +
                          "Będą spadki, decyzje pod presją i jedna próba oszustwa. Zobacz, jak działają emocje.", m, y, cw, 16f, Palette.Text) + 18f;
 
@@ -133,8 +140,6 @@ namespace FinanceQuest
             var v = Ui.Text("Value", card.Content, Money(InvestConfig.Start), 34f, Color.white);
             Ui.Place(v.rectTransform, 18, 40, cw - 36, 44);
             y += 104f + 18f;
-
-            y += Para(c, "Ok. 2–3 minuty · 12 tur = 12 miesięcy", m, y, cw, 13f, Palette.TextMuted, FontWeight.SemiBold);
             MainButton(bar, "ZACZYNAMY", () => Go(Stage.Choose));
             return y;
         }
@@ -169,6 +174,8 @@ namespace FinanceQuest
                 sim = new InvestSim(inst);
                 ChartRange(inst);
                 ev = Ev.None;
+                playing = false;
+                animT = 1f;
                 Go(Stage.Turn);
             });
             return h + ScreenKit.Lip;
@@ -188,90 +195,96 @@ namespace FinanceQuest
             return w;
         }
 
-        // Zakres osi Y liczony z góry z najbardziej skrajnych scenariuszy – wykres nie zmienia skali w trakcie gry.
-        void ChartRange(Instrument inst)
-        {
-            minY = double.MaxValue; maxY = double.MinValue;
-            var plays = new[] { new InvestSim(inst), new InvestSim(inst), new InvestSim(inst) };
-            for (int k = 0; k < InvestConfig.Months; k++)
-            {
-                foreach (var p in plays) p.NextMonth();
-                if (plays[0].Month == InvestConfig.CrashMonth1) { plays[1].Decide(CrashChoice.BuyMore); plays[2].Decide(CrashChoice.Sell); }
-                if (plays[0].Month == InvestConfig.CrashMonth2) plays[1].Decide(CrashChoice.BuyMore);
-                if (plays[0].Month == InvestConfig.ScamMonth) plays[2].Scam(true);
-            }
-            foreach (var p in plays)
-                foreach (var v in p.History) { minY = Math.Min(minY, v); maxY = Math.Max(maxY, v); }
-            minY = Math.Min(minY, InvestConfig.Start);
-            double pad = Math.Max(10.0, (maxY - minY) * 0.08);
-            minY -= pad; maxY += pad;
-        }
+        // ---------------- tura: wykres leci sam, zatrzymuje się na wydarzeniach ----------------
 
-        // ---------------- tura ----------------
+        const float MonthSeconds = 0.75f;   // ile trwa jeden miesiąc animacji
+        bool playing;                       // wykres leci (false = start albo pauza)
+        float animT = 1f;                   // 0..1 – postęp bieżącego miesiąca
+        TextMeshProUGUI kickerText, valueText, changeText, realText, zeroText;
+        LineChart chart;
+        RectTransform dot;
 
         float Turn(RectTransform c, float y, RectTransform bar)
         {
-            string kicker = sim.Month == 0 ? "START · " + InstrumentName(sim.Instrument).ToUpperInvariant()
-                                           : "MIESIĄC " + sim.Month + "/" + InvestConfig.Months + " · " + InstrumentName(sim.Instrument).ToUpperInvariant();
-            y += Kicker(c, kicker, y);
+            var k = Ui.Text("Kicker", c, "", 11f, Palette.TextMuted);
+            k.characterSpacing = 12f;
+            Ui.Place(k.rectTransform, m, y, cw, 16);
+            kickerText = k;
+            y += 24f;
 
-            // Karta z wartością, zmianą i wykresem.
+            // Karta z wartością, zmianą i wykresem. Wykres w % od wpłaty – spadek o 10% wygląda jak spadek o 10%.
             const float pad = 16f;
-            float h = pad + 18f + 44f + 22f + 12f + ChartH + (sim.Sold ? 26f : 0f) + pad;
+            float h = pad + 18f + 44f + 22f + 12f + ChartH + 18f + (sim.Sold ? 26f : 0f) + pad;
             var card = LipCard.Create(c, "Portfolio", m, y, cw, h, Palette.CardFill, Palette.CardEdge, Palette.CardLip, ScreenKit.CardRadius, ScreenKit.Lip, 2f);
             var lab = Ui.Text("Label", card.Content, sim.Sold ? "TWOJA GOTÓWKA" : "WARTOŚĆ PORTFELA", 11f, Palette.TextMuted);
             lab.characterSpacing = 10f;
             Ui.Place(lab.rectTransform, pad, pad, cw - 2 * pad, 16f);
-            var val = Ui.Text("Value", card.Content, Money(sim.Value), 34f, Palette.Text);
-            Ui.Place(val.rectTransform, pad, pad + 18f, cw - 2 * pad, 44f);
-            double ch = sim.ChangeFromPaid;
-            var chg = Ui.Text("Change", card.Content, PctSigned(ch) + " od wpłaty (" + Money(sim.Paid) + ")", 14f,
-                ch > 0.0005 ? Good : ch < -0.0005 ? Bad : Palette.TextMuted, FontWeight.ExtraBold);
-            Ui.Place(chg.rectTransform, pad, pad + 62f, cw - 2 * pad, 20f);
+            valueText = Ui.Text("Value", card.Content, "", 34f, Palette.Text);
+            Ui.Place(valueText.rectTransform, pad, pad + 18f, cw - 2 * pad, 44f);
+            changeText = Ui.Text("Change", card.Content, "", 14f, Palette.TextMuted, FontWeight.ExtraBold);
+            Ui.Place(changeText.rectTransform, pad, pad + 62f, cw - 2 * pad, 20f);
 
             float cy = pad + 62f + 22f + 12f;
-            var chart = Ui.Rect("Chart", card.Content).gameObject.AddComponent<LineChart>();
-            Ui.Place(chart.rectTransform, pad, cy, cw - 2 * pad, ChartH);
+            // CanvasRenderer dodajemy ręcznie – bez niego Unity nie rysuje wykresu i sypie błędami co klatkę (zamrożony ekran).
+            var chartGo = Ui.Rect("Chart", card.Content).gameObject;
+            chartGo.AddComponent<CanvasRenderer>();
+            chart = chartGo.AddComponent<LineChart>();
+            Ui.Place(chart.rectTransform, pad, cy, cw - 2 * pad - 34f, ChartH);   // z prawej miejsce na podpis „0%”
             chart.raycastTarget = false;
-            chart.Main.AddRange(sim.History);
-            if (sim.Sold) chart.Ghost = sim.HoldHistory;
-            chart.Baseline = InvestConfig.Start;
-            chart.Min = minY; chart.Max = maxY;
-            chart.MainColor = Palette.Brand; chart.GhostColor = Palette.TextMuted; chart.BaseColor = Palette.CardEdge;
-            chart.SetVerticesDirty();
+            chart.Baseline = 0.0;
+            chart.MainColor = Good; chart.DownColor = Bad; chart.GhostColor = Palette.TextMuted; chart.BaseColor = Palette.CardEdge;
+            zeroText = Ui.Text("Zero", card.Content, "0%", 10.5f, Palette.TextMuted, FontWeight.ExtraBold, TextAlignmentOptions.MidlineLeft);
             // Kropka na końcu linii – „tu jesteś teraz”.
-            var dot = Ui.Rounded("Dot", chart.transform, Palette.Accent, 6f);
-            var drt = dot.rectTransform;
-            drt.anchorMin = drt.anchorMax = new Vector2(0f, 1f);
-            drt.pivot = new Vector2(0.5f, 0.5f);
-            drt.sizeDelta = new Vector2(12f, 12f);
-            Vector2 p = chart.Point(sim.Month, sim.Value);
-            drt.anchoredPosition = new Vector2(p.x, p.y);
+            var d = Ui.Rounded("Dot", chart.transform, Palette.Accent, 6f);
+            dot = d.rectTransform;
+            dot.anchorMin = dot.anchorMax = new Vector2(0f, 1f);
+            dot.pivot = new Vector2(0.5f, 0.5f);
+            dot.sizeDelta = new Vector2(12f, 12f);
             var start = Ui.Text("Axis", card.Content, "start", 10.5f, Palette.TextMuted, FontWeight.SemiBold);
             Ui.Place(start.rectTransform, pad, cy + ChartH + 2f, 60f, 14f);
             var end = Ui.Text("Axis", card.Content, "12 mies.", 10.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.TopRight);
-            Ui.Place(end.rectTransform, cw - pad - 80f, cy + ChartH + 2f, 80f, 14f);
+            Ui.Place(end.rectTransform, cw - pad - 34f - 80f, cy + ChartH + 2f, 80f, 14f);
             if (sim.Sold)
-                Para(card.Content, "Sprzedane w miesiącu " + sim.SoldMonth + ". Przerywana linia: **gdybyś trzymał** – " + Money(sim.HoldHistory[sim.Month]) + ".",
-                    pad, cy + ChartH + 18f, cw - 2 * pad, 12.5f, Palette.TextMuted, FontWeight.SemiBold);
+                Para(card.Content, "Sprzedane w miesiącu " + sim.SoldMonth + ". Przerywana linia: **gdybyś trzymał**.",
+                    pad, cy + ChartH + 20f, cw - 2 * pad, 12.5f, Palette.TextMuted, FontWeight.SemiBold);
             y += h + ScreenKit.Lip + 12f;
 
             // Mały licznik wartości realnej.
             var real = LipCard.Create(c, "Real", m, y, cw, 54f, Palette.Background, Palette.CardEdge, Palette.CardEdge, 14f, 0f, 2f);
             var rl = Ui.Text("Label", real.Content, "Realna wartość po inflacji (3%/rok)", 13f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.MidlineLeft);
             Ui.Place(rl.rectTransform, 14f, 0f, cw - 140f, 50f);
-            var rv = Ui.Text("Value", real.Content, Money(sim.RealValue), 16f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.MidlineRight);
-            Ui.Place(rv.rectTransform, cw - 140f, 0f, 126f, 50f);
+            realText = Ui.Text("Value", real.Content, "", 16f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.MidlineRight);
+            Ui.Place(realText.rectTransform, cw - 140f, 0f, 126f, 50f);
             y += 54f + 12f;
 
-            if (sim.Finished) MainButton(bar, "ZOBACZ WYNIK", () => Go(Stage.Summary));
-            else MainButton(bar, sim.Month == 0 ? "PIERWSZY MIESIĄC" : "NASTĘPNY MIESIĄC", NextMonth);
+            if (sim.Finished && animT >= 1f) MainButton(bar, "ZOBACZ WYNIK", () => Go(Stage.Summary));
+            else if (!playing) MainButton(bar, sim.Month == 0 ? "START" : "GRAJ DALEJ", () => { playing = true; Haptics.Tap(); Rebuild(); });
+            else Button(bar, m, 36f, cw, "PAUZA", false, () => { playing = false; Rebuild(); });
+
+            UpdateView();
             return y;
         }
 
-        void NextMonth()
+        // Co klatkę (z Ticker): animacja bieżącego miesiąca, potem następny – aż do wydarzenia albo końca roku.
+        void Tick(float dt)
         {
+            if (stage != Stage.Turn || sim == null || !playing || ev != Ev.None || chart == null) return;
+            if (animT < 1f)
+            {
+                animT = Mathf.Min(1f, animT + dt / MonthSeconds);
+                UpdateView();
+                if (animT >= 1f) MonthDone();
+                return;
+            }
+            if (sim.Finished) { playing = false; Rebuild(); return; }
             sim.NextMonth();
+            animT = 0f;
+            UpdateView();
+        }
+
+        // Koniec miesiąca: wydarzenie zatrzymuje wykres i pokazuje pytanie.
+        void MonthDone()
+        {
             int mo = sim.Month;
             ev = Ev.None;
             feedback = null;
@@ -279,8 +292,79 @@ namespace FinanceQuest
             else if (mo == InvestConfig.CrashMonth2 && sim.HasCrash && !sim.Sold) ev = Ev.Crash2;
             else if (mo == InvestConfig.DividendMonth && sim.Instrument == Instrument.Etf && !sim.Sold) ev = Ev.Dividend;
             else if (mo == InvestConfig.ScamMonth) ev = Ev.Scam;
-            if (ev != Ev.None) Haptics.Tap();
-            Rebuild();
+            if (ev != Ev.None) { Haptics.Tap(); Rebuild(); }
+            else if (sim.Finished) { playing = false; Rebuild(); }
+        }
+
+        // Odświeża liczby, wykres i kropkę bez przebudowy ekranu (tanie – można co klatkę).
+        void UpdateView()
+        {
+            int mo = sim.Month;
+            float t = mo == 0 ? 1f : animT;
+            int prev = Mathf.Max(0, mo - 1);
+            double value = Lerp(sim.History[prev], sim.History[mo], t);
+            double pct = Lerp(sim.PctAt(prev), sim.PctAt(mo), t);
+            float when = prev + (mo == 0 ? 0f : t);
+
+            kickerText.text = (mo == 0 ? "START" : "MIESIĄC " + mo + "/" + InvestConfig.Months) + " · " + InstrumentName(sim.Instrument).ToUpperInvariant();
+            valueText.text = Money(value);
+            changeText.text = PctSigned(pct) + " od wpłaty (" + Money(sim.PaidHistory[mo]) + ")";
+            changeText.color = pct > 0.0005 ? Good : pct < -0.0005 ? Bad : Palette.TextMuted;
+            realText.text = Money(InvestSim.Real(value, when));
+
+            FitRange();
+            chart.Min = minY; chart.Max = maxY;
+            chart.Main.Clear();
+            for (int i = 0; i <= mo; i++) chart.Main.Add(sim.PctAt(i));
+            if (sim.Sold)
+            {
+                if (chart.Ghost == null) chart.Ghost = new System.Collections.Generic.List<double>();
+                chart.Ghost.Clear();
+                for (int i = 0; i <= mo; i++) chart.Ghost.Add(sim.HoldPctAt(i));
+            }
+            else chart.Ghost = null;
+            chart.LastT = t;
+            chart.SetVerticesDirty();
+            Vector2 p = chart.Point(when, pct);
+            dot.anchoredPosition = new Vector2(p.x, p.y);
+            Vector2 z = chart.Point(0f, 0.0);
+            var zr = chart.rectTransform;
+            Ui.Place(zeroText.rectTransform, zr.anchoredPosition.x + zr.sizeDelta.x + 4f, -zr.anchoredPosition.y - z.y - 8f, 30f, 16f);
+        }
+
+        static double Lerp(double a, double b, float t) { return a + (b - a) * t; }
+
+        // Zakres osi Y (w %) dopasowany do instrumentu – dla ETF ok. −18%…+7%, więc dołek zajmuje większość wykresu.
+        // Rozszerza się tylko wtedy, gdy Twój wynik wyjdzie poza niego (np. oszustwo).
+        void ChartRange(Instrument inst)
+        {
+            minY = maxY = 0.0;
+            var hold = new InvestSim(inst);
+            for (int k = 0; k < InvestConfig.Months; k++)
+            {
+                hold.NextMonth();
+                minY = Math.Min(minY, hold.PctAt(hold.Month)); maxY = Math.Max(maxY, hold.PctAt(hold.Month));
+            }
+            // Spokojne instrumenty (lokata, obligacje) dostają co najmniej ±3%, żeby drobne ruchy nie udawały krachu.
+            minY = Math.Min(minY, -0.03); maxY = Math.Max(maxY, 0.03);
+            double pad = (maxY - minY) * 0.12;
+            minY -= pad; maxY += pad;
+        }
+
+        void FitRange()
+        {
+            double lo = minY, hi = maxY;
+            for (int i = 0; i <= sim.Month; i++) { lo = Math.Min(lo, sim.PctAt(i)); hi = Math.Max(hi, sim.PctAt(i)); }
+            double pad = (maxY - minY) * 0.06;
+            if (lo < minY) minY = lo - pad;
+            if (hi > maxY) maxY = hi + pad;
+        }
+
+        // Komponent tylko po to, żeby dostać Update co klatkę (InvestGame to zwykła klasa).
+        class Ticker : MonoBehaviour
+        {
+            public Action<float> OnTick;
+            void Update() { if (OnTick != null) OnTick(Time.unscaledDeltaTime); }
         }
 
         // ---------------- karta wydarzenia ----------------
@@ -349,6 +433,7 @@ namespace FinanceQuest
 
         void Decide(int i)
         {
+            // DALEJ – wykres leci dalej sam (playing zostaje włączone).
             if (feedback != null || ev == Ev.Inflation || ev == Ev.Dividend) { ev = Ev.None; feedback = null; Rebuild(); return; }
             if (ev == Ev.Crash1 || ev == Ev.Crash2)
             {
@@ -428,10 +513,34 @@ namespace FinanceQuest
 
         float Summary(RectTransform c, float y, RectTransform bar)
         {
-            if (!completed) { completed = true; if (onComplete != null) onComplete(); }
+            int stars = Stars();
+            bool first = !completed;
+            if (first) { completed = true; if (onComplete != null) onComplete(stars); }
 
-            y += Kicker(c, "PODSUMOWANIE · " + InstrumentName(sim.Instrument).ToUpperInvariant(), y);
-            y += Para(c, "Twój rok w liczbach", m, y, cw, 24f, Palette.Text, FontWeight.ExtraBold) + 14f;
+            // Gwiazdki jak po teście: środkowa wyżej, zdobyte wskakują po kolei (tylko przy pierwszym pokazaniu).
+            const float star = 54f, sgap = 14f;
+            float sx = (W - 3 * star - 2 * sgap) * 0.5f, sy = y + 18f;
+            for (int i = 0; i < 3; i++)
+            {
+                bool on = i < stars;
+                float lift = i == 1 ? 0f : 12f;
+                if (on)
+                {
+                    var slot = Ui.Icon("StarSlot", c, IconId.Star, Palette.LockedFill, star);
+                    Ui.Place(slot.rectTransform, sx + i * (star + sgap), sy + lift, star, star);
+                }
+                var s = Ui.Icon("Star", c, IconId.Star, on ? Palette.Accent : Palette.LockedFill, star);
+                Ui.Place(s.rectTransform, sx + i * (star + sgap), sy + lift, star, star);
+                if (on && first) PopStar(s.rectTransform, star, i);
+            }
+            y = sy + star + 12f + 22f;
+            string head = stars == 3 ? "Komplet!" : stars == 2 ? "Dobra robota!" : "Ukończone!";
+            var ht = Ui.Text("Title", c, head, 26f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.Top);
+            Ui.Place(ht.rectTransform, m, y, cw, 34f);
+            y += 34f + 4f;
+            var hs = Ui.Text("Sub", c, "Gwiazdki: " + stars + " z 3 · " + InstrumentName(sim.Instrument), 16f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Top);
+            Ui.Place(hs.rectTransform, m, y, cw, 22f);
+            y += 22f + 22f;
 
             // Wynik.
             const float pad = 16f;
@@ -470,15 +579,14 @@ namespace FinanceQuest
             y += Para(c, "Wnioski", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 6f;
             y += Para(c, Lessons(), m, y, cw, 15f, Palette.Text) + 16f;
 
-            // Odznaki.
-            y += Para(c, "Odznaki", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
-            y += Badge(c, y, "Pierwsze kroki", "Ukończyłeś symulację", sim.FirstSteps) + 8f;
-            y += Badge(c, y, "Nie spanikowałeś", sim.HasCrash ? "Trzymałeś albo dokupiłeś w krachu" : "Lokata nie miała krachu – spróbuj ETF", sim.NoPanic) + 8f;
-            y += Badge(c, y, "Czujny na oszustwa", "Zgłosiłeś podejrzany SMS", sim.ScamAware) + 16f;
+            // Za co są gwiazdki.
+            y += Para(c, "Za co gwiazdki", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
+            y += StarRow(c, y, "Ukończyłeś symulację", "Cały rok, miesiąc po miesiącu", sim.FirstSteps) + 8f;
+            y += StarRow(c, y, "Nie spanikowałeś", sim.HasCrash ? "Trzymałeś albo dokupiłeś w krachu" : "Lokata nie ma krachu – spróbuj ETF albo obligacji", sim.NoPanic) + 8f;
+            y += StarRow(c, y, "Czujny na oszustwa", "Zgłosiłeś podejrzany SMS", sim.ScamAware) + 8f;
 
-            Button(c, m, y, cw, "ZAGRAJ PONOWNIE", false, () => { sim = null; Go(Stage.Choose); });
-            y += ButtonH + 8f;
-            MainButton(bar, "ZASTOSUJ W PRAKTYCE", () => { if (onFinish != null) onFinish(); });
+            MainButton(bar, "KONTYNUUJ", () => { if (onFinish != null) onFinish(); });
+            Button(bar, m, 36f + ButtonH + 10f, cw, "ZAGRAJ PONOWNIE", false, () => { sim = null; completed = false; Go(Stage.Choose); });
             return y;
         }
 
@@ -498,15 +606,33 @@ namespace FinanceQuest
             return h;
         }
 
-        float Badge(RectTransform c, float y, string title, string desc, bool got)
+        int Stars() { return (sim.FirstSteps ? 1 : 0) + (sim.NoPanic ? 1 : 0) + (sim.ScamAware ? 1 : 0); }
+
+        // Zdobyta gwiazdka wskakuje z obrotem (jak po teście w QuizScreen).
+        void PopStar(RectTransform rt, float size, int i)
+        {
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition += new Vector2(size * 0.5f, -size * 0.5f);
+            rt.localScale = Vector3.zero;
+            var fx = screen.GetComponent<QuizFx>();
+            if (fx == null) fx = screen.gameObject.AddComponent<QuizFx>();
+            float delay = 0.35f + i * 0.28f;
+            fx.Add(delay, 0.01f, t => { }, Haptics.Tap);
+            fx.Add(delay, 0.45f, t =>
+            {
+                float k = QuizFx.BackOut(t, 2.6f);
+                rt.localScale = new Vector3(k, k, 1f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, -25f * (1f - t));
+            }, null);
+        }
+
+        float StarRow(RectTransform c, float y, string title, string desc, bool got)
         {
             const float h = 58f, icon = 34f;
             var card = LipCard.Create(c, "Badge", m, y, cw, h, got ? Palette.CardFill : Palette.LockedFill, got ? Palette.CardEdge : Palette.LockedEdge,
                 got ? Palette.CardLip : Palette.LockedLip, 14f, 3f, 2f);
-            var circle = Ui.Rounded("Icon", card.Content, got ? Palette.Accent : Palette.LockedEdge, icon * 0.5f);
-            Ui.Place(circle.rectTransform, 12f, (h - 3f - icon) * 0.5f, icon, icon);
-            var ic = Ui.Icon("Glyph", circle.transform, got ? IconId.Star : IconId.Lock, got ? Palette.OnAccent : Palette.LockedIcon, 18f);
-            Ui.Center(ic.rectTransform, 18f, 18f);
+            var ic = Ui.Icon("Star", card.Content, IconId.Star, got ? Palette.Accent : Palette.LockedEdge, icon);
+            Ui.Place(ic.rectTransform, 12f, (h - 3f - icon) * 0.5f, icon, icon);
             var t = Ui.Text("Title", card.Content, title, 15f, got ? Palette.Text : Palette.TextLocked);
             Ui.Place(t.rectTransform, 58f, 9f, cw - 70f, 20f);
             var d = Ui.Text("Desc", card.Content, desc, 12.5f, got ? Palette.TextMuted : Palette.TextLocked, FontWeight.SemiBold);

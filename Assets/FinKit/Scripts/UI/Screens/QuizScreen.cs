@@ -321,7 +321,7 @@ namespace FinanceQuest
             progress = ProgressBar.Create(c, m, y, cw, 12f, Palette.Track, progressValue);
             y += 12f + 22f;
 
-            if (index == 0 && best >= 0 && best < 3) y += BestNote(c, y);
+            // Bez paska „Twój najlepszy wynik…” przed pierwszym pytaniem – wynik widać na kafelku levelu.
 
             var kick = Ui.Text("Kicker", c, (isTest ? "PYTANIE " : "ZADANIE ") + (index + 1) + " Z " + tasks.Count, 11.5f, Palette.TextMuted);
             kick.characterSpacing = 6f;

@@ -6,6 +6,7 @@ namespace FinanceQuest
 {
     // Prosty wykres liniowy rysowany jedną siatką (bez tekstur i bibliotek) – tani dla telefonu.
     // Linia główna (ciągła), opcjonalna „duch” (przerywana, np. „gdybyś trzymał”) i przerywana linia odniesienia (wpłata).
+    [RequireComponent(typeof(CanvasRenderer))]
     public class LineChart : MaskableGraphic
     {
         public List<double> Main = new List<double>();
@@ -13,11 +14,13 @@ namespace FinanceQuest
         public double Baseline;                    // np. 1000 € – linia wpłaty
         public double Min, Max;                    // zakres osi Y (stały przez całą grę, żeby wykres nie „skakał”)
         public int Steps = 12;                     // ile odcinków na osi X
+        public float LastT = 1f;                   // 0..1 – ile ostatniego odcinka już narysowano (animacja „linia leci”)
         public float Thickness = 3.5f;
         public Color MainColor = Color.black, GhostColor = Color.gray, BaseColor = Color.gray;
+        public Color DownColor = Color.red;        // odcinki pod linią wpłaty – strata od razu rzuca się w oczy
 
         // Pozycja punktu w układzie tego prostokąta – do kropki na końcu linii.
-        public Vector2 Point(int i, double v)
+        public Vector2 Point(float i, double v)
         {
             var r = rectTransform.rect;
             float x = r.xMin + r.width * i / Mathf.Max(1, Steps);
@@ -35,10 +38,22 @@ namespace FinanceQuest
 
             if (Ghost != null)
                 for (int i = 1; i < Ghost.Count; i++)
-                    Dashed(vh, Point(i - 1, Ghost[i - 1]), Point(i, Ghost[i]), Thickness * 0.7f, GhostColor, 7f, 5f);
+                    Dashed(vh, Point(i - 1, Ghost[i - 1]), End(Ghost, i), Thickness * 0.7f, GhostColor, 7f, 5f);
 
             for (int i = 1; i < Main.Count; i++)
-                Segment(vh, Point(i - 1, Main[i - 1]), Point(i, Main[i]), Thickness, MainColor, true);
+            {
+                bool down = (Main[i - 1] + Main[i]) * 0.5 < Baseline;
+                Segment(vh, Point(i - 1, Main[i - 1]), End(Main, i), Thickness, down ? DownColor : MainColor, true);
+            }
+        }
+
+        // Koniec odcinka i – ostatni rysujemy tylko do LastT (linia „rośnie” między miesiącami).
+        Vector2 End(List<double> s, int i)
+        {
+            Vector2 b = Point(i, s[i]);
+            if (i < s.Count - 1 || LastT >= 1f) return b;
+            Vector2 a = Point(i - 1, s[i - 1]);
+            return a + (b - a) * LastT;
         }
 
         void Dashed(VertexHelper vh, Vector2 a, Vector2 b, float w, Color c, float dash, float gap)

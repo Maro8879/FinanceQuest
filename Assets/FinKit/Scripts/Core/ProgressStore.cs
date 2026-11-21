@@ -43,10 +43,12 @@ namespace FinanceQuest
             return stars.TryGetValue(l.Id, out s) ? s : -1;
         }
 
-        // Czy level daje gwiazdki: ma zadania, które pokazuje ekran testu (mini gry jeszcze nie).
+        // Czy level daje gwiazdki: ma zadania, które pokazuje ekran testu, albo jest gotową mini grą (InvestGame: 1–3 gwiazdki).
         public static bool GivesStars(LevelData l)
         {
-            return l.Def != null && l.Def.tasks != null && l.Def.tasks.Count > 0 && l.Kind != LevelKind.MiniGame;
+            if (l.Kind == LevelKind.MiniGame)
+                return l.Def != null && l.Def.minigame != null && l.Def.minigame.game == InvestGame.Id;
+            return l.Def != null && l.Def.tasks != null && l.Def.tasks.Count > 0;
         }
 
         // Zdobyte gwiazdki / wszystkie możliwe (po 3 na każdy level z zadaniami) – dla rozdziału i całego kursu.

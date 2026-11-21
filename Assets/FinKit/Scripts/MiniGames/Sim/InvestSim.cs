@@ -54,6 +54,8 @@ namespace FinanceQuest
         public readonly List<double> History = new List<double>();
         // „Gdybyś trzymał” – sam instrument od 1000 €, bez Twoich decyzji (przerywana linia po sprzedaży).
         public readonly List<double> HoldHistory = new List<double>();
+        // Ile było wpłacone na koniec każdego miesiąca – do wykresu w % (dokupienie nie może „udawać” wzrostu).
+        public readonly List<double> PaidHistory = new List<double>();
 
         readonly double[] path;
 
@@ -64,7 +66,12 @@ namespace FinanceQuest
             Value = Paid = InvestConfig.Start;
             History.Add(Value);
             HoldHistory.Add(Value);
+            PaidHistory.Add(Paid);
         }
+
+        // Wynik w % od wpłaty na koniec miesiąca i – to rysuje wykres.
+        public double PctAt(int i) { return PaidHistory[i] > 0 ? History[i] / PaidHistory[i] - 1.0 : 0.0; }
+        public double HoldPctAt(int i) { return HoldHistory[i] / InvestConfig.Start - 1.0; }
 
         public bool Finished { get { return Month >= InvestConfig.Months; } }
         public bool HasCrash { get { return Instrument != Instrument.Deposit; } }
@@ -75,7 +82,7 @@ namespace FinanceQuest
         // Ile ta kwota jest warta w dzisiejszych pieniądzach (po inflacji od początku gry).
         public double RealValue { get { return Real(Value, Month); } }
 
-        public static double Real(double value, int month)
+        public static double Real(double value, double month)
         {
             return value / Math.Pow(1.0 + InvestConfig.InflationMonthly / 100.0, month);
         }
@@ -87,6 +94,7 @@ namespace FinanceQuest
             Month++;
             if (!Sold) Value *= 1.0 + r;                       // po sprzedaży gotówka stoi w miejscu
             History.Add(Value);
+            PaidHistory.Add(Paid);
             HoldHistory.Add(HoldHistory[HoldHistory.Count - 1] * (1.0 + r));
         }
 
@@ -98,6 +106,7 @@ namespace FinanceQuest
             if (c == CrashChoice.Sell) { Sold = true; SoldMonth = Month; }
             if (c == CrashChoice.BuyMore) { Value += InvestConfig.TopUp; Paid += InvestConfig.TopUp; BoughtMore = true; }
             History[History.Count - 1] = Value;   // punkt na wykresie od razu pokazuje dokupienie
+            PaidHistory[PaidHistory.Count - 1] = Paid;
         }
 
         // SMS od „banku”. Kliknięcie = strata z portfela (wpłata się nie zmienia, więc spada wynik).

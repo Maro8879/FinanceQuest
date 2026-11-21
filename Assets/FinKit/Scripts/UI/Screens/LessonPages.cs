@@ -16,6 +16,7 @@ namespace FinanceQuest
         const float TextSize = 16f;
 
         readonly List<PageDef> pages;
+        readonly string levelTitle;          // tytuł levelu – stoi już w nagłówku pod „Finance Quest”
         readonly bool hasTasks;
         readonly Action onFinish;
         readonly float W;
@@ -33,6 +34,7 @@ namespace FinanceQuest
         {
             this.onFinish = onFinish;
             pages = level.Def.pages;
+            levelTitle = level.Title;
             hasTasks = level.Def.tasks != null && level.Def.tasks.Count > 0;
             W = app.ScreenWidth;
 
@@ -103,18 +105,15 @@ namespace FinanceQuest
 
         float BuildBlocks(RectTransform parent, List<BlockDef> blocks)
         {
-            float m = ScreenKit.Margin, cw = W - 2 * m, y = 6f;
-
-            string kicker = "LEKCJA" + (pages.Count > 1 ? " · STRONA " + (page + 1) + " Z " + pages.Count : "");
-            var k = Ui.Text("Kicker", parent, kicker, 11f, Palette.TextMuted);
-            k.characterSpacing = 12f;
-            Ui.Place(k.rectTransform, m, y, cw, 16);
-            y += 28f;
+            // Bez dopisku „LEKCJA” – tytuł widać w nagłówku, a numer strony w kropkach na dole.
+            float m = ScreenKit.Margin, cw = W - 2 * m, y = 10f;
 
             bool videoOpened = false;
             for (int i = 0; i < blocks.Count; i++)
             {
                 var b = blocks[i];
+                // Pierwszy tytuł strony taki sam jak tytuł levelu w nagłówku – nie powtarzamy go drugi raz.
+                if (i == 0 && b.type == "heading" && SameTitle(b.text, levelTitle)) continue;
                 switch (b.type)
                 {
                     case "heading": y += Heading(parent, b, m, y, cw) + 12f; break;
@@ -129,6 +128,12 @@ namespace FinanceQuest
                 }
             }
             return y + 24f;
+        }
+
+        static bool SameTitle(string a, string b)
+        {
+            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)) return false;
+            return string.Equals(a.Replace("**", "").Trim(), b.Replace("**", "").Trim(), StringComparison.OrdinalIgnoreCase);
         }
 
         static TextMeshProUGUI RichText(string name, Transform parent, string text, float size, FontWeight weight)
