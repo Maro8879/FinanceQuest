@@ -56,6 +56,7 @@ namespace FinanceQuest
         public float maxHeight = 220f;                        // image: obrazek nie będzie wyższy niż tyle
         public string caption;                                // image, video: podpis pod obrazkiem / filmikiem
         public string video;                                  // video: ścieżka względem folderu kursu, np. filmy/ryzyko.mp4
+        public string videoSub;                               // video: ta sama wersja z napisami (opcjonalnie) – w apce przycisk CC
         public List<string> items = new List<string>();       // list: punkty listy
         public float size = 16f;                              // space: wysokość odstępu
         public List<TableRowDef> rows = new List<TableRowDef>();   // table: wiersze (pierwszy = nagłówek, gdy header)
@@ -67,6 +68,7 @@ namespace FinanceQuest
         public Sprite sprite;
         // Filmik podpięty przez importer – tak samo jak obrazek (MP4 leży obok treści, nie w Resources).
         public UnityEngine.Video.VideoClip clip;
+        public UnityEngine.Video.VideoClip clipSub;
     }
 
     [Serializable]

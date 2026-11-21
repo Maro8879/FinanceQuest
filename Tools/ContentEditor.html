@@ -148,9 +148,13 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .drop .dt b{color:var(--txt)}
 .bimg img{width:100%;height:100%;object-fit:cover;border-radius:11px;display:block}
 .bvid{margin:0 auto 14px;border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;background:#1D2B2F;overflow:hidden;color:#fff;font-size:11.5px;text-align:center}
-.bvid video{width:100%;max-height:200px;display:block;background:#000}
+.bvid{width:fit-content;max-width:100%}
+.bvid video{display:block;max-width:100%;max-height:300px;width:auto;height:auto;background:#000}
 .bvid .nov{padding:30px 6px;word-break:break-all}
 .bvid+.bcap{margin-top:-8px}
+.bvid{position:relative}
+.bcc{position:absolute;top:8px;right:8px;border:0;border-radius:6px;padding:3px 7px;font:800 11px Rubik,system-ui,sans-serif;background:rgba(255,255,255,.25);color:#fff;cursor:pointer}
+.bcc.on{background:#F2C200;color:#1D2B2F}.bcc:disabled{opacity:.5;cursor:default}
 .drop video{width:96px;height:54px;object-fit:cover;border-radius:8px;flex:none;background:#000}
 .bimg.has{padding:0;background:var(--pcard)}
 .tgrid{display:grid;gap:5px;align-items:center;margin-bottom:6px}
@@ -492,7 +496,7 @@ function normalizeBlock(b){
   b.type = b.type || "text";
   if (b.type === "heading" || b.type === "text" || b.type === "callout") b.text = b.text ?? "";
   if (b.type === "image"){ b.image = b.image ?? ""; b.width = b.width ?? 1; b.maxHeight = b.maxHeight ?? 220; b.caption = b.caption ?? ""; }
-  if (b.type === "video"){ b.video = b.video ?? ""; b.caption = b.caption ?? ""; }
+  if (b.type === "video"){ b.video = b.video ?? ""; b.videoSub = b.videoSub ?? ""; b.caption = b.caption ?? ""; }
   if (b.type === "list") b.items = b.items || [];
   if (b.type === "space") b.size = b.size ?? 16;
   if (b.type === "table"){
@@ -651,13 +655,14 @@ async function addImage(file, pageIdx, blockIdx){
 
 let pickTarget = null;
 $("imgpick").addEventListener("change", e => { const file = e.target.files[0]; e.target.value = ""; if (file && pickTarget) addImage(file, pickTarget.p, pickTarget.b); });
-$("vidpick").addEventListener("change", e => { const file = e.target.files[0]; e.target.value = ""; if (file && pickTarget) addVideo(file, pickTarget.p, pickTarget.b); });
+$("vidpick").addEventListener("change", e => { const file = e.target.files[0]; e.target.value = ""; if (file && pickTarget) addVideo(file, pickTarget.p, pickTarget.b, pickTarget.field); });
 
 // ======================= filmiki =======================
 // Tak samo jak obrazki: plik MP4 leży w repo w Content/<kurs>/filmy, w JSON tylko „filmy/<nazwa>.mp4”.
 // Tylko MP4 (H.264) – ten format odtwarza każdy telefon bez dodatkowych kodeków.
 const VID_DIR = "filmy", VID_WARN = 15 * 1024 * 1024, VID_MAX = 50 * 1024 * 1024;
 const videoCache = {}, videoLoading = {};
+let vidSubsOn = false;   // podgląd: która wersja filmiku jest włączona (jak przycisk CC w apce)
 function videoUrl(course, path){
   if (!course || !Store.kind || !path) return null;
   const key = course.id + "/" + path;
@@ -674,7 +679,9 @@ function videoUrl(course, path){
 function mb(n){ return (n / 1024 / 1024).toFixed(1).replace(".", ",") + " MB"; }
 
 // Kopiuje filmik do Content/<kurs>/filmy i wpisuje ścieżkę do bloku (albo dodaje nowy blok na końcu strony).
-async function addVideo(file, pageIdx, blockIdx){
+// field: „video” = wersja bez napisów, „videoSub” = ta sama z napisami.
+async function addVideo(file, pageIdx, blockIdx, field){
+  field = field === "videoSub" ? "videoSub" : "video";
   const course = curCourse(), l = curLevel(), f = curChapterFile();
   if (!file || !(file.type === "video/mp4" || /\.mp4$/i.test(file.name))){ toast("Filmik musi być w formacie MP4 (np. z telefonu .mov przekonwertuj na .mp4)."); return; }
   if (!Store.kind){ alert("Filmiki można dodawać po otwarciu folderu Content (Chrome/Edge) albo po połączeniu z GitHubem."); return; }
@@ -695,8 +702,8 @@ async function addVideo(file, pageIdx, blockIdx){
   } catch(e){ alert("Nie udało się zapisać filmiku: " + e.message); return; }
   const path = VID_DIR + "/" + name;
   const page = l.pages[pageIdx];
-  if (blockIdx === "new" || blockIdx == null) page.blocks.push(Object.assign(newBlock("video"), {video: path}));
-  else page.blocks[blockIdx].video = path;
+  if (blockIdx === "new" || blockIdx == null) page.blocks.push(Object.assign(newBlock("video"), {[field]: path}));
+  else page.blocks[blockIdx][field] = path;
   S.page = pageIdx; markDirty(f); renderForm(); renderPreview(); renderTree();
   toast("Dodano filmik " + path);
 }
@@ -714,11 +721,11 @@ document.addEventListener("drop", e => {
   document.querySelectorAll(".over").forEach(x => x.classList.remove("over"));
   const t = dropTarget(e), file = e.dataTransfer?.files?.[0];
   if (!t || !file) return;
-  const [p, b] = t.dataset.drop.split(":");
+  const [p, b, fld] = t.dataset.drop.split(":");
   // Filmik upuszczony na obrazek (albo odwrotnie) dostaje nowy blok – nie nadpisujemy bloku innego rodzaju.
   const isVid = file.type.startsWith("video/") || /\.mp4$/i.test(file.name), want = isVid ? "video" : "image";
   const blk = b === "new" ? null : curLevel()?.pages[Number(p)]?.blocks[Number(b)];
-  (isVid ? addVideo : addImage)(file, Number(p), blk && blk.type === want ? Number(b) : "new");
+  (isVid ? addVideo : addImage)(file, Number(p), blk && blk.type === want ? Number(b) : "new", fld);
 });
 
 // ======================= współpraca: cudze zmiany i łączenie =======================
@@ -915,7 +922,7 @@ function levelWarnings(l){
     for (const b of pg.blocks){
       if ((b.type === "text" || b.type === "heading" || b.type === "callout") && !String(b.text).trim()) w.push(pre + "pusty blok „" + BLOCKS[b.type] + "”.");
       if (b.type === "image" && !String(b.image).trim()) w.push(pre + "obrazek bez ścieżki.");
-      if (b.type === "video" && !String(b.video).trim()) w.push(pre + "filmik bez ścieżki.");
+      if (b.type === "video" && !String(b.video).trim() && !String(b.videoSub || "").trim()) w.push(pre + "filmik bez ścieżki.");
       if (b.type === "list" && !b.items.some(x => x.trim())) w.push(pre + "pusta lista.");
       if (b.type === "table" && !b.rows.some(r => r.cells.some(c => String(c).trim()))) w.push(pre + "pusta tabelka.");
       if (b.type === "table" && (b.colWidths || []).reduce((s, x) => s + (Number(x) || 0), 0) > 100) w.push(pre + "kolumny tabelki mają razem ponad 100% – w aplikacji zostaną zwężone.");
@@ -1110,12 +1117,15 @@ function blockForm(bl, bind, p, j){
     <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
     <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
   if (bl.type === "video"){
-    const url = bl.video ? videoUrl(curCourse(), bl.video) : null;
-    f = `<div class="drop" data-act="pick-video" data-p="${p}" data-b="${j}" data-drop="${p}:${j}">
+    // Dwa pola: główna wersja i (opcjonalnie) ta sama z napisami – w apce przełącza je przycisk CC.
+    const zone = (field, title, hint) => { const v = bl[field] || "", url = v ? videoUrl(curCourse(), v) : null;
+      return `<span class="sub">${title}</span><div class="drop" data-act="pick-video" data-field="${field}" data-p="${p}" data-b="${j}" data-drop="${p}:${j}:${field}">
       ${url ? `<video src="${url}" muted preload="metadata"></video>` : `<div style="font-size:28px;flex:none">🎬</div>`}
-      <div class="dt">${bl.video ? `<b>${esc(bl.video)}</b><br>` : ""}Przeciągnij tu filmik MP4 albo kliknij, żeby wybrać.<br><span style="font-weight:600">Edytor skopiuje go do repo (<code>${esc(curCourse()?.id || "")}/filmy</code>). Najlepiej krótki, 720p, do ~15 MB.</span></div></div>
-    <details style="margin-top:6px"><summary class="sub" style="cursor:pointer">ścieżka ręcznie</summary>${one(`${bind}.video`, bl.video, "filmy/nazwa.mp4")}</details>
-    <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod filmikiem (opcjonalnie)")}</div>`;
+      <div class="dt">${v ? `<b>${esc(v)}</b><br>` : ""}${hint}</div></div>
+      <details style="margin-top:6px;margin-bottom:8px"><summary class="sub" style="cursor:pointer">ścieżka ręcznie</summary>${one(`${bind}.${field}`, v, "filmy/nazwa.mp4")}</details>`; };
+    f = zone("video", "Bez napisów", `Przeciągnij tu filmik MP4 albo kliknij, żeby wybrać.<br><span style="font-weight:600">Edytor skopiuje go do repo (<code>${esc(curCourse()?.id || "")}/filmy</code>). Najlepiej krótki, 720p, do ~15 MB.</span>`)
+      + zone("videoSub", "Z napisami (opcjonalnie)", `Ta sama wersja z wypalonymi napisami – w apce przełącza się przyciskiem <b>CC</b>, film leci dalej od tego samego miejsca.<br><span style="font-weight:600">Najlepiej tej samej długości co wersja bez napisów.</span>`)
+      + `<div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod filmikiem (opcjonalnie)")}</div>`;
   }
   if (bl.type === "table"){
     const cols = Math.max(1, ...bl.rows.map(r => r.cells.length));
@@ -1234,8 +1244,11 @@ function blockPreview(b){
     case "space": return `<div style="height:${Math.min(200, Number(b.size)||0)}px"></div>`;
     case "video": {
       // W aplikacji: tap w obraz = pełny ekran, pasek pod spodem. Tu zwykły odtwarzacz – żeby obejrzeć, co wrzuciłeś.
-      const url = b.video ? videoUrl(curCourse(), b.video) : null;
-      return `<div class="bvid">${url ? `<video src="${url}" controls playsinline preload="metadata"></video>` : `<div class="nov">🎬 ${esc(b.video || "brak filmiku")}</div>`}</div>${b.caption ? `<div class="bcap">${rich(b.caption)}</div>` : ""}`;
+      const main = b.video || b.videoSub, sub = b.video && b.videoSub ? b.videoSub : "";
+      const on = sub && vidSubsOn, src = on ? sub : main;
+      const url = src ? videoUrl(curCourse(), src) : null, other = sub ? videoUrl(curCourse(), on ? main : sub) : null;
+      const btn = sub ? `<button class="bcc ${on ? "on" : ""}" data-act="vid-subs" ${other ? `data-other="${other}"` : "disabled"} title="Przełącz wersję z napisami / bez – od tego samego miejsca">CC</button>` : "";
+      return `<div class="bvid">${url ? `<video src="${url}" controls playsinline preload="metadata"></video>` : `<div class="nov">🎬 ${esc(main || "brak filmiku")}</div>`}${btn}</div>${b.caption ? `<div class="bcap">${rich(b.caption)}</div>` : ""}`;
     }
     case "image": {
       const w = Math.max(30, Math.min(100, (Number(b.width)||1)*100)), mh = Number(b.maxHeight) || 220;
@@ -1304,7 +1317,7 @@ function trackPage(bind){ const m = /\.pages\.(\d+)\./.exec(bind || ""); if (m) 
 document.addEventListener("focusin", e => { const b = e.target.dataset?.bind || e.target.dataset?.lines; if (b && /\.pages\./.test(b)){ const old = S.page; trackPage(b); if (old !== S.page) renderPreview(); } });
 document.addEventListener("change", e => {
   const bd = e.target.dataset?.bind;
-  if (bd && /\.blocks\.\d+\.(image|video)$/.test(bd) && curCourse()){
+  if (bd && /\.blocks\.\d+\.(image|video|videoSub)$/.test(bd) && curCourse()){
     const v = normImagePath(e.target.value, curCourse().id);
     if (v !== e.target.value){ e.target.value = v; e.target.dispatchEvent(new Event("input", {bubbles:true})); renderForm(); }
   } if (e.target.tagName === "SELECT") e.target.dispatchEvent(new Event("input", {bubbles:true})); });
@@ -1381,8 +1394,17 @@ document.addEventListener("click", async e => {
       if (act === "tcol"){ if (cols <= 1 || !confirm("Usunąć kolumnę?")) return; tb.rows.forEach(r => r.cells.splice(i, 1)); if (tb.colWidths) tb.colWidths.splice(i, 1); }
       S.page = pi; return changed();
     }
+    case "vid-subs": {
+      // Jak w apce: podmieniamy plik, a czas i odtwarzanie zostają.
+      const box = a.closest(".bvid"), v = box?.querySelector("video"); if (!v || !a.dataset.other) return;
+      const t = v.currentTime, playing = !v.paused, mine = v.src;
+      vidSubsOn = !vidSubsOn; a.classList.toggle("on", vidSubsOn);
+      v.src = a.dataset.other; a.dataset.other = mine;
+      v.addEventListener("loadedmetadata", () => { v.currentTime = Math.min(t, v.duration || t); if (playing) v.play(); }, {once: true});
+      return;
+    }
     case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
-    case "pick-video": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("vidpick").click(); return;
+    case "pick-video": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b), field: a.dataset.field}; $("vidpick").click(); return;
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();
     case "setting": if (moveIn(l.minigame.settings, i, dir)) changed(); return;
     case "add-task": l.tasks.push(newTask(a.dataset.type)); S.sel.part = "task"; S.sel.idx = l.tasks.length - 1; return changed();

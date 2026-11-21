@@ -114,16 +114,28 @@ namespace FinanceQuest.EditorTools
         }
 
         // Filmik z folderu kursu (np. Content/invest/filmy/x.mp4) jako VideoClip – działa jak obrazek, bez Resources.
+        // Dwie wersje: bez napisów (video) i z napisami (videoSub) – każda może być pusta.
         static int AttachVideo(BlockDef b, string courseDir, string courseId, string file)
         {
-            b.clip = null;
+            int w = 0;
             b.video = ContentBlocks.NormalizeImagePath(b.video, courseId);
-            if (string.IsNullOrEmpty(b.video)) return 0;
-            string assetPath = courseDir + "/" + b.video;
-            b.clip = AssetDatabase.LoadAssetAtPath<VideoClip>(assetPath);
-            if (b.clip != null) return 0;
-            Debug.LogWarning("Finance Quest: " + file + ": nie ma filmiku " + assetPath + " (albo Unity jeszcze go nie zaimportowało).");
-            return 1;
+            b.videoSub = ContentBlocks.NormalizeImagePath(b.videoSub, courseId);
+            b.clip = LoadClip(b.video, courseDir, file, ref w);
+            b.clipSub = LoadClip(b.videoSub, courseDir, file, ref w);
+            return w;
+        }
+
+        static VideoClip LoadClip(string path, string courseDir, string file, ref int warnings)
+        {
+            if (string.IsNullOrEmpty(path)) return null;
+            string assetPath = courseDir + "/" + path;
+            var clip = AssetDatabase.LoadAssetAtPath<VideoClip>(assetPath);
+            if (clip == null)
+            {
+                Debug.LogWarning("Finance Quest: " + file + ": nie ma filmiku " + assetPath + " (albo Unity jeszcze go nie zaimportowało).");
+                warnings++;
+            }
+            return clip;
         }
 
         static string StripExt(string p)
@@ -172,7 +184,7 @@ namespace FinanceQuest.EditorTools
                     if (blocks.Count == 0) { Debug.LogWarning("Finance Quest: " + pw + "pusta strona."); w++; }
                     foreach (var b in blocks)
                     {
-                        if (b.type == "video" && string.IsNullOrEmpty(b.video)) { Debug.LogWarning("Finance Quest: " + pw + "filmik bez ścieżki."); w++; }
+                        if (b.type == "video" && string.IsNullOrEmpty(b.video) && string.IsNullOrEmpty(b.videoSub)) { Debug.LogWarning("Finance Quest: " + pw + "filmik bez ścieżki."); w++; }
                         if (b.type == "image" && string.IsNullOrEmpty(b.image)) { Debug.LogWarning("Finance Quest: " + pw + "obrazek bez ścieżki."); w++; }
                         if (b.type == "table" && (b.rows.Count == 0 || b.rows.TrueForAll(r => r.cells.TrueForAll(string.IsNullOrEmpty)))) { Debug.LogWarning("Finance Quest: " + pw + "pusta tabelka."); w++; }
                         if (b.type == "list" && b.items.Count == 0) { Debug.LogWarning("Finance Quest: " + pw + "pusta lista."); w++; }

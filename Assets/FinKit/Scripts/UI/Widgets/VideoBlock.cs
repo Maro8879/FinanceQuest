@@ -9,21 +9,29 @@ namespace FinanceQuest
 {
     // Filmik w lekcji: obraz w karcie z wargą, pod nim pasek (play/pauza, przewijanie, czas).
     // Tap w obraz = pełny ekran, tap na pełnym ekranie = z powrotem w treść.
+    // Gdy filmik ma drugą wersję z napisami, w pasku jest przycisk „CC” – przełącza wersję w tym samym momencie filmu.
     // Przy przełączaniu przenosimy ten sam obiekt (nie tworzymy drugiego odtwarzacza),
     // więc filmik gra dalej bez przerwy i bez ponownego wczytywania.
     public class VideoBlock : MonoBehaviour, IPointerClickHandler
     {
         const float BarH = 36f, Lip = 4f, Border = 2f, Radius = 16f;
-        const float MaxInlineH = 260f;   // pionowy filmik nie zajmie całej strony
-        const float PlayW = 42f, TimeW = 84f, Big = 54f;
+        const float MaxInlineH = 260f;     // poziomy / kwadratowy filmik
+        const float MaxReelH = 400f;       // pionowy (reels 9:16) – wyższy, ale zostaje miejsce na tekst lekcji
+        const float PlayW = 42f, TimeW = 84f, TimeWShort = 42f, Big = 54f, CcW = 40f;
+        const string SubsKey = "fq_video_subs";   // wybór napisów pamiętamy dla wszystkich filmików
 
         VideoPlayer player;
         RawImage picture;
         RectTransform stage, home, overlay, bar, track, fill, knob, bigPlay;
-        Image playIcon;
-        TextMeshProUGUI timeLabel;
+        Image playIcon, ccBg;
+        TextMeshProUGUI timeLabel, ccLabel;
+        RectTransform cc;
+        VideoClip mainClip, subClip;
+        RenderTexture hold;         // ostatnia klatka na czas przełączania wersji – bez mignięcia czernią
+        bool subsOn, switching, swapReady, resumePlay;
+        double resumeTime;
         Vector2 inlineSize;
-        float aspect, trackW, shownK = -1f, dragK;
+        float aspect, trackW, timeW = TimeW, shownK = -1f, dragK;
         double length;
         bool full, dragging, shownPlaying;
         int shownSec = -1;
@@ -31,15 +39,18 @@ namespace FinanceQuest
         // Zwraca wysokość bloku razem z podpisem.
         public static float Build(RectTransform parent, BlockDef b, float x, float y, float cw)
         {
-            var clip = b.clip;
+            // Wersja bez napisów jest główna; gdy jest tylko jedna z dwóch, gra ona i nie ma przycisku CC.
+            var clip = b.clip != null ? b.clip : b.clipSub;
+            var sub = b.clip != null ? b.clipSub : null;
             float aspect = clip != null && clip.height > 0 ? (float)clip.width / clip.height : 16f / 9f;
             float w = cw;
             float vh = (w - 2 * Border) / aspect;
-            if (vh > MaxInlineH)
+            float maxH = aspect < 1f ? MaxReelH : MaxInlineH;
+            if (vh > maxH)
             {
-                vh = MaxInlineH;
-                // Węższa karta dla pionowego filmiku, ale nie tak wąska, żeby pasek stał się nieczytelny.
-                w = Mathf.Clamp(vh * aspect + 2 * Border, Mathf.Min(cw, 230f), cw);
+                // Karta dokładnie w proporcjach filmu (np. 9:16) – bez czarnych pasów po bokach.
+                vh = maxH;
+                w = vh * aspect + 2 * Border;
             }
             float h = vh + BarH + 2 * Border;
             float px = x + (cw - w) * 0.5f;
@@ -57,7 +68,7 @@ namespace FinanceQuest
                 Ui.Stretch(mask.rectTransform, Border, Border, Border, Border);
                 mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
                 var vb = Ui.Rect("Stage", mask.transform).gameObject.AddComponent<VideoBlock>();
-                vb.Init(clip, aspect, mask.rectTransform, new Vector2(w - 2 * Border, vh + BarH));
+                vb.Init(clip, sub, aspect, mask.rectTransform, new Vector2(w - 2 * Border, vh + BarH));
             }
 
             float used = h + Lip;
@@ -72,14 +83,18 @@ namespace FinanceQuest
             return used;
         }
 
-        void Init(VideoClip clip, float aspect, RectTransform home, Vector2 size)
+        void Init(VideoClip clip, VideoClip sub, float aspect, RectTransform home, Vector2 size)
         {
+            mainClip = clip;
+            subClip = sub;
+            subsOn = sub != null && PlayerPrefs.GetInt(SubsKey, 0) == 1;
             this.aspect = aspect;
             this.home = home;
             inlineSize = size;
             length = clip.length;
             stage = (RectTransform)transform;
             Ui.Stretch(stage);
+            stage.gameObject.AddComponent<RectMask2D>();   // przycina film wypełniający pełny ekran (patrz Layout)
 
             // Ciemne tło łapie tap w obraz (także w pasach po bokach węższego filmiku).
             var bg = gameObject.AddComponent<Image>();
@@ -115,16 +130,30 @@ namespace FinanceQuest
 
             timeLabel = Ui.Text("Time", bar, "", 12f, Color.white, FontWeight.SemiBold, TextAlignmentOptions.MidlineRight);
 
+            if (sub != null)
+            {
+                cc = Ui.Rect("Subs", bar);
+                cc.gameObject.AddComponent<Image>().color = Color.clear;   // większe pole dotyku niż sama plakietka
+                cc.gameObject.AddComponent<TapCatcher>().OnTap = ToggleSubs;
+                ccBg = Ui.Rounded("Pill", cc, Color.white, 5f);
+                Ui.Center(ccBg.rectTransform, 30f, 20f);
+                ccLabel = Ui.Text("Label", ccBg.transform, "CC", 11f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+                Ui.Stretch(ccLabel.rectTransform);
+                ShowSubsState();
+            }
+
             player = gameObject.AddComponent<VideoPlayer>();
             player.playOnAwake = false;
             player.source = VideoSource.VideoClip;
-            player.clip = clip;
+            player.clip = subsOn ? sub : clip;
             // APIOnly: bierzemy gotową teksturę dekodera, bez dodatkowej kopii do RenderTexture – mniej pracy dla telefonu.
             player.renderMode = VideoRenderMode.APIOnly;
             player.audioOutputMode = VideoAudioOutputMode.Direct;
             player.isLooping = false;
             player.skipOnDrop = true;   // na słabszym telefonie lepiej zgubić klatkę, niż rozjechać obraz z dźwiękiem
             player.loopPointReached += p => { p.Pause(); p.time = 0; };   // po końcu wracamy na start, gotowi do ponownego obejrzenia
+            player.prepareCompleted += OnPrepared;
+            player.seekCompleted += p => { if (switching) FinishSwitch(); };
             player.Prepare();   // pierwsza klatka służy za okładkę, zanim ktoś kliknie
 
             // Gdy ekran lekcji znika (np. przebudowa), pełny ekran musi zniknąć razem z nim – inaczej filmik zostałby na wierzchu.
@@ -139,14 +168,23 @@ namespace FinanceQuest
             float vh = h - BarH;
             float pw = w, ph = w / aspect;
             if (ph > vh) { ph = vh; pw = vh * aspect; }
+            // Na pełnym ekranie reels wypełnia ekran jak w Instagramie: zamiast pasów ucinamy odrobinę z boków
+            // (najwyżej ~15%, żeby nie obciąć napisów ani ważnych rzeczy przy krawędzi).
+            float fillK = Mathf.Max(w / pw, vh / ph);
+            if (full && fillK > 1f && fillK < 1.18f) { pw *= fillK; ph *= fillK; }
             Ui.Place(picture.rectTransform, (w - pw) * 0.5f, (vh - ph) * 0.5f, pw, ph);
             Ui.Place(bigPlay, (w - Big) * 0.5f, (vh - Big) * 0.5f, Big, Big);
 
             Ui.Place(bar, 0, vh, w, BarH);
-            trackW = Mathf.Max(20f, w - PlayW - TimeW - 14f);
+            float ccw = cc != null ? CcW : 0f;
+            // Wąska karta (reels w treści): sam bieżący czas zamiast „0:12 / 0:45”, żeby suwak był wygodny.
+            timeW = w < 300f ? TimeWShort : TimeW;
+            shownSec = -1;
+            trackW = Mathf.Max(20f, w - PlayW - timeW - 14f - ccw);
             Ui.Place(track, PlayW, 0, trackW, BarH);
             Ui.Place((RectTransform)track.Find("Line"), 0, BarH * 0.5f - 2f, trackW, 4f);
-            Ui.Place(timeLabel.rectTransform, w - TimeW - 12f, 0, TimeW, BarH);
+            if (cc != null) Ui.Place(cc, PlayW + trackW + 4f, 0, CcW, BarH);
+            Ui.Place(timeLabel.rectTransform, w - timeW - 12f, 0, timeW, BarH);
             shownK = -1f;
             shownPlaying = !player.isPlaying;   // wymusza odświeżenie ikon przy najbliższym Update
             Update();
@@ -155,14 +193,16 @@ namespace FinanceQuest
         void Update()
         {
             if (player == null) return;
+            // W trakcie przełączania wersji trzymamy zapamiętaną klatkę, aż nowa wersja dojdzie do tego samego miejsca.
+            if (hold != null && swapReady && player.texture != null) ReleaseHold();
             var tex = player.texture;
-            if (tex != picture.texture)
+            if (hold == null && tex != picture.texture)
             {
                 picture.texture = tex;
                 picture.color = tex != null ? Color.white : Color.clear;
             }
 
-            bool playing = player.isPlaying;
+            bool playing = switching ? resumePlay : player.isPlaying;
             if (playing != shownPlaying)
             {
                 shownPlaying = playing;
@@ -171,7 +211,7 @@ namespace FinanceQuest
             }
 
             // Pozycja suwaka: przy przeciąganiu palec, inaczej czas filmu. Przesuwamy tylko, gdy coś się zmieniło.
-            double t = dragging ? dragK * length : player.time;
+            double t = dragging ? dragK * length : switching ? resumeTime : player.time;
             float k = length > 0 ? Mathf.Clamp01((float)(t / length)) : 0f;
             if (Mathf.Abs(k - shownK) * trackW > 0.5f)
             {
@@ -183,7 +223,7 @@ namespace FinanceQuest
             if (sec != shownSec)
             {
                 shownSec = sec;
-                timeLabel.text = Clock(t) + " / " + Clock(length);
+                timeLabel.text = timeW < TimeW ? Clock(t) : Clock(t) + " / " + Clock(length);
             }
 
             // Na pełnym ekranie poziomy ruch palca to przewijanie filmu, nie zmiana strony.
@@ -210,6 +250,7 @@ namespace FinanceQuest
         void TogglePlay()
         {
             Haptics.Tap();
+            if (switching) { resumePlay = !resumePlay; return; }   // zadziała, gdy druga wersja będzie gotowa
             if (player.isPlaying) player.Pause();
             else player.Play();
         }
@@ -218,8 +259,71 @@ namespace FinanceQuest
         {
             dragging = !done;
             dragK = k;
+            if (!done) return;
             // Szukamy w filmie dopiero po puszczeniu – skakanie co klatkę przy przeciąganiu zacina słabsze telefony.
-            if (done && player.canSetTime) player.time = k * length;
+            if (switching) resumeTime = k * length;
+            else if (player.canSetTime) player.time = k * length;
+        }
+
+        // ---------- napisy: dwie wersje tego samego filmu ----------
+
+        void ToggleSubs()
+        {
+            Haptics.Tap();
+            subsOn = !subsOn;
+            PlayerPrefs.SetInt(SubsKey, subsOn ? 1 : 0);
+            ShowSubsState();
+
+            if (!switching)
+            {
+                resumeTime = player.isPrepared ? player.time : 0;
+                resumePlay = player.isPlaying;
+                HoldFrame();
+            }
+            // Jeden odtwarzacz zamiast dwóch naraz – dwa dekodery wideo to za dużo dla przeciętnego telefonu.
+            switching = true;
+            swapReady = false;
+            player.clip = subsOn ? subClip : mainClip;
+            player.Prepare();
+        }
+
+        void OnPrepared(VideoPlayer p)
+        {
+            if (!switching) return;
+            if (resumeTime > 0.05 && p.canSetTime) p.time = resumeTime;   // dalej w seekCompleted
+            else FinishSwitch();
+        }
+
+        void FinishSwitch()
+        {
+            switching = false;
+            if (resumePlay) player.Play();
+            swapReady = true;
+        }
+
+        // Kopia bieżącej klatki – zostaje na ekranie, gdy odtwarzacz wczytuje drugą wersję.
+        void HoldFrame()
+        {
+            var src = picture.texture;
+            if (src == null || hold != null) return;
+            hold = RenderTexture.GetTemporary(src.width, src.height, 0);
+            Graphics.Blit(src, hold);
+            picture.texture = hold;
+        }
+
+        void ReleaseHold()
+        {
+            if (hold == null) return;
+            if (picture.texture == hold) picture.texture = null;
+            RenderTexture.ReleaseTemporary(hold);
+            hold = null;
+        }
+
+        void ShowSubsState()
+        {
+            if (ccBg == null) return;
+            ccBg.color = subsOn ? Palette.Accent : new Color(1f, 1f, 1f, 0.22f);
+            ccLabel.color = subsOn ? Palette.OnAccent : Color.white;
         }
 
         void Maximize()
@@ -280,7 +384,7 @@ namespace FinanceQuest
             ReleaseBack();
         }
 
-        void OnDestroy() { ReleaseBack(); }
+        void OnDestroy() { ReleaseBack(); ReleaseHold(); }
 
         // Pilnuje karty w treści: gdy znika, sprząta pełny ekran.
         class Guard : MonoBehaviour
