@@ -78,7 +78,7 @@ namespace FinanceQuest
     // Sam przełącza cytat co Interval sekund. Liczy czas tylko, gdy karta jest na ekranie (menu jest otwarte).
     public class QuoteAuto : MonoBehaviour
     {
-        const float Interval = 4f;   // tyle czasu na przeczytanie jednego cytatu
+        const float Interval = 6f;   // tyle czasu na przeczytanie jednego cytatu
         public QuoteSwap Swap;
         float timer;
 
