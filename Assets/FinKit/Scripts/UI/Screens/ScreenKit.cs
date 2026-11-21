@@ -78,6 +78,20 @@ namespace FinanceQuest
             Ui.Place(p.rectTransform, x + w - labelW, y, labelW, 16f);
         }
 
+        // Licznik gwiazdek „★ 5/12” w jednej linii (np. za podpisem karty). Zwraca szerokość; nic nie rysuje, gdy max = 0.
+        public static float StarCount(Transform parent, float x, float y, int got, int max, Color starColor, Color textColor)
+        {
+            if (max <= 0) return 0f;
+            const float star = 13f, h = 18f;
+            var icon = Ui.Icon("StarIcon", parent, IconId.Star, starColor, star);
+            Ui.Place(icon.rectTransform, x, y + (h - star) * 0.5f - 1f, star, star);
+            var t = Ui.Text("StarCount", parent, got + "/" + max, 12.5f, textColor, FontWeight.ExtraBold, TextAlignmentOptions.MidlineLeft);
+            t.textWrappingMode = TextWrappingModes.NoWrap;
+            float tw = t.GetPreferredValues(t.text, 1000f, 0f).x;
+            Ui.Place(t.rectTransform, x + star + 3f, y, tw + 2f, h);
+            return star + 3f + tw;
+        }
+
         public static string Pct(float v) { return Mathf.RoundToInt(v * 100f) + "%"; }
     }
 }

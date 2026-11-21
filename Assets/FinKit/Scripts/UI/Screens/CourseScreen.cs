@@ -48,21 +48,37 @@ namespace FinanceQuest
             Ui.Place(cup.rectTransform, m + cw - trophyW - 2f, 4f + (ring - trophyH) * 0.5f, trophyW, trophyH);
 
             float y = 4f + ring + 18f;
+            float face = UniformFace(content, cw, course);
             for (int i = 0; i < course.Chapters.Count; i++)
-                y += Chapter(content, m, y, cw, app, course, i) + 14f;
+                y += Chapter(content, m, y, cw, app, course, i, face) + 14f;
             ScreenKit.SetContentHeight(content, y + 24f);
         }
 
         // Karta rozdziału; jeśli rozdział właśnie się otworzył – z animacją odblokowania (tylko raz).
-        static float Chapter(RectTransform parent, float x, float y, float w, FinanceQuestApp app, CourseData course, int index)
+        const float Pad = 16f, IconSpace = 40f;
+
+        // Wszystkie karty rozdziałów mają tę samą wysokość: najdłuższy tytuł + podpis + miejsce na pasek postępu.
+        static float UniformFace(Transform parent, float w, CourseData course)
+        {
+            float maxTitle = 0f;
+            foreach (var ch in course.Chapters)
+            {
+                var probe = Ui.Text("Probe", parent, ch.Title, 17f, Color.white);
+                maxTitle = Mathf.Max(maxTitle, Ui.TextHeight(probe, w - 2 * Pad - IconSpace));
+                Object.DestroyImmediate(probe.gameObject);
+            }
+            return Pad + maxTitle + 19f + 10f + 16f + Pad;
+        }
+
+        static float Chapter(RectTransform parent, float x, float y, float w, FinanceQuestApp app, CourseData course, int index, float face)
         {
             var ch = course.Chapters[index];
             if (ch.Id != app.UnlockedChapter || app.Progress.ChapterState(course, index) != ItemState.Current)
-                return ChapterCard(parent, x, y, w, app, course, index, null, 0f);
+                return ChapterCard(parent, x, y, w, app, course, index, null, face);
 
             app.UnlockedChapter = null;
             var box = UnlockReveal.Box(parent, "Unlock_" + index, x, y);
-            float fh = ChapterCard(box, 0f, 0f, w, app, course, index, null, 0f);
+            float fh = ChapterCard(box, 0f, 0f, w, app, course, index, null, face);
             var fin = (RectTransform)box.GetChild(box.childCount - 1);
             // Zablokowana wersja dostaje tę samą wysokość, żeby fala odsłaniała kartę bez skoku.
             ChapterCard(box, 0f, 0f, w, app, course, index, ItemState.Locked, fh - ScreenKit.Lip);
@@ -76,7 +92,7 @@ namespace FinanceQuest
         {
             var ch = course.Chapters[index];
             var state = force ?? app.Progress.ChapterState(course, index);
-            const float pad = 16f, iconSpace = 40f;
+            const float pad = Pad, iconSpace = IconSpace;
 
             Color fill, edge, lip, title, sub;
             string subText;
@@ -101,15 +117,24 @@ namespace FinanceQuest
             var card = LipCard.Create(parent, "Chapter_" + index, x, y, w, 100, fill, edge, lip,
                 ScreenKit.CardRadius, ScreenKit.Lip, state == ItemState.Locked ? 2f : 0f);
             float th = ScreenKit.TitleBlock(card.Content, pad, pad, w - 2 * pad - iconSpace, ch.Title, 17f, subText, title, sub);
+            // Gwiazdki rozdziału za podpisem (podpis stoi pod tytułem: TitleBlock zwraca tytuł + 19 na podpis).
+            int sg, sm;
+            app.Progress.StarTotals(ch, out sg, out sm);
+            var probe = Ui.Text("Probe", card.Content, subText, 12.5f, sub, FontWeight.SemiBold);
+            float sw = probe.GetPreferredValues(subText, 1000f, 0f).x;
+            Object.DestroyImmediate(probe.gameObject);
+            bool locked = state == ItemState.Locked;
+            ScreenKit.StarCount(card.Content, pad + sw + 10f, pad + th - 19f + 1f, sg, sm, locked ? Palette.TextLocked : Palette.Accent, title);
             float face = pad + th + pad;
+            if (state == ItemState.Current) face += 26f;
+            if (forceFace > 0f) face = forceFace;
 
+            // Pasek postępu (tylko otwarty rozdział) zawsze przy dolnej krawędzi – na każdej karcie w tym samym miejscu.
             if (state == ItemState.Current)
             {
                 float v = app.Progress.ChapterProgress(ch);
-                ScreenKit.BarRow(card.Content, pad, pad + th + 10f, w - 2 * pad, v, Palette.TrackOnColor, Color.white, ScreenKit.Pct(v));
-                face += 26f;
+                ScreenKit.BarRow(card.Content, pad, face - pad - 16f, w - 2 * pad, v, Palette.TrackOnColor, Color.white, ScreenKit.Pct(v));
             }
-            if (forceFace > 0f) face = forceFace;
             ((RectTransform)card.transform).sizeDelta = new Vector2(w, face + ScreenKit.Lip);
 
             // Rosnące słupki w prawym dolnym rogu (białe, delikatne). Na zablokowanych kartach bez nich.

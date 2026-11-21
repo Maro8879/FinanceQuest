@@ -43,6 +43,35 @@ namespace FinanceQuest
             return stars.TryGetValue(l.Id, out s) ? s : -1;
         }
 
+        // Czy level daje gwiazdki: ma zadania, które pokazuje ekran testu (mini gry jeszcze nie).
+        public static bool GivesStars(LevelData l)
+        {
+            return l.Def != null && l.Def.tasks != null && l.Def.tasks.Count > 0 && l.Kind != LevelKind.MiniGame;
+        }
+
+        // Zdobyte gwiazdki / wszystkie możliwe (po 3 na każdy level z zadaniami) – dla rozdziału i całego kursu.
+        public void StarTotals(ChapterData ch, out int got, out int max)
+        {
+            got = max = 0;
+            foreach (var l in ch.Levels)
+            {
+                if (!GivesStars(l)) continue;
+                max += 3;
+                got += Mathf.Max(0, Stars(l));
+            }
+        }
+
+        public void StarTotals(CourseData c, out int got, out int max)
+        {
+            got = max = 0;
+            foreach (var ch in c.Chapters)
+            {
+                int g, m;
+                StarTotals(ch, out g, out m);
+                got += g; max += m;
+            }
+        }
+
         // Zapisuje wynik, tylko jeśli jest lepszy od dotychczasowego.
         public void SetStars(LevelData l, int value)
         {

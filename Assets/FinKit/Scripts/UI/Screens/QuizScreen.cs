@@ -34,7 +34,7 @@ namespace FinanceQuest
         readonly RectTransform screen;
         readonly List<TaskDef> tasks;
         readonly bool isTest;
-        readonly int best;                  // dotychczasowy najlepszy wynik w gwiazdkach (-1 = jeszcze nie zaliczony)
+        int best;                  // dotychczasowy najlepszy wynik w gwiazdkach (-1 = jeszcze nie zaliczony)
         readonly Action<int> onFinish;      // dostaje zdobyte gwiazdki
         readonly System.Random rng = new System.Random();
         readonly float W, m, cw;
@@ -64,10 +64,16 @@ namespace FinanceQuest
         ProgressBar progress;          // pasek postępu bieżącego widoku (null na ekranie wyniku)
         float progressValue, shownProgress;   // docelowa wartość i to, co pasek pokazywał poprzednio
 
-        public static void Build(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, int bestStars, Action<int> onFinish)
+        // onResult: wywoływane raz na podejście, gdy pokazuje się wynik – zapis najlepszego wyniku od razu, nawet jeśli
+        // ktoś potem wyjdzie przyciskiem WRÓĆ zamiast UKOŃCZ.
+        public static void Build(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, int bestStars, Action<int> onFinish,
+            Action<int> onResult = null)
         {
-            new QuizScreen(screen, app, tasks, isTest, bestStars, onFinish);
+            new QuizScreen(screen, app, tasks, isTest, bestStars, onFinish) { onResult = onResult };
         }
+
+        Action<int> onResult;
+        bool resultSaved;
 
         QuizScreen(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, int bestStars, Action<int> onFinish)
         {
@@ -148,6 +154,7 @@ namespace FinanceQuest
 
         void Restart()
         {
+            resultSaved = false;
             score = 0;
             finished = false;
             fx = Fx.Slide;
@@ -184,6 +191,14 @@ namespace FinanceQuest
 
             var content = ScreenKit.Scroll(screen, W, 0f);
             float y = finished ? BuildSummary(content) : BuildTask(content);
+            if (finished && !resultSaved)
+            {
+                // Najpierw podsumowanie (porównuje z dotychczasowym rekordem), potem zapis i nowy rekord na resztę sesji.
+                resultSaved = true;
+                int st = Stars();
+                if (onResult != null) onResult(st);
+                if (st > best) best = st;
+            }
             ScreenKit.SetContentHeight(content, y + 16f);
             content.anchoredPosition = keep;
 
@@ -191,6 +206,8 @@ namespace FinanceQuest
             ((RectTransform)content.parent).offsetMin = new Vector2(0f, barH);
             // Swipe w lewo = DALEJ, ale dopiero po sprawdzeniu odpowiedzi.
             if (!finished && answered) app.SwipeForward = Next;
+            // Na podsumowaniu bez przycisku powrotu w nagłówku – wychodzi się przez UKOŃCZ (albo próbuje ponownie).
+            app.Header.Set(app.Header.CurrentTitle, false, IconId.Back, Palette.TextLocked, finished ? null : (Action)app.Back);
 
             if (anim != Fx.None) Animate(anim, oldLayer, content, barH);
 
@@ -427,6 +444,25 @@ namespace FinanceQuest
             return score >= total ? 3 : ratio >= 0.66f ? 2 : ratio >= 0.34f ? 1 : 0;
         }
 
+        // Zdobyta gwiazdka wskakuje: rośnie od zera z odbiciem i lekkim obrotem, po kolei, z „tyknięciem” telefonu.
+        // Animacja tylko przy pierwszym pokazaniu wyniku (resultSaved = false), nie przy przebudowie ekranu.
+        void PopStar(RectTransform rt, float size, int i)
+        {
+            // Obrót i skala wokół środka gwiazdki (Ui.Place ustawia punkt zaczepienia w lewym górnym rogu).
+            rt.pivot = new Vector2(0.5f, 0.5f);
+            rt.anchoredPosition += new Vector2(size * 0.5f, -size * 0.5f);
+            rt.localScale = Vector3.zero;
+            var fxr = Fx_(screen);
+            float delay = 0.45f + i * 0.28f;
+            fxr.Add(delay, 0.01f, t => { }, Haptics.Tap);
+            fxr.Add(delay, 0.45f, t =>
+            {
+                float k = QuizFx.BackOut(t, 2.6f);   // mocniejsze odbicie niż zwykle
+                rt.localScale = new Vector3(k, k, 1f);
+                rt.localRotation = Quaternion.Euler(0f, 0f, -25f * (1f - t));
+            }, null);
+        }
+
         float BuildSummary(RectTransform c)
         {
             int total = Mathf.Max(1, tasks.Count);
@@ -439,9 +475,16 @@ namespace FinanceQuest
             for (int i = 0; i < 3; i++)
             {
                 bool on = i < stars;
-                var s = Ui.Icon("Star", c, IconId.Star, on ? Palette.Accent : Palette.LockedFill, star);
                 float lift = i == 1 ? 0f : 12f;   // środkowa gwiazdka trochę wyżej
+                if (on)
+                {
+                    // Pod zdobytą gwiazdką szare „gniazdo” – gwiazdka wskakuje w nie po kolei.
+                    var slot = Ui.Icon("StarSlot", c, IconId.Star, Palette.LockedFill, star);
+                    Ui.Place(slot.rectTransform, sx + i * (star + sgap), y + lift, star, star);
+                }
+                var s = Ui.Icon("Star", c, IconId.Star, on ? Palette.Accent : Palette.LockedFill, star);
                 Ui.Place(s.rectTransform, sx + i * (star + sgap), y + lift, star, star);
+                if (on && !resultSaved) PopStar(s.rectTransform, star, i);
             }
             y += star + 12f + 26f;
 
@@ -513,7 +556,12 @@ namespace FinanceQuest
             int stars = Stars();
             float y = 10f;
             if (stars == 0)
+            {
+                // Niezaliczone: powtórka albo wyjście do rozdziału (level zostaje jak był – wcześniejszy wynik się nie zmienia).
                 Button(bar, m, y, cw, "SPRÓBUJ PONOWNIE", true, true, Restart);
+                y += ButtonH + 10f;
+                Button(bar, m, y, cw, "WRÓĆ DO ROZDZIAŁU", true, false, app.Back);
+            }
             else
             {
                 if (stars < 3)
@@ -1132,9 +1180,9 @@ namespace FinanceQuest
         }
 
         public static float EaseOut(float t) { t = 1f - t; return 1f - t * t * t; }
-        public static float BackOut(float t)
+        public static float BackOut(float t) { return BackOut(t, 1.7f); }
+        public static float BackOut(float t, float s)
         {
-            const float s = 1.7f;
             t -= 1f;
             return t * t * ((s + 1f) * t + s) + 1f;
         }

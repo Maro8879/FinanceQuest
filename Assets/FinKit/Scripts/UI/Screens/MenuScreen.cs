@@ -126,6 +126,11 @@ namespace FinanceQuest
                          ContentText.Plural(course.LevelCount, "level", "levele", "leveli");
             var st = Ui.Text("Subtitle", card.Content, sub, 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
             Ui.Place(st.rectTransform, pad, top + th + 1f, l.TextW, 18f);
+            // Gwiazdki całego kursu za podpisem.
+            int sg, sm;
+            app.Progress.StarTotals(course, out sg, out sm);
+            float sw = st.GetPreferredValues(sub, 1000f, 0f).x;
+            ScreenKit.StarCount(card.Content, pad + sw + 10f, top + th + 1f, sg, sm, Palette.Accent, Color.white);
 
             // Dół: pasek zawsze przy dolnej krawędzi – procenty w kolejnych kartach stoją w jednej linii.
             ScreenKit.BarRow(card.Content, pad, l.Face - pad - 16f, l.TextW, value, Palette.TrackOnColor, Color.white, ScreenKit.Pct(value));

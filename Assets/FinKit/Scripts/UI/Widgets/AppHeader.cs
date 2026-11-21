@@ -65,6 +65,8 @@ namespace FinanceQuest
         }
 
         // Wywoływane przez ekran podczas budowania.
+        public string CurrentTitle { get { return front.text; } }
+
         public void Set(string text, bool tagline, IconId icon, Color iconColor, Action onRightClick)
         {
             front.text = text;

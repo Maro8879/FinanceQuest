@@ -20,16 +20,34 @@ namespace FinanceQuest
         {
             var ch = course.Chapters[chapterIndex];
             var level = ch.Levels[levelIndex];
+            app.BlockSwipeBack = true;   // z levelu wychodzi się tylko przyciskiem – swipe łatwo zrobić przypadkiem
             app.Header.Set(string.IsNullOrEmpty(level.Title) ? ch.Title : level.Title, false, IconId.Back, Palette.TextLocked, app.Back);
 
             var def = level.Def;
             bool hasTasks = def != null && def.tasks != null && def.tasks.Count > 0;
             // Zaliczenie levelu; z zadań przychodzi też wynik w gwiazdkach (zapamiętujemy najlepszy).
+            // save: wynik zapisujemy od razu po teście (bez czekania na UKOŃCZ). SetStars trzyma najlepszy wynik –
+            // gorszy go nie nadpisze. Level zaliczony = co najmniej 1 gwiazdka (0 = niezaliczony, nic się nie zmienia).
+            System.Action<int> save = stars =>
+            {
+                if (stars == 0) return;
+                if (stars > 0) app.Progress.SetStars(level, stars);
+                // Już zaliczony level nie „odblokowuje się” ponownie (bez animacji odblokowania przy powrocie).
+                if (!app.Progress.IsDone(level)) app.CompleteLevel(course, level);
+            };
+            // Po zaliczeniu od razu następny level tego rozdziału (wjeżdża z boku). Gdy to był ostatni level
+            // albo następny nie ma jeszcze treści – powrót do rozdziału, jak wcześniej.
             System.Action<int> finish = stars =>
             {
-                if (stars >= 0) app.Progress.SetStars(level, stars);
-                app.CompleteLevel(course, level);
-                app.Back();
+                save(stars);
+                int next = levelIndex + 1;
+                if (next < ch.Levels.Count && HasContent(ch.Levels[next])
+                    && app.Progress.LevelState(course, chapterIndex, next) != ItemState.Locked)
+                {
+                    app.UnlockedLevel = null;   // wchodzimy prosto do niego – animacja odblokowania nie jest potrzebna
+                    app.ReplaceTop(r => Build(r, app, course, chapterIndex, next));
+                }
+                else app.Back();
             };
             int best = app.Progress.Stars(level);
             if (level.Kind == LevelKind.Lesson && def != null && def.pages != null && def.pages.Count > 0)
@@ -41,7 +59,7 @@ namespace FinanceQuest
                         // Zadania na końcu lekcji – podmieniamy treść tego samego ekranu, więc „wstecz” wraca od razu do rozdziału.
                         for (int i = screen.childCount - 1; i >= 0; i--) Object.Destroy(screen.GetChild(i).gameObject);
                         app.SwipeForward = null;
-                        QuizScreen.Build(screen, app, def.tasks, false, best, finish);
+                        QuizScreen.Build(screen, app, def.tasks, false, best, finish, save);
                     }
                     else finish(-1);
                 });
@@ -49,7 +67,7 @@ namespace FinanceQuest
             }
             if (hasTasks && level.Kind != LevelKind.MiniGame)
             {
-                QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, best, finish);
+                QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, best, finish, save);
                 return;
             }
             Placeholder(screen, app, course, ch, level, "Tu pojawi się mini gra.");

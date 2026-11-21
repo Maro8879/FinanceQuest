@@ -4,8 +4,7 @@ using UnityEngine;
 namespace FinanceQuest
 {
     // Ekran 3: nagłówek rozdziału z postępem + levele jako kafelki w dwóch kolumnach.
-    // Aktualny level jest żółty ze START. Gdy zaczyna nowy wiersz, zajmuje go całego; gdy obok poprzedniego
-    // kafelka jest wolne miejsce, staje tam jako zwykły kafelek – dzięki temu w siatce nie ma dziur.
+    // Aktualny level jest żółty ze START. Siatka jest stała – kafelki nie zmieniają miejsc ani rozmiaru po postępie.
     public static class ChapterScreen
     {
         const float TileH = 140f, CurrentH = 96f, Gap = 14f;
@@ -44,21 +43,14 @@ namespace FinanceQuest
 
             float y = 4 + headFace + ScreenKit.Lip + 14f;
             float half = (cw - Gap) * 0.5f;
-            int col = 0;   // 0 = lewa kolumna wolna, 1 = lewa zajęta (czekamy na prawą)
+            // Stała siatka: każdy level ma zawsze to samo miejsce (dwie kolumny, równe kafelki) –
+            // po przejściu levelu zmienia się tylko jego wygląd, a nie układ całego rozdziału.
             for (int i = 0; i < ch.Levels.Count; i++)
             {
-                bool current = app.Progress.LevelState(course, chapterIndex, i) == ItemState.Current;
-                if (current && col == 0)
-                {
-                    // Aktualny level na początku wiersza: na całą szerokość, wysokość z treści (0).
-                    y += Tile(content, m, y, cw, 0f, app, course, chapterIndex, i) + Gap;
-                    continue;
-                }
-                Tile(content, col == 0 ? m : m + half + Gap, y, half, TileH, app, course, chapterIndex, i);
-                if (col == 0) col = 1;
-                else { col = 0; y += TileH + ScreenKit.Lip + Gap; }
+                int col = i % 2, row = i / 2;
+                Tile(content, col == 0 ? m : m + half + Gap, y + row * (TileH + ScreenKit.Lip + Gap), half, TileH, app, course, chapterIndex, i);
             }
-            if (col == 1) y += TileH + ScreenKit.Lip + Gap;
+            y += (ch.Levels.Count + 1) / 2 * (TileH + ScreenKit.Lip + Gap);
             ScreenKit.SetContentHeight(content, y + 10f);
         }
 

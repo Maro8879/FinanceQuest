@@ -79,7 +79,7 @@ namespace FinanceQuest
             if (scroll != null) scroll.velocity = Vector2.zero;
 
             bool last = page == pages.Count - 1;
-            buttonLabel.text = !last ? "DALEJ" : hasTasks ? "DO ZADAŃ" : "UKOŃCZ";
+            buttonLabel.text = !last ? "DALEJ" : hasTasks ? "DO ZADAŃ" : "ROZUMIEM";
             BuildDots();
         }
 

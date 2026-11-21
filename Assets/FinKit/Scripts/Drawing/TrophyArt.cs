@@ -135,10 +135,11 @@ namespace FinanceQuest
 
             if (locked)
             {
-                var w = new Color(1f, 1f, 1f, 0.92f);
+                // Ciemniejsza kłódka – widać ją i na szarej figurce, i na jasnym tle (np. przy cienkiej fladze Startu).
+                var w = Palette.LockedIcon;
                 Rect(c, 15, 22, 10, 8, 1.5f, w);
                 Line(c, 17, 22.5f, 17, 19, 0.8f, w); Line(c, 17, 19, 23, 19, 0.8f, w); Line(c, 23, 19, 23, 22.5f, 0.8f, w);
-                Circle(c, V(20, 26), 1.2f, LockedRim);
+                Circle(c, V(20, 26), 1.2f, Color.white);
             }
             return Sprite.Create(c.ToTexture("fq_" + key), new UnityEngine.Rect(0, 0, c.Width, c.Height),
                 new Vector2(0.5f, 0.5f), 100f, 0, SpriteMeshType.FullRect);

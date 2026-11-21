@@ -135,8 +135,21 @@ namespace FinanceQuest
             Rebuild(Nav.Forward);
         }
 
+        // Ustawia ekran, z którego nie wolno wyjść swipem w prawo (level – łatwo przez przypadek przerwać lekcję lub test).
+        // Przycisk w nagłówku i systemowe „wstecz” dalej działają.
+        [System.NonSerialized] public bool BlockSwipeBack;
+
+        // Podmienia bieżący ekran na inny (np. level → następny level): „wstecz” z nowego wraca tam, gdzie wróciłby stary.
+        public void ReplaceTop(Action<RectTransform> build)
+        {
+            if (stack.Count == 0 || Time.unscaledTime < navLockUntil) return;
+            stack[stack.Count - 1] = build;
+            Rebuild(Nav.Forward, true);
+        }
+
         void BackSwipe()
         {
+            if (BlockSwipeBack) return;
             if (stack.Count <= 1 || Time.unscaledTime < navLockUntil) return;
             stack.RemoveAt(stack.Count - 1);
             Rebuild(Nav.Back, true);
@@ -186,6 +199,7 @@ namespace FinanceQuest
 
             if (animate && old != null) Header.BeginSwap();
             SwipeForward = null;   // nowy ekran sam ustawi, dokąd prowadzi swipe w lewo
+            BlockSwipeBack = false;
             currentScreen = Ui.Rect("Screen", body);
             Ui.Stretch(currentScreen);
             currentScreen.gameObject.AddComponent<CanvasGroup>();
