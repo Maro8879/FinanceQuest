@@ -48,12 +48,15 @@ namespace FinanceQuest
     // Blok treści na stronie lekcji. Jedna klasa na wszystkie rodzaje (jak w zadaniach) – typ mówi, których pól używać.
     // W tekście **słowo** = pogrubienie.
     // Wiersz tabelki (JsonUtility nie umie list w listach, więc wiersz to osobna klasa).
+    // Wiersz bloku „karta ofert”: tytuł, wartość po prawej (np. „0.75% p.a.”), opis pod spodem
+    // i opcjonalna kolorowa plakietka z lewej (np. „iShares”, kolor jako #RRGGBB).
+    [Serializable] public class OfferDef { public string title; public string value; public string desc; public string badge; public string badgeColor; }
     [Serializable] public class TableRowDef { public List<string> cells = new List<string>(); public float height; }   // height: min. wysokość wiersza, 0 = sama się dobiera
 
     [Serializable]
     public class BlockDef
     {
-        public string type;                                   // heading | text | image | video | callout | list | divider | space | table
+        public string type;                                   // heading | text | image | video | callout | list | divider | space | table | offers
         public string text;                                   // heading, text, callout
         public string image;                                  // image: ścieżka względem folderu kursu, np. obrazki/ryzyko.png
         public float width = 1f;                              // image: szerokość jako ułamek szerokości strony (0.3–1)
@@ -67,6 +70,11 @@ namespace FinanceQuest
         public bool header = true;                            // table: pierwszy wiersz to nagłówek
         public List<float> colWidths = new List<float>();     // table: szerokość kolumn w % szerokości tabelki, 0 / brak = sama się dobiera
         public string style = "a";                            // table: a = karta z ciemnym nagłówkiem, b = bez ramki, same linie
+        // offers (karta ofert): text = tytuł, image = logo, caption = nazwa obok logo, offers = wiersze,
+        // button = napis na przycisku (puste = SEE MORE), url = co otworzyć po kliknięciu (puste = nic)
+        public List<OfferDef> offers = new List<OfferDef>();
+        public string button;
+        public string url;
         // Obrazek podpięty przez importer (nie ma go w JSON). Dzięki temu obrazki leżą obok treści,
         // a do gry trafiają razem z bazą treści – bez kopiowania do Resources.
         public Sprite sprite;

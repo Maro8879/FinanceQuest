@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 53cbc9d5d12c2024083047b7467842b8
+guid: 1c451b1e94f337e4885340f9d7d1f8cd
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -2997163064113828839
-    second: 0cedcf75-5335-42f3-aa7f-a61753_0
+      213: 6743621497688511234
+    second: commerzbank-mark_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -115,13 +115,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 0cedcf75-5335-42f3-aa7f-a61753_0
+      name: commerzbank-mark_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 1320
-        height: 612
+        width: 519
+        height: 407
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,8 +130,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 91ce295a210f766d0800000000000000
-      internalID: -2997163064113828839
+      spriteID: 203596dd508269d50800000000000000
+      internalID: 6743621497688511234
       vertices: []
       indices: 
       edges: []
@@ -150,7 +150,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      0cedcf75-5335-42f3-aa7f-a61753_0: -2997163064113828839
+      commerzbank-mark_0: 6743621497688511234
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -81,11 +81,35 @@
               "text": "Don't keep spare money in your current account – there **inflation eats it**."
             },
             {
-              "type": "image",
-              "image": "obrazki/c584ed85-3331-4ad2-a1f4-213cbf.png",
-              "width": 1,
-              "maxHeight": 220,
-              "caption": ""
+              "type": "offers",
+              "text": "Savings accounts",
+              "image": "obrazki/commerzbank-mark.png",
+              "caption": "COMMERZBANK",
+              "offers": [
+                {
+                  "title": "Top-Rate Savings Plus",
+                  "value": "3% p.a. for 6 months",
+                  "desc": "New funds up to €500,000.",
+                  "badge": "",
+                  "badgeColor": ""
+                },
+                {
+                  "title": "Instant Access Savings",
+                  "value": "0.75% p.a.",
+                  "desc": "Variable interest rate, money available daily.",
+                  "badge": "",
+                  "badgeColor": ""
+                },
+                {
+                  "title": "Savings Account Plus",
+                  "value": "0.5% p.a.",
+                  "desc": "Flexible saving with a savings card, withdrawals up to €2,000 per month.",
+                  "badge": "",
+                  "badgeColor": ""
+                }
+              ],
+              "button": "SEE MORE",
+              "url": ""
             }
           ]
         }

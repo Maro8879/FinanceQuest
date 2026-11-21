@@ -11,14 +11,14 @@ namespace FinanceQuest
     // a płynnie zmienia się tylko tytuł i ikona przycisku (dwa egzemplarze: stary znika, nowy się pojawia).
     public class AppHeader
     {
-        public const float Height = 80f;
+        public const float Height = 96f;   // logo + motto albo logo + tytuł ekranu (24 px, jak nagłówek w treści)
         const float Margin = 16f, Btn = 40f;
 
         // Układ logo (wariant A): znak ma wysokość wielkich liter INVESTOMM (+3 px nad i pod),
         // a motto WERSALIKAMI idzie pod całym logo od lewej krawędzi znaku.
         // Położenia liczone z metryk czcionki Rubik (na 1 jednostkę rozmiaru): górna linia tekstu i wysokość wielkiej litery.
         const float Asc = 0.935f, Cap = 0.70f;
-        const float WordSize = 30f, MottoSize = 10.5f;
+        const float WordSize = 34f, MottoSize = 10.5f;
         const float BtnY = 16f;                                                 // górna krawędź przycisku po prawej
         // +3 px więcej niż góra przycisku: przycisk ma cień od spodu, więc „na oko” jego środek jest niżej.
         const float CapTop = BtnY + 3f + 3f;
@@ -28,6 +28,12 @@ namespace FinanceQuest
         const float MarkSize = Cap * WordSize + 2f * MarkPad;
         const float TextX = Margin + MarkSize + 8f;                             // napis INVESTOMM obok znaku
         const float SubY = Baseline + 17f - Asc * MottoSize;                    // linia bazowa motta 17 px pod napisem
+        // Tytuł ekranu (kurs, rozdział, level) wygląda jak nagłówek w treści lekcji (24 px, ExtraBold) i stoi wyraźnie
+        // niżej niż motto, żeby nie wyglądał na część logo. Wielkie litery zaczynają się 20 px pod napisem INVESTCOMM
+        // (bliżej treści niż logo – tytuł „należy” do ekranu, nie do logo),
+        // czyli już pod przyciskiem po prawej – dlatego tytuł może zająć całą szerokość.
+        const float TitleSize = 24f;
+        const float TitleY = Baseline + 20f - (Asc - Cap) * TitleSize;
         // Motto: odstępy między literami ok. 0.15 litery – wersaliki z odstępem czyta się lżej.
         const float MottoSpacing = 15f;
 
@@ -38,7 +44,6 @@ namespace FinanceQuest
         Action onRight;
         Action onDev;
         LipCard devButton;
-        float titleW;
         CanvasGroup buttonGroup;
         bool frontButton = true, backButton = true;   // czy przycisk jest na nowym / starym ekranie
         bool swapping;
@@ -80,7 +85,6 @@ namespace FinanceQuest
             b.SetClickable(() => { if (h.onRight != null) h.onRight(); });
 
             // Przycisk deweloperski (pomiń level na 100%) – obok przycisku po prawej, tylko gdy ekran go ustawi.
-            h.titleW = width - 2 * Margin - Btn - 8f;
             h.devButton = LipCard.Create(h.Root, "DevButton", width - Margin - 2 * Btn - 8f, BtnY, Btn, Btn + 3,
                 Palette.Brick, Palette.Brick, Palette.Darker(Palette.Brick, 0.7f), 12f, 3f, 0f);
             var dl = Ui.Text("Label", h.devButton.Content, "DEV", 11f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
@@ -92,11 +96,9 @@ namespace FinanceQuest
 
         static TextMeshProUGUI MakeTitle(RectTransform parent, float width, out CanvasGroup group)
         {
-            // Linijka pod logo: zaczyna się od lewej krawędzi znaku; kończy przed przyciskiem.
-            var t = Ui.Text("Title", parent, "", 17f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
-            Ui.Place(t.rectTransform, Margin, SubY, width - 2 * Margin - Btn - 8f, 24);
-            t.fontSizeMin = 13f;
-            t.fontSizeMax = 17f;
+            // Linijka pod logo: zaczyna się od lewej krawędzi znaku. Położenie i wielkość ustawia Set() (motto albo tytuł).
+            var t = Ui.Text("Title", parent, "", TitleSize, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
+            Ui.Place(t.rectTransform, Margin, TitleY, width - 2 * Margin, TitleSize * 1.3f);
             group = t.gameObject.AddComponent<CanvasGroup>();
             return t;
         }
@@ -115,9 +117,12 @@ namespace FinanceQuest
             // Zawsze jedna linia: przy braku miejsca zmniejsza się czcionka, a nie przybywa linii.
             front.enableAutoSizing = true;
             front.textWrappingMode = TextWrappingModes.NoWrap;
-            // Motto pod logo jest mniejsze, żeby nie konkurowało z napisem INVESTOMM.
-            front.fontSizeMax = tagline ? MottoSize : 17f;
-            front.fontSizeMin = tagline ? 8f : 12f;
+            // Motto: małe, tuż pod logo. Tytuł: duży, niżej; za długi zmniejsza się do 16 px.
+            front.fontSizeMax = tagline ? MottoSize : TitleSize;
+            front.fontSizeMin = tagline ? 8f : 16f;
+            var fr = front.rectTransform;
+            fr.anchoredPosition = new Vector2(fr.anchoredPosition.x, -(tagline ? SubY : TitleY));
+            fr.sizeDelta = new Vector2(fr.sizeDelta.x, (tagline ? MottoSize : TitleSize) * 1.3f);
             front.fontSize = front.fontSizeMax;
             frontIcon.sprite = ProceduralSprites.Icon(icon);
             frontIcon.color = iconColor;
@@ -133,9 +138,7 @@ namespace FinanceQuest
             onDev = Debug.isDebugBuild ? onClick : null;
             bool on = onDev != null;
             devButton.gameObject.SetActive(on);
-            // Tytuł kończy się przed przyciskiem DEV, żeby na niego nie wchodził.
-            var r = front.rectTransform;
-            r.sizeDelta = new Vector2(on ? titleW - Btn - 8f : titleW, r.sizeDelta.y);
+            // Tytuł stoi pod przyciskami, więc DEV na niego nie wchodzi – szerokość bez zmian.
         }
 
         void ApplyButton(float alpha)

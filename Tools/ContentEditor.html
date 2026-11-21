@@ -134,6 +134,14 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 .bimg{margin:0 auto;border:2px solid var(--pedge);box-shadow:0 4px 0 var(--pedge);border-radius:14px;background:var(--pcard);display:flex;align-items:center;justify-content:center;font-size:11.5px;color:var(--pmut);text-align:center;padding:6px;word-break:break-all}
 .bcap{font-size:11.5px;color:var(--pmut);font-weight:600;margin:6px 0 0}
 .bimg,.bcap{margin-bottom:14px}.bimg+.bcap{margin-top:-8px}
+.bof{background:#0B3A45;border-radius:16px;padding:12px 11px 11px;margin-bottom:14px;box-shadow:0 4px 0 #072830;color:#fff}
+.bofh{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.boft{font-weight:800;font-size:15px}
+.bofl{display:flex;align-items:center;gap:5px}.bofl img{height:20px}.bofl span{font-weight:800;font-size:8.5px;letter-spacing:.5px}
+.bofr{display:flex;gap:8px;align-items:center;background:#164F5C;border-left:3px solid #F2C200;border-radius:8px;padding:8px 9px;margin-bottom:6px}
+.bofb{flex:none;width:32px;height:32px;border-radius:6px;font-size:7px;font-weight:800;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.bof1{display:flex;justify-content:space-between;gap:6px;font-size:11.5px}.bof1 span{font-weight:600;white-space:nowrap}.bof2{font-size:10px;opacity:.75;margin-top:2px}
+.bofbtn{background:#F2C200;color:#1D2B2F;font-weight:800;font-size:10.5px;padding:6px 12px;border-radius:999px;box-shadow:0 2px 0 #B59100;margin-top:3px;animation:bofp 3s infinite}
+@keyframes bofp{0%,8%,100%{transform:translateY(0);box-shadow:0 2px 0 #B59100}2%,6%{transform:translateY(2px);box-shadow:0 0 0 #B59100}}
 .bc{display:flex;gap:10px;align-items:center;background:var(--pcard);border:2px solid var(--y);box-shadow:0 4px 0 var(--yl);border-radius:14px;padding:10px 11px;font-size:13.5px;line-height:1.4;margin-bottom:14px;white-space:pre-wrap}
 .bci{width:30px;height:30px;border-radius:15px;background:var(--y);display:flex;align-items:center;justify-content:center;flex:none;font-size:18px;font-weight:800;color:var(--txt)}
 .bl{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
@@ -214,7 +222,7 @@ const SCAM_DEFAULT = [
 
 // Mini gry: id w treści → nazwa w edytorze. Gotowa (zrobiona w aplikacji) jest na razie tylko „12-miesiecy”.
 const GAMES = {"12-miesiecy":"Pierwsze 12 miesięcy po zakupie (symulacja inwestowania)", "prawda-czy-pulapka":"Prawda czy Pułapka? (oszustwa – przesuń kartę)", sortowanie:"sortowanie (jeszcze nie ma)", budzet:"budzet (jeszcze nie ma)", wydatki:"wydatki (jeszcze nie ma)", inna:"inna (jeszcze nie ma)"};
-const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", video:"Filmik", callout:"Ważne", list:"Lista", table:"Tabelka", divider:"Linia", space:"Odstęp"};
+const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", video:"Filmik", callout:"Ważne", list:"Lista", table:"Tabelka", offers:"Karta ofert", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
 // ======================= stan =======================
@@ -516,6 +524,11 @@ function normalizeBlock(b){
   if (b.type === "video"){ b.video = b.video ?? ""; b.videoSub = b.videoSub ?? ""; b.caption = b.caption ?? ""; }
   if (b.type === "list") b.items = b.items || [];
   if (b.type === "space") b.size = b.size ?? 16;
+  if (b.type === "offers"){
+    // Karta ofert: tytuł (text), logo (image), nazwa obok logo (caption), wiersze, napis i link przycisku.
+    for (const k of ["text","image","caption","button","url"]) b[k] = b[k] ?? "";
+    b.offers = (b.offers || []).map(o => ({title:o.title ?? "", value:o.value ?? "", desc:o.desc ?? "", badge:o.badge ?? "", badgeColor:o.badgeColor ?? ""}));
+  }
   if (b.type === "table"){
     b.rows = b.rows || []; b.header = b.header ?? true; b.style = b.style || "a";
     const cols = Math.max(1, ...b.rows.map(r => (r.cells || []).length));
@@ -523,6 +536,7 @@ function normalizeBlock(b){
   }
 }
 function newBlock(type){ const b = {type}; normalizeBlock(b); if (type === "list") b.items = ["", ""];
+  if (type === "offers") b.offers = [{title:"",value:"",desc:"",badge:"",badgeColor:""},{title:"",value:"",desc:"",badge:"",badgeColor:""}];
   if (type === "table") b.rows = [{cells:["", "Kolumna 1", "Kolumna 2"]}, {cells:["Wiersz 1", "", ""]}, {cells:["Wiersz 2", "", ""]}];
   return b; }
 function normalizeTask(t){
@@ -950,6 +964,8 @@ function levelWarnings(l){
       if (b.type === "video" && !String(b.video).trim() && !String(b.videoSub || "").trim()) w.push(pre + "filmik bez ścieżki.");
       if (b.type === "list" && !b.items.some(x => x.trim())) w.push(pre + "pusta lista.");
       if (b.type === "table" && !b.rows.some(r => r.cells.some(c => String(c).trim()))) w.push(pre + "pusta tabelka.");
+      if (b.type === "offers" && !b.offers.some(o => o.title.trim())) w.push(pre + "karta ofert bez wierszy.");
+      if (b.type === "offers" && b.offers.some(o => o.badgeColor.trim() && !/^#?[0-9a-fA-F]{6}$/.test(o.badgeColor.trim()))) w.push(pre + "kolor plakietki musi mieć postać #RRGGBB.");
       if (b.type === "table" && (b.colWidths || []).reduce((s, x) => s + (Number(x) || 0), 0) > 100) w.push(pre + "kolumny tabelki mają razem ponad 100% – w aplikacji zostaną zwężone.");
       if (/\*\*/.test((b.text || "") + (b.items || []).join(" ")) && (((b.text || "") + (b.items || []).join(" ")).match(/\*\*/g).length % 2)) w.push(pre + "niesparowane ** (pogrubienie).");
     }
@@ -1156,6 +1172,25 @@ function blockForm(bl, bind, p, j){
     <div class="grid2" style="margin-top:6px"><div><span class="sub">Szerokość (0.3–1)</span><input type="number" step="0.1" min="0.3" max="1" data-bind="${bind}.width" data-num="1" value="${esc(bl.width)}"></div>
     <div><span class="sub">Maks. wysokość</span><input type="number" step="10" min="40" data-bind="${bind}.maxHeight" data-num="1" value="${esc(bl.maxHeight)}"></div></div>
     <div style="margin-top:6px">${one(`${bind}.caption`, bl.caption, "Podpis pod obrazkiem (opcjonalnie)")}</div>`;
+  if (bl.type === "offers"){
+    // Logo jak obrazek (to samo przeciąganie / wybór pliku), reszta to zwykłe pola tekstowe.
+    const url = bl.image ? imageUrl(curCourse(), bl.image) : null;
+    f = `<span class="sub">Tytuł karty</span>${one(`${bind}.text`, bl.text, "np. Savings accounts")}
+      <div class="grid2" style="margin-top:6px"><div><span class="sub">Logo (prawy górny róg)</span>
+      <div class="drop" data-act="pick-image" data-p="${p}" data-b="${j}" data-drop="${p}:${j}" style="min-height:44px">
+        ${url ? `<img src="${url}" alt="" style="max-height:34px">` : `<div style="font-size:22px;flex:none">🏦</div>`}<div class="dt">${bl.image ? `<b>${esc(bl.image)}</b>` : "Przeciągnij logo albo kliknij"}</div></div></div>
+      <div><span class="sub">Nazwa obok logo (opcjonalnie)</span>${one(`${bind}.caption`, bl.caption, "np. COMMERZBANK")}</div></div>
+      <label style="margin-top:8px">Wiersze <span class="hint">plakietka = krótki napis na kolorowym kwadracie z lewej (np. iShares); wartość = po prawej (np. 0.75% p.a.)</span></label>`
+      + bl.offers.map((o, i) => `<div class="line" style="align-items:flex-start"><div class="f card" style="margin:0;padding:8px">
+          <div class="grid2"><div>${one(`${bind}.offers.${i}.title`, o.title, "Nazwa")}</div><div>${one(`${bind}.offers.${i}.value`, o.value, "Wartość (opcjonalnie)")}</div></div>
+          <div style="margin-top:4px">${one(`${bind}.offers.${i}.desc`, o.desc, "Opis pod nazwą (opcjonalnie)")}</div>
+          <div class="grid2" style="margin-top:4px"><div>${one(`${bind}.offers.${i}.badge`, o.badge, "Plakietka (opcjonalnie)")}</div><div>${one(`${bind}.offers.${i}.badgeColor`, o.badgeColor, "Kolor plakietki #RRGGBB")}</div></div>
+        </div><div style="display:flex;flex-direction:column;gap:3px"><button class="mini" data-act="offer" data-p="${p}" data-b="${j}" data-i="${i}" data-dir="-1">↑</button><button class="mini" data-act="offer" data-p="${p}" data-b="${j}" data-i="${i}" data-dir="1">↓</button><button class="mini x" data-act="offer" data-p="${p}" data-b="${j}" data-i="${i}" data-dir="0">✕</button></div></div>`).join("")
+      + `<div class="btns"><button class="btn small" data-act="add-offer" data-p="${p}" data-b="${j}">+ wiersz</button></div>
+      <div class="grid2" style="margin-top:8px"><div><span class="sub">Napis na przycisku</span>${one(`${bind}.button`, bl.button, "SEE MORE")}</div>
+      <div><span class="sub">Link po kliknięciu (opcjonalnie)</span>${one(`${bind}.url`, bl.url, "https://…")}</div></div>
+      <div class="sub" style="margin-top:3px">Przycisk co ok. 3 s sam się wciska (jak pod palcem). Bez linku po kliknięciu nic się nie otwiera.</div>`;
+  }
   if (bl.type === "video"){
     // Dwa pola: główna wersja i (opcjonalnie) ta sama z napisami – w apce przełącza je przycisk CC.
     const zone = (field, title, hint) => { const v = bl[field] || "", url = v ? videoUrl(curCourse(), v) : null;
@@ -1285,6 +1320,13 @@ function blockPreview(b){
     case "callout": return `<div class="bc"><span class="bci">!</span><div>${rich(b.text)}</div></div>`;
     case "list": return `<div class="bl">${b.items.filter(x=>x.trim()).map(x=>`<div class="bli"><span class="blc"></span><div>${rich(x)}</div></div>`).join("")}</div>`;
     case "divider": return `<div class="bd"></div>`;
+    case "offers": {
+      const logo = b.image ? imageUrl(curCourse(), b.image) : null;
+      return `<div class="bof"><div class="bofh"><div class="boft">${esc(b.text)}</div>${logo || b.caption ? `<div class="bofl">${logo ? `<img src="${logo}">` : ""}${b.caption ? `<span>${esc(b.caption)}</span>` : ""}</div>` : ""}</div>
+        ${b.offers.filter(o => o.title.trim()).map(o => `<div class="bofr">${o.badge ? `<div class="bofb" style="background:${/^#?[0-9a-fA-F]{6}$/.test(o.badgeColor.trim()) ? "#" + o.badgeColor.trim().replace("#","") : "#0E4A55"}">${esc(o.badge)}</div>` : ""}
+          <div style="flex:1"><div class="bof1"><b>${esc(o.title)}</b>${o.value ? `<span>${esc(o.value)}</span>` : ""}</div>${o.desc ? `<div class="bof2">${esc(o.desc)}</div>` : ""}</div></div>`).join("")}
+        <div style="display:flex;justify-content:flex-end"><span class="bofbtn">${esc(b.button || "SEE MORE")} →</span></div></div>`;
+    }
     case "table": {
       const cols = Math.max(1, ...b.rows.map(r => r.cells.length)), head = b.header && b.rows.length > 1;
       // Szerokości kolumn (%) i minimalne wysokości wierszy jak w aplikacji (ekran ~0.77 skali).
@@ -1458,6 +1500,8 @@ document.addEventListener("click", async e => {
       v.addEventListener("loadedmetadata", () => { v.currentTime = Math.min(t, v.duration || t); if (playing) v.play(); }, {once: true});
       return;
     }
+    case "add-offer": { const pi = Number(a.dataset.p); l.pages[pi].blocks[Number(a.dataset.b)].offers.push({title:"",value:"",desc:"",badge:"",badgeColor:""}); S.page = pi; return changed(); }
+    case "offer": { const pi = Number(a.dataset.p); S.page = pi; if (moveIn(l.pages[pi].blocks[Number(a.dataset.b)].offers, i, dir)) changed(); return; }
     case "pick-image": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b)}; $("imgpick").click(); return;
     case "pick-video": if (e.target.closest("details")) return; pickTarget = {p: Number(a.dataset.p), b: Number(a.dataset.b), field: a.dataset.field}; $("vidpick").click(); return;
     case "add-setting": l.minigame.settings.push({key:"", value:""}); return changed();

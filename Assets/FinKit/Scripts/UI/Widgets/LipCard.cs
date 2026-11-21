@@ -227,6 +227,17 @@ namespace FinanceQuest
             FinanceQuestApp.RunLater(0.09f, OnClick);
         }
 
+        // Ustawia wciśnięcie wprost (0 = w górze, 1 = wciśnięta) – do własnych, płynnych animacji z zewnątrz
+        // (np. przycisk SEE MORE, który sam się wciska). Gdy ktoś akurat trzyma palec na karcie, nic nie robimy.
+        public bool SetPress(float p)
+        {
+            if (pressed || spring.enabled) return false;
+            if (pos == p) return true;   // bez zmiany = nic nie przerysowujemy (ważne: wołane co klatkę)
+            pos = p; vel = 0f; target = 0f;
+            Apply();
+            return true;
+        }
+
         void Release()
         {
             if (!pressed) return;
