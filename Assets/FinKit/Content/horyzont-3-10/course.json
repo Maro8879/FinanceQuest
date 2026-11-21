@@ -2,7 +2,7 @@
   "format": 1,
   "id": "horyzont-3-10",
   "title": "Horyzont 3–10 lat",
-  "shortName": "3–10 lat",
+  "shortName": "Średni Horyzont",
   "color": "#3F6B5C",
   "art": "Sapling",
   "icon": "Chart",
@@ -13,7 +13,7 @@
     "portfel-zrownowazony"
   ],
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T06:54:22Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T12:50:16Z"
   }
 }
