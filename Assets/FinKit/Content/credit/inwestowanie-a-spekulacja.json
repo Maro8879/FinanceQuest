@@ -5,7 +5,7 @@
   "color": "#4A5D73",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -27,12 +27,19 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "Inwestowanie to kupowanie z myślą o latach, a spekulacja (trading) to próba zarobienia na ruchach ceny w ciągu dni, godzin, a nawet minut. Im krótszy czas, tym większą rolę gra przypadek, a mniejszą wartość firmy."
+              "type": "list",
+              "items": [
+                "**Inwestowanie** – kupujesz z myślą o latach",
+                "**Spekulacja (trading)** – próbujesz zarobić na ruchach ceny w ciągu dni, godzin, a nawet minut"
+              ]
             },
             {
               "type": "text",
-              "text": "Trading wymaga ciągłej uwagi, szybkich decyzji i odporności na stres – pojedynczy błąd może kosztować dużo."
+              "text": "Im krótszy czas, tym większą rolę gra **przypadek**, a mniejszą wartość firmy."
+            },
+            {
+              "type": "callout",
+              "text": "Trading wymaga ciągłej uwagi i odporności na stres – **jeden błąd** może dużo kosztować."
             }
           ]
         }
@@ -62,12 +69,15 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "Analiza fundamentalna sprawdza, ile firma jest naprawdę warta: zyski, długi, wzrost, pozycję na rynku – odpowiada na pytanie „co kupić”. Analiza techniczna patrzy na wykres ceny i wolumen, szukając wzorców i trendów – odpowiada na pytanie „kiedy kupić”."
+              "type": "list",
+              "items": [
+                "**Fundamentalna** – ile firma jest naprawdę warta: zyski, długi, wzrost. Odpowiada na pytanie „**co** kupić”",
+                "**Techniczna** – wykres ceny i wolumen, wzorce i trendy. Odpowiada na pytanie „**kiedy** kupić”"
+              ]
             },
             {
               "type": "text",
-              "text": "Inwestorzy długoterminowi opierają się głównie na fundamentach, traderzy częściej na wykresach."
+              "text": "Inwestorzy długoterminowi patrzą głównie na **fundamenty**, traderzy częściej na **wykresy**."
             }
           ]
         }
@@ -98,11 +108,19 @@
             },
             {
               "type": "text",
-              "text": "Prowizje, spread i podatki zjadają zysk przy każdej transakcji. Do tego emocje: trzymanie strat w nadziei na odbicie i za szybkie zamykanie zysków. Konkurujesz z profesjonalistami i algorytmami, które mają lepsze dane i szybsze systemy."
+              "text": "Główne powody:"
             },
             {
-              "type": "text",
-              "text": "Regulatorzy w UE wymagają, by brokerzy CFD pokazywali, jaki % kont detalicznych traci pieniądze – zwykle to większość klientów."
+              "type": "list",
+              "items": [
+                "**Koszty** – prowizje, spread i podatki przy każdej transakcji",
+                "**Emocje** – trzymanie strat i za szybkie zamykanie zysków",
+                "**Konkurencja** – profesjonaliści i algorytmy z lepszymi danymi"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "W UE brokerzy CFD muszą pokazywać, jaki % kont traci pieniądze – zwykle to **większość klientów**."
             }
           ]
         }
@@ -133,11 +151,15 @@
             },
             {
               "type": "text",
-              "text": "FOMO (fear of missing out) to strach, że ominie Cię okazja, bo „wszyscy zarabiają”. Prowadzi do kupowania po dużym wzroście – często na samym szczycie, tuż przed spadkiem."
+              "text": "**FOMO** (fear of missing out) to strach, że ominie Cię okazja, bo „wszyscy zarabiają”. Kończy się kupowaniem po dużym wzroście – często **na samym szczycie**."
             },
             {
               "type": "text",
-              "text": "Jeśli o czymś mówią wszyscy w social mediach, najlepszy moment zwykle już minął. Lekarstwo: własny plan i zasada, że nie kupujesz niczego w pośpiechu."
+              "text": "Jeśli o czymś mówią wszyscy w social mediach, najlepszy moment **zwykle już minął**."
+            },
+            {
+              "type": "callout",
+              "text": "Lekarstwo: **własny plan** i zasada, że nic nie kupujesz w pośpiechu."
             }
           ]
         }
@@ -147,6 +169,155 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "zones",
+          "prompt": "Inwestowanie czy spekulacja?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Inwestowanie",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Spekulacja",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Kupuję ETF na 20 lat",
+              "zone": "a"
+            },
+            {
+              "text": "Kupuję rano, sprzedaję wieczorem",
+              "zone": "b"
+            },
+            {
+              "text": "Co miesiąc wpłacam stałą kwotę",
+              "zone": "a"
+            },
+            {
+              "text": "Gram na ruchach ceny w minutach",
+              "zone": "b"
+            }
+          ],
+          "explain": "Inwestowanie myśli w latach, spekulacja w dniach, godzinach i minutach.",
+          "fact": "Im krótszy czas, tym większą rolę gra przypadek.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Analiza fundamentalna",
+              "right": "Co kupić"
+            },
+            {
+              "left": "Analiza techniczna",
+              "right": "Kiedy kupić"
+            },
+            {
+              "left": "FOMO",
+              "right": "Strach, że ominie Cię okazja"
+            }
+          ],
+          "explain": "Fundamenty mówią, ile firma jest warta, wykres – kiedy wejść, a FOMO to emocja, która psuje plan.",
+          "fact": "Inwestorzy długoterminowi patrzą głównie na fundamenty.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Dlaczego większość traderów traci?",
+          "options": [
+            {
+              "text": "Koszty przy każdej transakcji",
+              "correct": true
+            },
+            {
+              "text": "Robią za mało transakcji",
+              "correct": false
+            },
+            {
+              "text": "Emocje i trzymanie strat",
+              "correct": true
+            }
+          ],
+          "multi": true,
+          "explain": "Każda transakcja kosztuje, a emocje każą trzymać straty i za szybko brać zyski.",
+          "fact": "Brokerzy CFD w UE muszą pokazywać, jaki % kont traci pieniądze.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Kupowanie, bo „wszyscy zarabiają”, to ___.",
+          "answers": [
+            "FOMO"
+          ],
+          "wrong": [
+            "DCA",
+            "rebalancing"
+          ],
+          "mode": "choose",
+          "explain": "FOMO często kończy się zakupem na samym szczycie.",
+          "fact": "Lekarstwo to własny plan i zasada: nic w pośpiechu.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

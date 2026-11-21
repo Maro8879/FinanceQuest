@@ -5,7 +5,7 @@
   "color": "#3F6B5C",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,15 @@
             },
             {
               "type": "text",
-              "text": "Akcje nie nadają się na krótki termin (np. poniżej 2–3 lat) ze względu na ich wysoką zmienność i nieprzewidywalność rynkową. W krótkim okresie ceny akcji reagują na nagłe wiadomości, kryzysy czy nastroje inwestorów, przez co ich wartość potrafi spaść o kilkadziesiąt procent w ciągu zaledwie kilku miesięcy."
+              "text": "W krótkim terminie ceny akcji reagują na wiadomości, kryzysy i nastroje. Potrafią spaść o **kilkadziesiąt procent w kilka miesięcy**."
             },
             {
               "type": "text",
-              "text": "Jeśli potrzebujesz pieniędzy w konkretnym, bliskim terminie (np. na zakup auta, wkład własny czy wakacje), inwestowanie w akcje naraża Cię na ryzyko, że w momencie wypłaty rynek będzie akurat w dołku i zrealizujesz realną stratę. Dlatego na krótki horyzont bezpieczniejszym wyborem są konta oszczędnościowe lub lokaty, które chronią kapitał i gwarantują stały, przewidywalny zysk."
+              "text": "Jeśli pieniądze są Ci potrzebne za mniej niż **2–3 lata** (auto, wkład własny, wakacje), rynek może być akurat w dołku – i zrealizujesz **realną stratę**."
+            },
+            {
+              "type": "callout",
+              "text": "Na krótki termin wybierz **konto oszczędnościowe lub lokatę**."
             }
           ]
         }
@@ -63,11 +67,18 @@
             },
             {
               "type": "text",
-              "text": "Konto bieżące (ROR) służy do codziennych operacji finansowych — wpływa na nie Twoje wynagrodzenie, płacisz z niego kartą, robisz przelewy i opłacasz rachunki. Jest zaprojektowane z myślą o wygodzie i natychmiastowym dostępie do gotówki, dlatego zazwyczaj jest nieoprocentowane (0%), co sprawia, że trzymane na nim nadwyżki tracą na wartości przez inflację."
+              "text": "Każde konto ma inne zadanie:"
             },
             {
-              "type": "text",
-              "text": "Konto oszczędnościowe (Tagesgeld) służy do bezpiecznego odkładania pieniędzy, których nie wydajesz na co dzień (np. poduszki bezpieczeństwa lub środków na bliskie cele). Zapewnia oprocentowanie, które chroni kapitał przed spadkiem wartości, przy jednoczesnym zachowaniu pełnej płynności — środki możesz w każdej chwili przelać z powrotem na konto bieżące bez utraty wypracowanych dotychczas odsetek (często tylko z limitem darmowych przelewów w miesiącu)."
+              "type": "list",
+              "items": [
+                "**Konto bieżące** – pensja, karta, przelewy i rachunki. Zwykle **0%**",
+                "**Konto oszczędnościowe** (Tagesgeld) – na poduszkę bezpieczeństwa i bliskie cele. Daje **odsetki** i dostęp do pieniędzy w każdej chwili"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Nie trzymaj nadwyżek na koncie bieżącym – tam **zjada je inflacja**."
             }
           ]
         }
@@ -98,11 +109,15 @@
             },
             {
               "type": "text",
-              "text": "Lokata terminowa (Festgeld) to umowa z bankiem, w ramach której powierzasz mu określoną kwotę pieniędzy na z góry ustalony czas (np. 3, 6 lub 12 miesięcy) w zamian za gwarancję wypłaty stałego, znanego od samego początku oprocentowania."
+              "text": "**Lokata** (Festgeld) to umowa z bankiem: wpłacasz kwotę na **ustalony czas** (np. 3, 6 lub 12 miesięcy) i dostajesz **stałe, znane z góry** oprocentowanie."
             },
             {
               "type": "text",
-              "text": "W przeciwieństwie do konta oszczędnościowego, na lokacie środki są zamrożone — nie możesz ich swobodnie dopłacać ani wypłacać w trakcie trwania umowy. Jeśli zerwiesz lokatę przed terminem, bank zwróci Ci wpłacony kapitał, ale zazwyczaj stracisz wszystkie lub większość wypracowanych odsetek, dlatego lokata najlepiej sprawdza się przy nadwyżkach, których na pewno nie będziesz potrzebować do końca jej trwania."
+              "text": "Pieniądze są **zamrożone** – w trakcie nie dopłacisz ani nie wypłacisz."
+            },
+            {
+              "type": "callout",
+              "text": "Zerwiesz lokatę przed terminem? Odzyskasz kapitał, ale zwykle **stracisz odsetki**. Wpłacaj tylko pieniądze, których na pewno nie ruszysz."
             }
           ]
         }
@@ -112,6 +127,155 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "zones",
+          "prompt": "Gdzie trzymać te pieniądze?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Konto bieżące",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Konto oszczędnościowe",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Pensja na rachunki",
+              "zone": "a"
+            },
+            {
+              "text": "Poduszka bezpieczeństwa",
+              "zone": "b"
+            },
+            {
+              "text": "Zakupy w tym tygodniu",
+              "zone": "a"
+            },
+            {
+              "text": "Odkładane na wakacje",
+              "zone": "b"
+            }
+          ],
+          "explain": "Na codzienne wydatki – konto bieżące. To, czego nie wydajesz od razu, niech zarabia odsetki.",
+          "fact": "Konto bieżące zwykle ma 0%, więc nadwyżki tracą tam na inflacji.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Dlaczego akcje nie nadają się na pieniądze potrzebne za rok?",
+          "options": [
+            {
+              "text": "Są zawsze droższe niż lokata",
+              "correct": false
+            },
+            {
+              "text": "Nie można ich sprzedać przed 2 latami",
+              "correct": false
+            },
+            {
+              "text": "W krótkim terminie mogą mocno spaść",
+              "correct": true
+            }
+          ],
+          "multi": false,
+          "explain": "W kilka miesięcy ceny akcji potrafią spaść o kilkadziesiąt procent – akurat wtedy, gdy potrzebujesz pieniędzy.",
+          "fact": "Na horyzont poniżej 2–3 lat lepsze są konto oszczędnościowe i lokata.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Gdy zerwiesz lokatę przed terminem, zwykle tracisz ___.",
+          "answers": [
+            "odsetki"
+          ],
+          "wrong": [
+            "cały kapitał",
+            "konto"
+          ],
+          "mode": "choose",
+          "explain": "Bank oddaje wpłacony kapitał, ale zwykle zabiera wypracowane odsetki.",
+          "fact": "Oprocentowanie lokaty jest stałe i znane od pierwszego dnia.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Konto bieżące",
+              "right": "Codzienne płatności, zwykle 0%"
+            },
+            {
+              "left": "Konto oszczędnościowe",
+              "right": "Odsetki i dostęp w każdej chwili"
+            },
+            {
+              "left": "Lokata",
+              "right": "Stały procent, pieniądze zamrożone"
+            }
+          ],
+          "explain": "Każde z nich ma inne zadanie: płatności, odkładanie albo pewny procent na ustalony czas.",
+          "fact": "Depozyty w bankach w UE są chronione do 100 000 € na osobę w jednym banku.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

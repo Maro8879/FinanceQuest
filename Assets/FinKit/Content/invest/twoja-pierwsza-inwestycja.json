@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:21:41Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,19 @@
             },
             {
               "type": "text",
-              "text": "Broker to firma, przez którą kupujesz akcje, ETF-y i obligacje – bez niego nie masz dostępu do giełdy. Przy wyborze sprawdź: czy ma licencję nadzoru finansowego w UE, ile wynoszą prowizje i opłaty za prowadzenie konta oraz czy oferuje instrumenty, które Cię interesują (np. plan regularnego inwestowania w ETF)."
+              "text": "**Broker** to firma, przez którą kupujesz akcje, ETF-y i obligacje – bez niego nie wejdziesz na giełdę. Przy wyborze sprawdź:"
             },
             {
-              "type": "text",
-              "text": "Twoje akcje i ETF-y są zapisane na Ciebie i oddzielone od majątku brokera, więc jego upadłość nie oznacza utraty papierów."
+              "type": "list",
+              "items": [
+                "**Licencję** nadzoru finansowego w UE",
+                "**Prowizje** i opłaty za konto",
+                "**Ofertę** – np. plan regularnego inwestowania w ETF"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Twoje papiery są zapisane **na Ciebie** i oddzielone od majątku brokera. Jego upadłość nie oznacza ich utraty."
             }
           ]
         }
@@ -63,11 +71,18 @@
             },
             {
               "type": "text",
-              "text": "Zlecenie to polecenie kupna lub sprzedaży, które wysyłasz do brokera. Zlecenie rynkowe (market) wykonuje się od razu po bieżącej cenie, a zlecenie z limitem (limit) wykona się tylko po cenie, którą sam ustalisz, albo lepszej."
+              "text": "**Zlecenie** to polecenie kupna lub sprzedaży, które wysyłasz brokerowi. Dwa podstawowe:"
             },
             {
-              "type": "text",
-              "text": "Na start najprościej kupować małą kwotę (np. 25–50 €) i używać zleceń z limitem – wtedy nie zapłacisz więcej, niż planowałeś."
+              "type": "list",
+              "items": [
+                "**Rynkowe (market)** – wykonuje się od razu, po bieżącej cenie",
+                "**Z limitem (limit)** – tylko po Twojej cenie albo lepszej"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Na start: **mała kwota** (np. 25–50 €) i **zlecenie z limitem** – nie zapłacisz więcej, niż planowałeś."
             }
           ]
         }
@@ -77,6 +92,124 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Co sprawdzić przy wyborze brokera?",
+          "options": [
+            {
+              "text": "Licencję nadzoru finansowego w UE",
+              "correct": true
+            },
+            {
+              "text": "Ilu ma obserwujących w social mediach",
+              "correct": false
+            },
+            {
+              "text": "Wysokość prowizji i opłat",
+              "correct": true
+            }
+          ],
+          "multi": true,
+          "explain": "Licencja chroni Twoje pieniądze, a opłaty decydują o wyniku. Popularność w sieci niczego nie gwarantuje.",
+          "fact": "Twoje papiery są zapisane na Ciebie i oddzielone od majątku brokera.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Zlecenie rynkowe",
+              "right": "Od razu, po bieżącej cenie"
+            },
+            {
+              "left": "Zlecenie z limitem",
+              "right": "Po Twojej cenie albo lepszej"
+            },
+            {
+              "left": "Broker",
+              "right": "Firma, przez którą kupujesz na giełdzie"
+            }
+          ],
+          "explain": "Rynkowe działa od razu, z limitem pilnuje ceny, a broker daje Ci dostęp do giełdy.",
+          "fact": "Plan regularnego inwestowania pozwala kupować ETF automatycznie co miesiąc.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Na start najbezpieczniej użyć zlecenia z ___.",
+          "answers": [
+            "limitem"
+          ],
+          "wrong": [
+            "dźwignią",
+            "kredytem"
+          ],
+          "mode": "choose",
+          "explain": "Zlecenie z limitem sprawia, że nie zapłacisz więcej, niż planowałeś.",
+          "fact": "Na pierwszy zakup wystarczy mała kwota, np. 25–50 €.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "Upadłość brokera nie oznacza utraty akcji",
+          "extra": [
+            "zawsze",
+            "pieniędzy"
+          ],
+          "explain": "Papiery są zapisane na Ciebie i oddzielone od majątku brokera.",
+          "fact": "Dlatego przy wyborze brokera tak ważna jest licencja nadzoru w UE.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

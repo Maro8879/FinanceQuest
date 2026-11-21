@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:21:41Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,18 @@
             },
             {
               "type": "text",
-              "text": "Prowizje i opłaty to ukryte koszty inwestowania, które bezpośrednio pomniejszają Twój zysk — niezależnie od tego, czy rynek rośnie, czy spada. Wśród najważniejszych opłat wyróżniamy prowizję maklerską (pobieraną jednorazowo przy zakupie lub sprzedaży akcji i ETF-ów) oraz TER (ang. Total Expense Ratio), czyli roczny koszt zarządzania funduszem ETF, automatycznie odliczany od jego wyniku."
+              "text": "Opłaty **pomniejszają Twój zysk** zawsze – bez względu na to, czy rynek rośnie, czy spada. Dwie najważniejsze:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "**Prowizja maklerska** – jednorazowo przy każdym kupnie i sprzedaży",
+                "**TER** – roczny koszt funduszu, odliczany automatycznie od jego wyniku"
+              ]
             },
             {
               "type": "text",
-              "text": "W perspektywie wieloletniej nawet pozornie niewielka różnica w opłatach (np. 0,2% w pasywnym ETF-ie kontra 2,0% w tradycyjnym funduszu) potrafi „zjeść” znaczną część zysków przez działanie procentu składanego. Zrozumienie struktury opłat pozwala unikać kosztownych produktów i świadomie wybierać rozwiązania (np. promocyjne plany oszczędnościowe bez prowizji za zakup), dzięki czemu większa część kapitału pracuje na Twoje cele."
+              "text": "Sprawdzaj opłaty przed zakupem i szukaj tanich rozwiązań, np. planów oszczędnościowych **bez prowizji**."
             }
           ]
         }
@@ -63,11 +70,18 @@
             },
             {
               "type": "text",
-              "text": "Opłaty i prowizje w długim terminie działają jak „odwrócony procent składany” — nie pomniejszają Twojego wyniku liniowo, lecz z roku na rok odbierają Ci nie tylko samą kwotę prowizji, ale również wszystkie przyszłe zyski, które ta kwota mogłaby wypracować."
+              "text": "Opłaty działają jak **odwrócony procent składany**: zabierają nie tylko swoją kwotę, ale też wszystkie zyski, które te pieniądze zarobiłyby przez lata."
             },
             {
-              "type": "text",
-              "text": "Przy jednorazowym zakupie 1% lub 2% wydaje się niewielkim kosztem, jednak w horyzoncie 20–30 lat różnica między tanim funduszem pasywnym (np. ETF z opłatą 0,2% rocznie) a drogim funduszem zarządzanym aktywnie (np. 2,0% rocznie) potrafi pochłonąć od jednej trzeciej do nawet połowy wypracowanego kapitału. Dlatego minimalizowanie kosztów stałych (takich jak wskaźnik TER czy prowizje za zakup) jest jednym z najpewniejszych sposobów na zwiększenie końcowego zysku bez dodatkowego ryzyka."
+              "type": "list",
+              "items": [
+                "**ETF pasywny** – ok. 0,2% rocznie",
+                "**Fundusz aktywny** – nawet 2,0% rocznie"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Po 20–30 latach ta różnica może zabrać **nawet jedną trzecią** kapitału. Niskie koszty to wyższy wynik **bez dodatkowego ryzyka**."
             }
           ]
         }
@@ -98,11 +112,19 @@
             },
             {
               "type": "text",
-              "text": "Podatek od zysków kapitałowych (w Polsce podatek Belki, w Niemczech Abgeltungsteuer) to obowiązkowa opłata od dochodu z inwestycji, m.in. sprzedaży akcji i ETF-ów, otrzymanych dywidend oraz odsetek z lokat."
+              "text": "Od zysków z inwestycji płacisz podatek: w Polsce **podatek Belki**, w Niemczech **Abgeltungsteuer**. Obejmuje m.in.:"
             },
             {
-              "type": "text",
-              "text": "Płacisz go wyłącznie od wypracowanego zysku (a nie od całej kwoty) i dopiero w momencie jego realizacji, czyli sprzedaży aktywów lub wypłaty odsetek. Dopóki trzymasz rosnące inwestycje na rachunku, podatek nie jest pobierany, dzięki czemu cały kapitał pracuje dalej na procent składany."
+              "type": "list",
+              "items": [
+                "zysk ze **sprzedaży** akcji i ETF-ów",
+                "**dywidendy**",
+                "**odsetki** z lokat i obligacji"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Płacisz tylko od **zysku** i dopiero, gdy go zrealizujesz. Dopóki trzymasz inwestycję, cały kapitał **dalej pracuje**."
             }
           ]
         }
@@ -133,11 +155,19 @@
             },
             {
               "type": "text",
-              "text": "Ulgi i zwolnienia podatkowe w inwestowaniu to legalne rozwiązania przygotowane przez państwo, które pozwalają zmniejszyć lub całkowicie uniknąć podatku od zysków kapitałowych, aby zachęcić obywateli do długoterminowego oszczędzania (np. na emeryturę)."
+              "text": "Państwo daje **legalne sposoby**, żeby płacić mniejszy podatek albo wcale – w zamian za długie oszczędzanie, np. na emeryturę."
+            },
+            {
+              "type": "list",
+              "items": [
+                "**IKE** (Polska) – brak podatku Belki przy wypłacie na emeryturze",
+                "**IKZE** (Polska) – wpłaty odliczasz od dochodu w PIT",
+                "**Sparer-Pauschbetrag** (Niemcy) – 1 000 € zysków rocznie bez podatku"
+              ]
             },
             {
               "type": "text",
-              "text": "W Polsce tę rolę pełnią specjalne konta emerytalne (IKE oraz IKZE), a w Niemczech m.in. roczna kwota wolna od zysków kapitałowych (Sparer-Pauschbetrag). Korzystanie z nich sprawia, że zamiast oddawać część zysku urzędowi skarbowemu, więcej wypracowanych odsetek i dywidend zostaje w Twoim portfelu i napędza procent składany."
+              "text": "Więcej zysku zostaje w portfelu i **napędza procent składany**."
             }
           ]
         }
@@ -147,6 +177,159 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Prowizja maklerska",
+              "right": "Opłata przy kupnie i sprzedaży"
+            },
+            {
+              "left": "TER",
+              "right": "Roczny koszt funduszu"
+            },
+            {
+              "left": "Podatek Belki",
+              "right": "Podatek od zysków w Polsce"
+            },
+            {
+              "left": "IKE",
+              "right": "Konto z ulgą podatkową na emeryturę"
+            }
+          ],
+          "explain": "Prowizja i TER to koszty, podatek Belki płacisz od zysku, a IKE pozwala go legalnie uniknąć.",
+          "fact": "W Niemczech podatek od zysków kapitałowych to Abgeltungsteuer.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Kiedy płacisz podatek od zysku ze sprzedaży ETF-u?",
+          "options": [
+            {
+              "text": "Co miesiąc, od wartości portfela",
+              "correct": false
+            },
+            {
+              "text": "Gdy sprzedasz go z zyskiem",
+              "correct": true
+            },
+            {
+              "text": "Przy każdym zakupie",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "Podatek płacisz od zrealizowanego zysku. Dopóki trzymasz ETF, cały kapitał dalej pracuje.",
+          "fact": "Gdy sprzedajesz bez zysku, nie ma od czego płacić podatku.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Opłaty działają jak odwrócony ___ składany.",
+          "answers": [
+            "procent"
+          ],
+          "wrong": [
+            "podatek",
+            "kredyt"
+          ],
+          "mode": "choose",
+          "explain": "Opłata zabiera nie tylko swoją kwotę, ale też wszystkie przyszłe zyski z tych pieniędzy.",
+          "fact": "Po 20–30 latach różnica między 0,2% a 2% rocznie może zabrać nawet jedną trzecią kapitału.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "zones",
+          "prompt": "Przeciągnij do właściwej strefy",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Koszt inwestowania",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Mniejszy podatek",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Prowizja maklerska",
+              "zone": "a"
+            },
+            {
+              "text": "IKZE",
+              "zone": "b"
+            },
+            {
+              "text": "TER",
+              "zone": "a"
+            },
+            {
+              "text": "Sparer-Pauschbetrag",
+              "zone": "b"
+            }
+          ],
+          "explain": "Prowizja i TER zmniejszają zysk, a IKZE i niemiecka kwota wolna zmniejszają podatek.",
+          "fact": "W Niemczech zyski do 1 000 € rocznie na osobę są wolne od podatku.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

@@ -5,7 +5,7 @@
   "color": "#4A5D73",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,18 @@
             },
             {
               "type": "text",
-              "text": "Zmienność (volatility) mówi, jak mocno i jak szybko cena skacze w górę i w dół. Przy krótkim horyzoncie to ona decyduje o wyniku: daje szansę na szybki zysk, ale też na szybką i dużą stratę."
+              "text": "**Zmienność** (volatility) mówi, jak mocno i jak szybko cena skacze w górę i w dół. Przy krótkim horyzoncie to ona decyduje o wyniku."
             },
             {
-              "type": "text",
-              "text": "Kryptowaluty i małe spółki są dużo bardziej zmienne niż globalne ETF-y czy obligacje."
+              "type": "list",
+              "items": [
+                "**Duża** – kryptowaluty, małe spółki",
+                "**Mała** – globalne ETF-y, obligacje"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Duża zmienność to szansa na **szybki zysk**, ale też na **szybką stratę**."
             }
           ]
         }
@@ -63,11 +70,15 @@
             },
             {
               "type": "text",
-              "text": "Dźwignia pozwala grać większą kwotą, niż masz: przy dźwigni 1:10 za 100 € kontrolujesz pozycję wartą 1 000 €. Zysk jest mnożony, ale strata też – spadek ceny o 10% może wyzerować całą Twoją wpłatę."
+              "text": "**Dźwignia** pozwala grać większą kwotą, niż masz. Przy dźwigni **1:10** za 100 € kontrolujesz pozycję wartą 1 000 €."
             },
             {
               "type": "text",
-              "text": "W UE regulator ogranicza dźwignię dla klientów detalicznych, ale nawet wtedy to narzędzie dla doświadczonych, nie na start."
+              "text": "Mnoży zysk, ale **mnoży też stratę**: spadek ceny o 10% może wyzerować całą wpłatę."
+            },
+            {
+              "type": "callout",
+              "text": "W UE dźwignia dla klientów detalicznych jest ograniczona, ale to i tak narzędzie dla doświadczonych – **nie na start**."
             }
           ]
         }
@@ -98,11 +109,15 @@
             },
             {
               "type": "text",
-              "text": "Stop-Loss to zlecenie, które automatycznie sprzedaje pozycję, gdy cena spadnie do ustalonego poziomu. Przykład: kupujesz po 100 €, ustawiasz stop na 95 € – maksymalna strata to 5%."
+              "text": "**Stop-Loss** to zlecenie, które samo sprzedaje pozycję, gdy cena spadnie do ustalonego poziomu."
             },
             {
               "type": "text",
-              "text": "Chroni przed sytuacją, w której mała strata zamienia się w dużą, bo „może jeszcze odbije”. Przy gwałtownych ruchach może się wykonać po gorszej cenie niż ustawiona."
+              "text": "Przykład: kupujesz po **100 €**, stop ustawiasz na **95 €** – maksymalna strata to 5%. Mała strata nie zamieni się w dużą, bo „może jeszcze odbije”."
+            },
+            {
+              "type": "callout",
+              "text": "Przy gwałtownych ruchach może się wykonać po **gorszej cenie** niż ustawiona."
             }
           ]
         }
@@ -133,11 +148,15 @@
             },
             {
               "type": "text",
-              "text": "Take-Profit to zlecenie, które automatycznie sprzedaje pozycję, gdy cena dojdzie do Twojego celu zysku. Przykład: kupujesz po 100 €, ustawiasz cel 110 € – zysk realizuje się sam, nawet jeśli nie patrzysz na ekran."
+              "text": "**Take-Profit** to zlecenie, które samo sprzedaje pozycję, gdy cena dojdzie do Twojego celu."
             },
             {
               "type": "text",
-              "text": "Pomaga trzymać się planu zamiast chciwie czekać na „jeszcze trochę”."
+              "text": "Przykład: kupujesz po **100 €**, cel ustawiasz na **110 €** – zysk realizuje się sam, nawet gdy nie patrzysz na ekran."
+            },
+            {
+              "type": "callout",
+              "text": "Pomaga trzymać się planu, zamiast chciwie czekać na „**jeszcze trochę**”."
             }
           ]
         }
@@ -147,6 +166,157 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Dźwignia 1:10, cena spada o 10%. Co z Twoją wpłatą?",
+          "options": [
+            {
+              "text": "Tracisz 1%",
+              "correct": false
+            },
+            {
+              "text": "Tracisz 10%",
+              "correct": false
+            },
+            {
+              "text": "Może zniknąć cała",
+              "correct": true
+            }
+          ],
+          "multi": false,
+          "explain": "Przy dźwigni 1:10 spadek ceny o 10% to −100% Twojej wpłaty.",
+          "fact": "W UE dźwignia dla klientów detalicznych jest ograniczona.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Stop-Loss",
+              "right": "Sprzedaje przy ustalonej stracie"
+            },
+            {
+              "left": "Take-Profit",
+              "right": "Sprzedaje przy celu zysku"
+            },
+            {
+              "left": "Zmienność",
+              "right": "Jak mocno skacze cena"
+            },
+            {
+              "left": "Dźwignia",
+              "right": "Gra większą kwotą, niż masz"
+            }
+          ],
+          "explain": "Stop-Loss i Take-Profit to zlecenia obronne, zmienność i dźwignia decydują o ryzyku.",
+          "fact": "Take-Profit realizuje zysk, nawet gdy nie patrzysz na ekran.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Kupujesz po 100 €, Stop-Loss ustawiasz na 95 €. Maksymalna strata to ___ procent.",
+          "answers": [
+            "5",
+            "pięć"
+          ],
+          "wrong": [],
+          "mode": "type",
+          "explain": "Od 100 € do 95 € to 5 € straty, czyli 5%.",
+          "fact": "Przy gwałtownych ruchach Stop-Loss może się wykonać po gorszej cenie.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "zones",
+          "prompt": "Duża czy mała zmienność?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Duża zmienność",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Mała zmienność",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Kryptowaluty",
+              "zone": "a"
+            },
+            {
+              "text": "Globalne ETF-y",
+              "zone": "b"
+            },
+            {
+              "text": "Małe spółki",
+              "zone": "a"
+            },
+            {
+              "text": "Obligacje",
+              "zone": "b"
+            }
+          ],
+          "explain": "Kryptowaluty i małe spółki skaczą mocno, globalne ETF-y i obligacje – dużo spokojniej.",
+          "fact": "Duża zmienność to szansa na szybki zysk, ale też na szybką stratę.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

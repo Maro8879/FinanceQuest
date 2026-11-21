@@ -5,7 +5,7 @@
   "color": "#3F6B5C",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,15 @@
             },
             {
               "type": "text",
-              "text": "Fundusz rynku pieniężnego (money market fund) inwestuje w bardzo krótkie i bezpieczne instrumenty, np. bony skarbowe i krótkoterminowe depozyty bankowe. Jego wartość rośnie powoli, ale stabilnie, a oprocentowanie jest zbliżone do stóp procentowych banku centralnego."
+              "text": "**Fundusz rynku pieniężnego** inwestuje w bardzo krótkie i bezpieczne instrumenty, np. **bony skarbowe** i krótkie depozyty bankowe."
             },
             {
               "type": "text",
-              "text": "To nie lokata – nie ma gwarancji depozytów, ale ryzyko spadku wartości jest bardzo małe."
+              "text": "Rośnie **powoli, ale stabilnie**, a jego oprocentowanie jest zbliżone do stóp banku centralnego."
+            },
+            {
+              "type": "callout",
+              "text": "To nie lokata – **nie ma gwarancji depozytów**, ale ryzyko spadku jest bardzo małe."
             }
           ]
         }
@@ -62,12 +66,15 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "Lokata daje gwarantowane oprocentowanie i ochronę do 100 000 € na bank, ale zamraża pieniądze na ustalony czas. Fundusz rynku pieniężnego nie ma gwarancji, za to możesz go sprzedać praktycznie w każdej chwili i nie tracisz zarobionych odsetek."
+              "type": "list",
+              "items": [
+                "**Lokata** – gwarantowane odsetki i ochrona do 100 000 €, ale pieniądze są **zamrożone**",
+                "**Fundusz** – bez gwarancji i z małą opłatą roczną (TER), ale sprzedasz go **w każdej chwili** bez utraty odsetek"
+              ]
             },
             {
-              "type": "text",
-              "text": "Fundusz pobiera małą opłatę roczną (TER). Lokata to pewność, fundusz to elastyczność."
+              "type": "callout",
+              "text": "Lokata to **pewność**, fundusz to **elastyczność**."
             }
           ]
         }
@@ -98,11 +105,19 @@
             },
             {
               "type": "text",
-              "text": "Fundusz rynku pieniężnego sprawdza się, gdy trzymasz pieniądze, które mogą być potrzebne w każdej chwili, ale nie chcesz, żeby leżały na 0% – np. poduszka bezpieczeństwa, gotówka czekająca na inwestycję albo kwota odkładana na zakup za kilka miesięcy."
+              "text": "Sprawdza się, gdy pieniądze mogą być potrzebne **w każdej chwili**, ale nie chcesz, żeby leżały na 0%. Na przykład:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "**Poduszka bezpieczeństwa**",
+                "**Gotówka czekająca** na inwestycję",
+                "Kwota na **zakup za kilka miesięcy**"
+              ]
             },
             {
               "type": "text",
-              "text": "Dostajesz oprocentowanie bliskie stopom rynkowym i nie blokujesz środków jak na lokacie."
+              "text": "Dostajesz oprocentowanie **bliskie stopom rynkowym** i nie blokujesz pieniędzy jak na lokacie."
             }
           ]
         }
@@ -112,6 +127,153 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "W co inwestuje fundusz rynku pieniężnego?",
+          "options": [
+            {
+              "text": "W akcje szybko rosnących firm",
+              "correct": false
+            },
+            {
+              "text": "W bony skarbowe i krótkie depozyty",
+              "correct": true
+            },
+            {
+              "text": "W kryptowaluty",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "To bardzo krótkie i bezpieczne instrumenty, dlatego fundusz rośnie powoli, ale stabilnie.",
+          "fact": "Jego oprocentowanie jest zbliżone do stóp procentowych banku centralnego.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "zones",
+          "prompt": "Lokata czy fundusz?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Lokata",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Fundusz rynku pieniężnego",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Gwarancja do 100 000 €",
+              "zone": "a"
+            },
+            {
+              "text": "Sprzedasz w każdej chwili",
+              "zone": "b"
+            },
+            {
+              "text": "Pieniądze zamrożone na ustalony czas",
+              "zone": "a"
+            },
+            {
+              "text": "Mała opłata roczna (TER)",
+              "zone": "b"
+            }
+          ],
+          "explain": "Lokata to pewność, fundusz to elastyczność.",
+          "fact": "Fundusz nie ma gwarancji depozytów, ale ryzyko spadku jest bardzo małe.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Na co pasuje fundusz rynku pieniężnego?",
+          "options": [
+            {
+              "text": "Poduszka bezpieczeństwa",
+              "correct": true
+            },
+            {
+              "text": "Oszczędzanie na emeryturę za 30 lat",
+              "correct": false
+            },
+            {
+              "text": "Gotówka czekająca na inwestycję",
+              "correct": true
+            }
+          ],
+          "multi": true,
+          "explain": "To miejsce na pieniądze potrzebne w każdej chwili. Na dekady lepiej sprawdzają się akcje i ETF-y.",
+          "fact": "Dostajesz oprocentowanie bliskie stopom rynkowym i nie blokujesz pieniędzy.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "Fundusz możesz sprzedać w każdej chwili",
+          "extra": [
+            "nigdy",
+            "lokatę"
+          ],
+          "explain": "W przeciwieństwie do lokaty fundusz nie zamraża pieniędzy.",
+          "fact": "Przy sprzedaży nie tracisz zarobionych odsetek.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

@@ -5,7 +5,7 @@
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,18 @@
             },
             {
               "type": "text",
-              "text": "Przy takim horyzoncie masz już czas, żeby przeczekać część spadków, ale nie aż tyle, żeby ignorować każdy krach. Dlatego zamiast samej gotówki albo samych akcji łączy się różne aktywa: akcje dają wzrost, obligacje stabilność."
+              "text": "Masz czas, żeby **przeczekać część spadków**, ale nie tyle, żeby ignorować każdy krach. Dlatego łączy się różne aktywa:"
             },
             {
-              "type": "text",
-              "text": "Cel: pobić inflację bez ryzyka, że tuż przed wypłatą stracisz połowę."
+              "type": "list",
+              "items": [
+                "**Akcje** – dają wzrost",
+                "**Obligacje** – dają stabilność"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Cel: **pobić inflację** bez ryzyka, że tuż przed wypłatą stracisz połowę."
             }
           ]
         }
@@ -63,11 +70,15 @@
             },
             {
               "type": "text",
-              "text": "Dobry cel ma kwotę i datę: zamiast „chcę oszczędzać” – „chcę mieć 20 000 € na wkład własny za 6 lat”. Wtedy łatwo policzysz, ile odkładać miesięcznie i jakie ryzyko możesz przyjąć."
+              "text": "Dobry cel ma **kwotę i datę**. Zamiast „chcę oszczędzać” – „**20 000 € na wkład własny za 6 lat**”."
             },
             {
               "type": "text",
-              "text": "Im bliżej daty celu, tym więcej pieniędzy warto przenosić do bezpieczniejszych aktywów."
+              "text": "Wtedy łatwo policzysz, **ile odkładać** co miesiąc i jakie ryzyko możesz przyjąć."
+            },
+            {
+              "type": "callout",
+              "text": "Im bliżej daty celu, tym więcej pieniędzy przenoś do **bezpieczniejszych aktywów**."
             }
           ]
         }
@@ -98,11 +109,15 @@
             },
             {
               "type": "text",
-              "text": "Jeśli cały kapitał siedzi w jednym aktywie, jeden zły rok może zniszczyć plan. Podział na akcje, obligacje i gotówkę sprawia, że gdy jedna część spada, inne zwykle trzymają wartość albo rosną."
+              "text": "Gdy cały kapitał siedzi w jednym aktywie, **jeden zły rok** może zniszczyć plan."
             },
             {
               "type": "text",
-              "text": "Portfel rośnie wolniej niż w najlepszym scenariuszu, ale dużo mniej boli w najgorszym."
+              "text": "Podział na **akcje, obligacje i gotówkę** sprawia, że gdy jedna część spada, inne zwykle trzymają wartość albo rosną."
+            },
+            {
+              "type": "callout",
+              "text": "Portfel rośnie wolniej w najlepszym scenariuszu, ale **dużo mniej boli** w najgorszym."
             }
           ]
         }
@@ -112,6 +127,124 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Który cel jest dobrze ustawiony?",
+          "options": [
+            {
+              "text": "Chcę więcej oszczędzać",
+              "correct": false
+            },
+            {
+              "text": "20 000 € na wkład własny za 6 lat",
+              "correct": true
+            },
+            {
+              "text": "Chcę być bogaty",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "Dobry cel ma kwotę i datę – wtedy policzysz, ile odkładać co miesiąc.",
+          "fact": "Z kwotą i datą łatwiej też dobrać ryzyko.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Im bliżej daty celu, tym więcej pieniędzy przenosisz do ___ aktywów.",
+          "answers": [
+            "bezpieczniejszych"
+          ],
+          "wrong": [
+            "ryzykowniejszych",
+            "tańszych"
+          ],
+          "mode": "choose",
+          "explain": "Tuż przed wypłatą nie możesz sobie pozwolić na duży spadek.",
+          "fact": "Tak działają fundusze z datą docelową – z czasem same zmniejszają udział akcji.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Akcje",
+              "right": "Dają wzrost"
+            },
+            {
+              "left": "Obligacje",
+              "right": "Dają stabilność"
+            },
+            {
+              "left": "Gotówka",
+              "right": "Jest dostępna od razu"
+            }
+          ],
+          "explain": "Na 3–10 lat łączysz różne aktywa – każde ma w portfelu inne zadanie.",
+          "fact": "Podział pieniędzy na kilka aktywów to dywersyfikacja.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "Jeden zły rok nie zniszczy planu",
+          "extra": [
+            "dobry",
+            "zawsze"
+          ],
+          "explain": "Gdy pieniądze są podzielone między różne aktywa, spadek jednego nie przekreśla celu.",
+          "fact": "Portfel rośnie wtedy wolniej w najlepszym scenariuszu, ale dużo mniej boli w najgorszym.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

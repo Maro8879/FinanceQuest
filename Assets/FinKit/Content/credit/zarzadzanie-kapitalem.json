@@ -5,7 +5,7 @@
   "color": "#4A5D73",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,15 @@
             },
             {
               "type": "text",
-              "text": "W jednej transakcji ryzykujesz maksymalnie 1–2% wartości całego portfela. Przy portfelu 5 000 € to najwyżej 50–100 € straty na jednym pomyśle – nawet seria 10 nieudanych transakcji z rzędu nie wyrzuca Cię z gry."
+              "text": "W jednej transakcji ryzykujesz najwyżej **1–2% całego portfela**."
             },
             {
               "type": "text",
-              "text": "Profesjonaliści przetrwają nie dlatego, że zawsze mają rację, tylko dlatego, że ich straty są małe."
+              "text": "Przy 5 000 € to maks. **50–100 € straty** na jednym pomyśle. Nawet 10 nieudanych transakcji z rzędu nie wyrzuca Cię z gry."
+            },
+            {
+              "type": "callout",
+              "text": "Profesjonaliści przetrwają nie dlatego, że zawsze mają rację, tylko dlatego, że ich **straty są małe**."
             }
           ]
         }
@@ -63,11 +67,20 @@
             },
             {
               "type": "text",
-              "text": "Wielkość pozycji wynika z tego, ile chcesz ryzykować i gdzie stoi Twój Stop-Loss. Przykład: portfel 5 000 €, ryzyko 1% = 50 €, stop 5% poniżej ceny wejścia – pozycja może mieć 1 000 € (5% z 1 000 € = 50 €)."
+              "text": "Wielkość pozycji wynika z tego, **ile chcesz ryzykować** i gdzie stoi Twój Stop-Loss. Przykład:"
             },
             {
-              "type": "text",
-              "text": "Najpierw ustalasz ryzyko, dopiero potem kwotę zakupu – nigdy odwrotnie."
+              "type": "list",
+              "items": [
+                "Portfel: **5 000 €**",
+                "Ryzyko 1%: **50 €**",
+                "Stop-Loss: 5% poniżej ceny wejścia",
+                "Pozycja: **1 000 €** (5% z 1 000 € = 50 €)"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Najpierw ustalasz **ryzyko**, dopiero potem kwotę zakupu – nigdy odwrotnie."
             }
           ]
         }
@@ -98,11 +111,15 @@
             },
             {
               "type": "text",
-              "text": "Zanim zaryzykujesz własne pieniądze, przetestuj strategię na rachunku demo albo w symulatorze z wirtualną gotówką. Zobaczysz, jak działają zlecenia, Stop-Loss i Twoje emocje przy stracie – i nic to nie kosztuje."
+              "text": "Zanim zaryzykujesz własne pieniądze, przetestuj strategię na **rachunku demo** albo w symulatorze z wirtualną gotówką."
             },
             {
               "type": "text",
-              "text": "Jeśli strategia nie zarabia na demo przez kilka miesięcy, na prawdziwych pieniądzach też nie zacznie."
+              "text": "Zobaczysz, jak działają zlecenia, Stop-Loss i **Twoje emocje** przy stracie – i nic to nie kosztuje."
+            },
+            {
+              "type": "callout",
+              "text": "Strategia nie zarabia na demo przez kilka miesięcy? Na prawdziwych pieniądzach **też nie zacznie**."
             }
           ]
         }
@@ -112,6 +129,124 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Portfel 5 000 €. Ile najwyżej ryzykujesz w jednej transakcji według zasady 1–2%?",
+          "options": [
+            {
+              "text": "500–1 000 €",
+              "correct": false
+            },
+            {
+              "text": "50–100 €",
+              "correct": true
+            },
+            {
+              "text": "Całość, jeśli jestem pewny",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "1–2% z 5 000 € to 50–100 €.",
+          "fact": "Nawet seria 10 strat z rzędu nie wyrzuca Cię wtedy z gry.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Najpierw ustalasz ___, dopiero potem kwotę zakupu.",
+          "answers": [
+            "ryzyko"
+          ],
+          "wrong": [
+            "zysk",
+            "dźwignię"
+          ],
+          "mode": "choose",
+          "explain": "Kwota zakupu wynika z tego, ile chcesz ryzykować i gdzie stoi Stop-Loss.",
+          "fact": "Profesjonaliści przetrwają, bo ich straty są małe.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Ryzyko 50 €, Stop-Loss 5% poniżej ceny wejścia. Jaka może być pozycja?",
+          "options": [
+            {
+              "text": "250 €",
+              "correct": false
+            },
+            {
+              "text": "5 000 €",
+              "correct": false
+            },
+            {
+              "text": "1 000 €",
+              "correct": true
+            }
+          ],
+          "multi": false,
+          "explain": "5% z 1 000 € to 50 € – dokładnie tyle, ile chcesz ryzykować.",
+          "fact": "Wielkość pozycji liczysz od ryzyka, nie od tego, ile masz na koncie.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "Najpierw przetestuj strategię na demo",
+          "extra": [
+            "kredycie",
+            "prawdziwych"
+          ],
+          "explain": "Na demo uczysz się zleceń i własnych emocji bez ryzyka.",
+          "fact": "Strategia, która nie zarabia na demo, na prawdziwych pieniądzach też nie zacznie.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,15 @@
             },
             {
               "type": "text",
-              "text": "Indeks to „koszyk” spółek mierzący cały rynek, np. 500 największych firm w USA albo kilka tysięcy firm z całego świata. ETF na indeks pozwala kupić cały ten koszyk jednym zleceniem, przy bardzo niskich kosztach."
+              "text": "**Indeks** to koszyk spółek, który mierzy cały rynek, np. 500 największych firm w USA albo tysiące firm z całego świata."
             },
             {
               "type": "text",
-              "text": "Globalny ETF to najprostszy sposób na pełną dywersyfikację na dekady – nie musisz wybierać zwycięzców, masz ich wszystkich."
+              "text": "**ETF na indeks** kupuje cały ten koszyk jednym zleceniem, przy **bardzo niskich kosztach**."
+            },
+            {
+              "type": "callout",
+              "text": "Globalny ETF to najprostsza dywersyfikacja na dekady – nie wybierasz zwycięzców, **masz ich wszystkich**."
             }
           ]
         }
@@ -63,11 +67,18 @@
             },
             {
               "type": "text",
-              "text": "DCA (Dollar Cost Averaging) to inwestowanie stałej kwoty co miesiąc, niezależnie od tego, co dzieje się na rynku. Gdy ceny spadają, za te same 100 € kupujesz więcej jednostek, gdy rosną – mniej."
+              "text": "**DCA** (Dollar Cost Averaging) to inwestowanie **stałej kwoty co miesiąc**, bez względu na to, co dzieje się na rynku."
             },
             {
-              "type": "text",
-              "text": "Nie musisz zgadywać dobrego momentu, a regularność robi robotę za Ciebie."
+              "type": "list",
+              "items": [
+                "**Ceny spadają** – za 100 € kupujesz więcej jednostek",
+                "**Ceny rosną** – kupujesz mniej"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Nie zgadujesz dobrego momentu – **regularność** robi robotę za Ciebie."
             }
           ]
         }
@@ -97,12 +108,19 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "ETF dystrybuujący wypłaca dywidendy na Twoje konto (np. co kwartał), a akumulujący automatycznie reinwestuje je w fundusz – procent składany działa bez Twojego udziału."
+              "type": "list",
+              "items": [
+                "**Dystrybuujący** – wypłaca dywidendy na Twoje konto, np. co kwartał",
+                "**Akumulujący** – sam reinwestuje dywidendy, więc procent składany działa bez Twojego udziału"
+              ]
             },
             {
               "type": "text",
-              "text": "Na długi horyzont zwykle lepszy jest akumulujący (w wielu krajach odkładasz też podatek do sprzedaży). Dystrybuujący pasuje, gdy chcesz regularnego dochodu, np. na emeryturze."
+              "text": "Na długi horyzont zwykle lepszy jest **akumulujący** – w wielu krajach odkładasz też podatek do sprzedaży."
+            },
+            {
+              "type": "text",
+              "text": "**Dystrybuujący** pasuje, gdy chcesz regularnego dochodu, np. na emeryturze."
             }
           ]
         }
@@ -112,6 +130,155 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Co to jest DCA?",
+          "options": [
+            {
+              "text": "Kupowanie tylko po spadkach",
+              "correct": false
+            },
+            {
+              "text": "Inwestowanie stałej kwoty co miesiąc",
+              "correct": true
+            },
+            {
+              "text": "Jednorazowa wpłata całej kwoty",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "DCA to regularne wpłaty tej samej kwoty, bez względu na to, co dzieje się na rynku.",
+          "fact": "Nazwa pochodzi od Dollar Cost Averaging – uśredniania ceny zakupu.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Gdy ceny spadają, za te same 100 € kupujesz ___ jednostek.",
+          "answers": [
+            "więcej"
+          ],
+          "wrong": [
+            "mniej",
+            "tyle samo"
+          ],
+          "mode": "choose",
+          "explain": "Niższa cena oznacza więcej jednostek za tę samą kwotę – tak uśredniasz cenę zakupu.",
+          "fact": "Regularność zwalnia Cię ze zgadywania dobrego momentu.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "zones",
+          "prompt": "Akumulujący czy dystrybuujący?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Akumulujący (ACC)",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Dystrybuujący (DIST)",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Sam reinwestuje dywidendy",
+              "zone": "a"
+            },
+            {
+              "text": "Wypłaca dywidendy na konto",
+              "zone": "b"
+            },
+            {
+              "text": "Dobry na długi horyzont",
+              "zone": "a"
+            },
+            {
+              "text": "Regularny dochód na emeryturze",
+              "zone": "b"
+            }
+          ],
+          "explain": "ACC reinwestuje dywidendy za Ciebie, DIST wypłaca je na konto.",
+          "fact": "Skróty ACC i DIST często widać w samej nazwie ETF-u.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Dlaczego globalny ETF to dobry wybór na dekady?",
+          "options": [
+            {
+              "text": "Gwarantuje zysk co roku",
+              "correct": false
+            },
+            {
+              "text": "Wybiera tylko najlepsze spółki",
+              "correct": false
+            },
+            {
+              "text": "Masz w nim tysiące firm z całego świata",
+              "correct": true
+            }
+          ],
+          "multi": false,
+          "explain": "Globalny ETF kupuje cały rynek – nie musisz wybierać zwycięzców, masz ich wszystkich.",
+          "fact": "Indeks to koszyk spółek, który mierzy cały rynek.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

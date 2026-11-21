@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T21:50:47Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -170,6 +170,81 @@
           "answers": [],
           "wrong": [],
           "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Przy 0% na koncie i inflacji 4% Twoje pieniądze co roku ___ na wartości.",
+          "answers": [
+            "tracą"
+          ],
+          "wrong": [
+            "zyskują",
+            "nie zmieniają się"
+          ],
+          "mode": "choose",
+          "explain": "Ceny rosną szybciej niż Twoje oszczędności, więc za tę samą kwotę kupisz mniej.",
+          "fact": "Dlatego oszczędności warto trzymać tam, gdzie zarabiają co najmniej tyle, ile wynosi inflacja.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Na czym polega procent składany?",
+          "options": [
+            {
+              "text": "Bank co roku wypłaca stałą kwotę",
+              "correct": false
+            },
+            {
+              "text": "Odsetki doliczają się do kapitału i same zarabiają",
+              "correct": true
+            },
+            {
+              "text": "Odsetki dostajesz tylko raz, na koniec",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "Odsetki od odsetek sprawiają, że kapitał rośnie jak kula śnieżna.",
+          "fact": "Z czasem zysk z odsetek potrafi przewyższyć wszystkie Twoje wpłaty.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "Im wcześniej zaczniesz tym mniej musisz wpłacić",
+          "extra": [
+            "później",
+            "więcej"
+          ],
+          "explain": "Czas daje procentowi składanemu więcej lat na pracę.",
+          "fact": "Długi horyzont pomaga też przeczekać krachy.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
           "image": "",
           "text": "",
           "mode": "",

@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -27,12 +27,16 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "2000: pękła bańka internetowa i spółki technologiczne straciły większość wartości. 2008: kryzys finansowy zaczął się od rynku nieruchomości w USA i pociągnął w dół cały świat. 2020: pandemia wywołała jeden z najszybszych spadków w historii – i jedno z najszybszych odbić."
+              "type": "list",
+              "items": [
+                "**2000** – pęka bańka internetowa, spółki technologiczne tracą większość wartości",
+                "**2008** – kryzys z rynku nieruchomości w USA ciągnie w dół cały świat",
+                "**2020** – pandemia: jeden z najszybszych spadków w historii i jedno z najszybszych odbić"
+              ]
             },
             {
-              "type": "text",
-              "text": "Wniosek: krachy się zdarzają, ale szeroki rynek historycznie w końcu wracał wyżej. To nie jest gwarancja na przyszłość."
+              "type": "callout",
+              "text": "Krachy się zdarzają, ale szeroki rynek historycznie **wracał wyżej**. To nie gwarancja na przyszłość."
             }
           ]
         }
@@ -63,11 +67,15 @@
             },
             {
               "type": "text",
-              "text": "Gdy rynek spada, mózg krzyczy „uciekaj”, gdy rośnie – „kupuj więcej”. Dlatego większość ludzi kupuje drogo i sprzedaje tanio."
+              "text": "Gdy rynek spada, mózg krzyczy „**uciekaj**”, gdy rośnie – „**kupuj więcej**”. Dlatego większość ludzi kupuje drogo i sprzedaje tanio."
             },
             {
               "type": "text",
-              "text": "Plan spisany zanim przyjdzie krach (ile wpłacasz, w co, kiedy rebalansujesz) chroni przed decyzjami w panice. Zasada: decyzje podejmuj na spokojnie, a w czasie burzy tylko realizuj plan."
+              "text": "Chroni Cię **plan spisany przed krachem**: ile wpłacasz, w co i kiedy rebalansujesz."
+            },
+            {
+              "type": "callout",
+              "text": "Decyzje podejmuj na spokojnie. W czasie burzy **tylko realizuj plan**."
             }
           ]
         }
@@ -98,11 +106,15 @@
             },
             {
               "type": "text",
-              "text": "Najlepsze dni na giełdzie często przychodzą tuż po najgorszych – w środku paniki. Kto sprzedał w strachu i czeka, „aż się uspokoi”, zwykle przegapia odbicie."
+              "text": "Najlepsze dni na giełdzie często przychodzą **tuż po najgorszych** – w środku paniki."
             },
             {
               "type": "text",
-              "text": "Ominięcie zaledwie kilku najlepszych dni w ciągu wielu lat potrafi mocno obniżyć końcowy wynik."
+              "text": "Kto sprzedał ze strachu i czeka, „aż się uspokoi”, zwykle **przegapia odbicie**."
+            },
+            {
+              "type": "callout",
+              "text": "Ominięcie zaledwie **kilku najlepszych dni** w ciągu wielu lat potrafi mocno obniżyć końcowy wynik."
             }
           ]
         }
@@ -132,12 +144,17 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "Nie sprzedawaj w panice – strata na papierze staje się realna dopiero, gdy sprzedasz. Kontynuuj regularne wpłaty, bo kupujesz wtedy taniej, i rozważ rebalancing, jeśli proporcje mocno się rozjechały."
+              "type": "list",
+              "items": [
+                "**Nie sprzedawaj w panice** – strata staje się realna dopiero przy sprzedaży",
+                "**Wpłacaj dalej** – kupujesz taniej",
+                "**Zrób rebalancing**, jeśli proporcje mocno się rozjechały",
+                "**Nie sprawdzaj portfela** co godzinę"
+              ]
             },
             {
-              "type": "text",
-              "text": "I nie sprawdzaj portfela co godzinę – przy horyzoncie 20 lat to, co dzieje się dziś, nie ma większego znaczenia."
+              "type": "callout",
+              "text": "Przy horyzoncie 20 lat to, co dzieje się dziś, **nie ma większego znaczenia**."
             }
           ]
         }
@@ -147,6 +164,124 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "2000",
+              "right": "Pęknięcie bańki internetowej"
+            },
+            {
+              "left": "2008",
+              "right": "Kryzys z rynku nieruchomości w USA"
+            },
+            {
+              "left": "2020",
+              "right": "Pandemia i szybkie odbicie"
+            }
+          ],
+          "explain": "Każdy krach miał inną przyczynę, ale wszystkie mocno przestraszyły inwestorów.",
+          "fact": "Szeroki rynek historycznie wracał po krachach wyżej – to jednak nie gwarancja.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Co robisz podczas krachu, mając horyzont 20 lat?",
+          "options": [
+            {
+              "text": "Wpłacam dalej według planu",
+              "correct": true
+            },
+            {
+              "text": "Sprzedaję wszystko, zanim spadnie bardziej",
+              "correct": false
+            },
+            {
+              "text": "Robię rebalancing, jeśli proporcje się rozjechały",
+              "correct": true
+            }
+          ],
+          "multi": true,
+          "explain": "Sprzedaż w panice zamienia stratę na papierze w prawdziwą.",
+          "fact": "Najlepsze dni na giełdzie często przychodzą tuż po najgorszych.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Strata staje się realna dopiero, gdy ___.",
+          "answers": [
+            "sprzedasz"
+          ],
+          "wrong": [
+            "sprawdzisz portfel",
+            "kupisz więcej"
+          ],
+          "mode": "choose",
+          "explain": "Dopóki trzymasz, spadek jest tylko na papierze i rynek ma czas się odbić.",
+          "fact": "Kto sprzedał w panice, zwykle przegapia odbicie.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        },
+        {
+          "type": "tiles",
+          "prompt": "Ułóż zdanie",
+          "answer": "W czasie burzy tylko realizuj plan",
+          "extra": [
+            "sprzedawaj",
+            "zmieniaj"
+          ],
+          "explain": "Plan spisany przed krachem chroni przed decyzjami w panice.",
+          "fact": "Przez emocje większość ludzi kupuje drogo i sprzedaje tanio.",
+          "options": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

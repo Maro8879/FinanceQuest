@@ -5,7 +5,7 @@
   "color": "#3F6B5C",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,18 @@
             },
             {
               "type": "text",
-              "text": "Gwarancja zysku to prawnie wiążące zobowiązanie (np. banku lub państwa w przypadku lokat i obligacji skarbowych), które daje pewność, że w określonym terminie odzyskasz wpłacony kapitał wraz z dokładnie ustalonymi odsetkami. Chroni je również ustawowy system gwarantowania depozytów (do 100 000 euro w UE)."
+              "text": "Te dwa słowa brzmią podobnie, ale znaczą coś zupełnie innego:"
             },
             {
-              "type": "text",
-              "text": "Obietnica (prognoza) zysku to jedynie szacunek oparty na historycznych wynikach lub założeniach rynkowych — np. informacja, że dany ETF rósł średnio o 8% rocznie. Na giełdzie żaden zysk nie jest gwarantowany, a wyniki z przeszłości nie dają pewności na przyszłość; dlatego jeśli ktoś oferuje „gwarantowany wysoki zysk bez ryzyka”, jest to niemal na pewno próba oszustwa."
+              "type": "list",
+              "items": [
+                "**Gwarancja** – prawnie wiążące zobowiązanie, np. lokata lub obligacje skarbowe. Depozyty w UE chroni system gwarancji do **100 000 €**",
+                "**Obietnica** – tylko prognoza, np. „ten ETF rósł średnio 8% rocznie”. Przeszłe wyniki **nie dają pewności** na przyszłość"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "„Gwarantowany wysoki zysk bez ryzyka” to niemal na pewno **oszustwo**."
             }
           ]
         }
@@ -63,11 +70,20 @@
             },
             {
               "type": "text",
-              "text": "Sygnały ostrzegawcze (tzw. czerwone flagi) to cechy ofert finansowych wskazujące na próbę oszustwa. Największą z nich jest obietnica wysokiego, gwarantowanego zysku bez ryzyka — na legalnym rynku wyższy potencjalny zwrot zawsze oznacza większe ryzyko."
+              "text": "**Czerwone flagi** to cechy oferty, które zdradzają oszustwo. Największa: **wysoki, gwarantowany zysk bez ryzyka**. Uważaj też na:"
             },
             {
-              "type": "text",
-              "text": "Uważaj również na presję czasu („oferta tylko dziś”), brak nadzoru finansowego (np. KNF lub BaFin), „tajne algorytmy” oraz prośby o przelewy na prywatne konta czy instalację zdalnego pulpitu. Jeśli oferta brzmi zbyt pięknie, by była prawdziwa — to niemal na pewno pułapka."
+              "type": "list",
+              "items": [
+                "**Presję czasu** – „oferta tylko dziś”",
+                "**Brak nadzoru** finansowego (KNF, BaFin)",
+                "**„Tajne algorytmy”** zamiast konkretów",
+                "Przelew na **prywatne konto** albo instalację **zdalnego pulpitu**"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Brzmi zbyt pięknie, by było prawdziwe? To **pułapka**."
             }
           ]
         }
@@ -98,11 +114,20 @@
             },
             {
               "type": "text",
-              "text": "Najpopularniejsze oszustwa finansowe na całym świecie działają według podobnych schematów. Do najczęstszych należą: phishing i spoofing (fałszywe e-maile, SMS-y i telefony podszywające się pod banki, aby wyłudzić dane logowania) oraz fałszywe platformy inwestycyjne, które na ekranie pokazują fikcyjne, szybko rosnące zyski, by zachęcić do kolejnych wpłat."
+              "text": "Oszuści na całym świecie działają według kilku **powtarzalnych schematów**:"
             },
             {
-              "type": "text",
-              "text": "Powszechne są też piramidy finansowe i schematy Ponziego (gdzie zyski starych uczestników pochodzą wyłącznie z wpłat nowych osób) oraz oszustwa z wykorzystaniem wizerunku celebrytów (deepfake’i i fałszywe reklamy w mediach społecznościowych). Pamiętaj: żaden legalny bank nie poprosi Cię o podanie hasła, instalację aplikacji do zdalnego dostępu ani przelew na „bezpieczne konto techniczne”."
+              "type": "list",
+              "items": [
+                "**Phishing i spoofing** – fałszywe maile, SMS-y i telefony „z banku”",
+                "**Fałszywe platformy** – na ekranie rosną zyski, których nie ma",
+                "**Piramidy finansowe** – zyski starych uczestników to wpłaty nowych",
+                "**Deepfake z celebrytą** – fałszywe reklamy w social mediach"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "Żaden bank nie poprosi o **hasło**, aplikację do zdalnego dostępu ani przelew na „bezpieczne konto”."
             }
           ]
         }
@@ -133,11 +158,20 @@
             },
             {
               "type": "text",
-              "text": "Zanim wpłacisz pieniądze, sprawdź firmę w rejestrze nadzoru finansowego (np. KNF, BaFin) i na liście ostrzeżeń publicznych. Nigdy nie podawaj nikomu haseł ani kodów SMS i nie instaluj aplikacji do zdalnego dostępu na prośbę „doradcy”."
+              "text": "Kilka zasad chroni przed większością oszustw:"
             },
             {
-              "type": "text",
-              "text": "Inwestuj tylko przez licencjonowanego brokera, na konto zapisane na Ciebie. Daj sobie zasadę 24 godzin – żadnej decyzji pod presją."
+              "type": "list",
+              "items": [
+                "**Sprawdź firmę** w rejestrze nadzoru (KNF, BaFin) i na liście ostrzeżeń",
+                "**Nie podawaj** nikomu haseł ani kodów SMS",
+                "**Nie instaluj** aplikacji do zdalnego dostępu na prośbę „doradcy”",
+                "**Inwestuj** tylko przez licencjonowanego brokera, na konto na Twoje nazwisko"
+              ]
+            },
+            {
+              "type": "callout",
+              "text": "**Zasada 24 godzin** – żadnej decyzji finansowej pod presją."
             }
           ]
         }
@@ -147,6 +181,157 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "zones",
+          "prompt": "Oszustwo czy OK?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Czerwona flaga",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Wszystko w porządku",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "„Gwarantowane 20% miesięcznie”",
+              "zone": "a"
+            },
+            {
+              "text": "Broker z licencją KNF lub BaFin",
+              "zone": "b"
+            },
+            {
+              "text": "„Oferta ważna tylko dziś”",
+              "zone": "a"
+            },
+            {
+              "text": "Lokata z oprocentowaniem w umowie",
+              "zone": "b"
+            }
+          ],
+          "explain": "Gwarantowany wysoki zysk i presja czasu to czerwone flagi. Licencja i jasna umowa to dobre znaki.",
+          "fact": "Na legalnym rynku wyższy zysk zawsze oznacza większe ryzyko.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "Dzwoni „bank” i prosi o kod z SMS-a. Co robisz?",
+          "options": [
+            {
+              "text": "Podaję kod, bo to pilne",
+              "correct": false
+            },
+            {
+              "text": "Rozłączam się i sam dzwonię na numer z karty",
+              "correct": true
+            },
+            {
+              "text": "Instaluję aplikację, którą poleca",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "Bank nigdy nie prosi o kody ani hasła. Oddzwoń na oficjalny numer i sprawdź.",
+          "fact": "Podszywanie się pod prawdziwy numer banku to spoofing.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Phishing",
+              "right": "Fałszywy mail lub SMS „z banku”"
+            },
+            {
+              "left": "Piramida finansowa",
+              "right": "Zyski starych to wpłaty nowych"
+            },
+            {
+              "left": "Deepfake",
+              "right": "Fałszywa reklama z celebrytą"
+            },
+            {
+              "left": "Fałszywa platforma",
+              "right": "Na ekranie zyski, których nie ma"
+            }
+          ],
+          "explain": "Wszystkie te schematy chcą jednego: Twoich danych albo kolejnej wpłaty.",
+          "fact": "Schemat Ponziego nazwano od Charlesa Ponziego, oszusta z lat 20. XX wieku.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "gap",
+          "prompt": "Uzupełnij zdanie",
+          "text": "Zasada ___ godzin: żadnej decyzji finansowej pod presją.",
+          "answers": [
+            "24",
+            "dwudziestu czterech"
+          ],
+          "wrong": [],
+          "mode": "type",
+          "explain": "Doba na zastanowienie pozwala ochłonąć i spokojnie sprawdzić ofertę.",
+          "fact": "Oszuści celowo tworzą presję czasu, żebyś nie zdążył niczego sprawdzić.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answer": "",
+          "image": "",
+          "multi": false
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }

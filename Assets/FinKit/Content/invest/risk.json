@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:21:41Z"
+    "editedAt": "2026-11-21T08:47:06Z"
   },
   "levels": [
     {
@@ -141,11 +141,11 @@
             },
             {
               "type": "text",
-              "text": "Dywersyfikacja to strategia polegająca na dzieleniu kapitału między różne, niepowiązane ze sobą inwestycje, aby ograniczyć ryzyko. Jej główna zasada brzmi: „nie wkładaj wszystkich jajek do jednego koszyka”."
+              "text": "**Dywersyfikacja** to dzielenie pieniędzy między różne, niepowiązane ze sobą inwestycje, żeby **ograniczyć ryzyko**."
             },
             {
               "type": "text",
-              "text": "Jeśli jedna firma zbankrutuje lub dana branża wpadnie w kryzys, straty z tego obszaru zostaną zrównoważone przez zyski z pozostałych elementów portfela."
+              "text": "Gdy jedna firma upadnie albo cała branża wpadnie w kryzys, stratę **równoważą** pozostałe części portfela."
             }
           ]
         }
@@ -176,11 +176,19 @@
             },
             {
               "type": "text",
-              "text": "Skuteczną dywersyfikację buduje się na kilku poziomach: poprzez kupowanie akcji firm z różnych branż (np. technologia, medycyna, energetyka), inwestowanie na różnych rynkach geograficznych (np. USA, Europa, rynki wschodzące) oraz łączenie różnych klas aktywów (np. akcji, obligacji i gotówki)."
+              "text": "Dywersyfikację buduje się **na kilku poziomach**:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "**Branże** – np. technologia, medycyna, energetyka",
+                "**Regiony** – np. USA, Europa, rynki wschodzące",
+                "**Klasy aktywów** – akcje, obligacje, gotówka"
+              ]
             },
             {
               "type": "text",
-              "text": "Dzięki temu portfel staje się bardziej odporny na nagłe załamania jednego sektora i daje stabilniejsze wyniki w długim terminie."
+              "text": "Taki portfel lepiej znosi załamanie jednego sektora i daje **stabilniejsze wyniki** w długim terminie."
             }
           ]
         }

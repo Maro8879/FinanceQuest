@@ -5,7 +5,7 @@
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-21T07:52:17Z"
+    "editedAt": "2026-11-21T08:59:11Z"
   },
   "levels": [
     {
@@ -28,11 +28,22 @@
             },
             {
               "type": "text",
-              "text": "Kupując obligację, pożyczasz pieniądze emitentowi. W zamian dostajesz regularne odsetki (kupon), a na koniec (data wykupu) zwrot pożyczonej kwoty. Obligacjami można też handlować przed wykupem, więc ich cena się zmienia: gdy stopy procentowe rosną, ceny starych obligacji spadają, a gdy stopy spadają – rosną."
+              "text": "Kupując obligację, **pożyczasz pieniądze** emitentowi. W zamian dostajesz:"
+            },
+            {
+              "type": "list",
+              "items": [
+                "**Odsetki (kupon)** – regularnie",
+                "**Zwrot kwoty** – w dniu wykupu"
+              ]
             },
             {
               "type": "text",
-              "text": "Jeśli trzymasz obligację do wykupu, a emitent nie zbankrutuje, dostajesz z powrotem pełną kwotę."
+              "text": "Przed wykupem cena obligacji się zmienia: gdy **stopy rosną**, ceny starych obligacji **spadają**, a gdy stopy spadają – rosną."
+            },
+            {
+              "type": "callout",
+              "text": "Trzymasz do wykupu, a emitent nie zbankrutuje? Dostajesz **pełną kwotę**."
             }
           ]
         }
@@ -62,12 +73,19 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "Obligacje rządowe wydaje państwo – są zwykle najbezpieczniejsze, ale płacą niższe odsetki. Obligacje korporacyjne wydają firmy i płacą więcej, bo ryzyko, że firma nie odda pieniędzy, jest większe."
+              "type": "list",
+              "items": [
+                "**Rządowe** – wydaje je państwo. Zwykle najbezpieczniejsze, ale płacą **mniej**",
+                "**Korporacyjne** – wydają je firmy. Płacą **więcej**, bo większe jest ryzyko, że firma nie odda pieniędzy"
+              ]
             },
             {
               "type": "text",
-              "text": "Wiarygodność emitenta ocenia rating (np. AAA = bardzo bezpieczny). Im niższy rating, tym wyższe odsetki i wyższe ryzyko."
+              "text": "Wiarygodność emitenta ocenia **rating** (np. AAA = bardzo bezpieczny)."
+            },
+            {
+              "type": "callout",
+              "text": "Niższy rating = **wyższe odsetki** i **wyższe ryzyko**."
             }
           ]
         }
@@ -97,12 +115,15 @@
               "caption": ""
             },
             {
-              "type": "text",
-              "text": "Obligacja ze stałym kuponem płaci te same odsetki przez cały czas – gdy stopy rosną, jest mniej atrakcyjna i jej cena spada. Obligacja o zmiennym oprocentowaniu dostosowuje odsetki do stóp procentowych lub inflacji, więc jej cena jest stabilniejsza."
+              "type": "list",
+              "items": [
+                "**Stały kupon** – te same odsetki przez cały czas. Gdy stopy rosną, cena obligacji spada",
+                "**Zmienny kupon** – odsetki idą za stopami procentowymi lub inflacją, więc cena jest stabilniejsza"
+              ]
             },
             {
-              "type": "text",
-              "text": "Przy rosnących stopach lepiej sprawdzają się zmienne, przy spadających – stałe."
+              "type": "callout",
+              "text": "Stopy rosną → lepsze **zmienne**. Stopy spadają → lepsze **stałe**."
             }
           ]
         }
@@ -133,11 +154,15 @@
             },
             {
               "type": "text",
-              "text": "Obligacje, zwłaszcza rządowe, wahają się dużo mniej niż akcje i często trzymają wartość, gdy na giełdzie jest panika. Ich dodatek zmniejsza głębokość spadków portfela i ułatwia trzymanie się planu."
+              "text": "Obligacje, zwłaszcza rządowe, **wahają się dużo mniej** niż akcje i często trzymają wartość, gdy na giełdzie panika."
             },
             {
               "type": "text",
-              "text": "Nie zawsze działa to idealnie – w 2022 roku akcje i obligacje spadały jednocześnie, bo gwałtownie rosły stopy procentowe."
+              "text": "Dzięki nim spadki portfela są **płytsze**, a łatwiej trzymać się planu."
+            },
+            {
+              "type": "callout",
+              "text": "Nie zawsze działa to idealnie: w **2022** akcje i obligacje spadały razem, bo gwałtownie rosły stopy."
             }
           ]
         }
@@ -147,6 +172,167 @@
         "settings": []
       },
       "tasks": []
+    },
+    {
+      "id": "l5",
+      "kind": "test",
+      "title": "Test rozdziału",
+      "tasks": [
+        {
+          "type": "choice",
+          "prompt": "Stopy procentowe rosną. Co dzieje się z ceną starych obligacji o stałym kuponie?",
+          "options": [
+            {
+              "text": "Rośnie",
+              "correct": false
+            },
+            {
+              "text": "Spada",
+              "correct": true
+            },
+            {
+              "text": "Nie zmienia się",
+              "correct": false
+            }
+          ],
+          "multi": false,
+          "explain": "Nowe obligacje płacą więcej, więc stare ze stałym kuponem są mniej atrakcyjne i tanieją.",
+          "fact": "Jeśli trzymasz obligację do wykupu, a emitent nie zbankrutuje, i tak dostajesz pełną kwotę.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        },
+        {
+          "type": "zones",
+          "prompt": "Rządowe czy korporacyjne?",
+          "zones": [
+            {
+              "id": "a",
+              "label": "Rządowe",
+              "x": 0.04,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            },
+            {
+              "id": "b",
+              "label": "Korporacyjne",
+              "x": 0.52,
+              "y": 0.1,
+              "w": 0.44,
+              "h": 0.8
+            }
+          ],
+          "items": [
+            {
+              "text": "Wydaje je państwo",
+              "zone": "a"
+            },
+            {
+              "text": "Wydają je firmy",
+              "zone": "b"
+            },
+            {
+              "text": "Zwykle najbezpieczniejsze",
+              "zone": "a"
+            },
+            {
+              "text": "Płacą wyższe odsetki",
+              "zone": "b"
+            }
+          ],
+          "explain": "Państwo zwykle spłaca pewniej, a firmy płacą więcej za większe ryzyko.",
+          "fact": "Wiarygodność emitenta ocenia rating – AAA to najwyższa ocena.",
+          "options": [],
+          "extra": [],
+          "pairs": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "pairs",
+          "prompt": "Połącz pojęcie z opisem",
+          "pairs": [
+            {
+              "left": "Kupon",
+              "right": "Regularne odsetki"
+            },
+            {
+              "left": "Dzień wykupu",
+              "right": "Zwrot pożyczonej kwoty"
+            },
+            {
+              "left": "Rating",
+              "right": "Ocena wiarygodności emitenta"
+            },
+            {
+              "left": "Zmienny kupon",
+              "right": "Odsetki idą za stopami lub inflacją"
+            }
+          ],
+          "explain": "To podstawowe pojęcia, które znajdziesz w opisie każdej obligacji.",
+          "fact": "Obligacje indeksowane inflacją chronią oszczędności przed wzrostem cen.",
+          "options": [],
+          "extra": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": "",
+          "multi": false
+        },
+        {
+          "type": "choice",
+          "prompt": "W którym roku akcje i obligacje spadały jednocześnie?",
+          "options": [
+            {
+              "text": "2008",
+              "correct": false
+            },
+            {
+              "text": "2020",
+              "correct": false
+            },
+            {
+              "text": "2022",
+              "correct": true
+            }
+          ],
+          "multi": false,
+          "explain": "W 2022 gwałtownie rosły stopy procentowe, więc taniały i akcje, i obligacje.",
+          "fact": "Zwykle obligacje rządowe trzymają wartość, gdy na giełdzie jest panika.",
+          "extra": [],
+          "pairs": [],
+          "zones": [],
+          "items": [],
+          "answers": [],
+          "wrong": [],
+          "answer": "",
+          "image": "",
+          "text": "",
+          "mode": ""
+        }
+      ],
+      "pages": [],
+      "minigame": {
+        "game": "",
+        "settings": []
+      }
     }
   ]
 }
