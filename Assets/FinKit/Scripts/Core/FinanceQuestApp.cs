@@ -203,6 +203,7 @@ namespace FinanceQuest
             SwipeForward = null;   // nowy ekran sam ustawi, dokąd prowadzi swipe w lewo
             BlockSwipeBack = false;
             BackOverride = null;
+            Header.SetDev(null);   // przycisk DEV pokazuje tylko ekran, który go ustawi (level)
             currentScreen = Ui.Rect("Screen", body);
             Ui.Stretch(currentScreen);
             currentScreen.gameObject.AddComponent<CanvasGroup>();

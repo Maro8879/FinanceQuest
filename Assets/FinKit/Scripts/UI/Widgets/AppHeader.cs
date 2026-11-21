@@ -94,7 +94,6 @@ namespace FinanceQuest
             frontIcon.sprite = ProceduralSprites.Icon(icon);
             frontIcon.color = iconColor;
             onRight = onRightClick;
-            SetDev(null);   // każdy ekran sam decyduje, czy pokazać przycisk DEV
             // Bez akcji = bez przycisku (np. menu – ustawienia są w kokpicie).
             frontButton = onRightClick != null;
             if (!swapping) ApplyButton(frontButton ? 1f : 0f);
