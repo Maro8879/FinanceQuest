@@ -351,6 +351,11 @@ namespace FinanceQuest
                     c.Add(p => SdfCanvas.RoundRect(p, V(8.5f, 12), V(4.4f, 15f), 1.2f));
                     c.Add(p => SdfCanvas.RoundRect(p, V(15.5f, 12), V(4.4f, 15f), 1.2f));
                     break;
+                case IconId.Skip:
+                    // „Pomiń”: trójkąt odtwarzania z pionową kreską (jak „następny” w odtwarzaczach).
+                    c.Add(p => SdfCanvas.Polygon(p, new[] { V(5, 5), V(15.5f, 12), V(5, 19) }) - 0.8f);
+                    c.Add(p => SdfCanvas.RoundRect(p, V(18.5f, 12), V(3.2f, 14f), 1f));
+                    break;
                 case IconId.Close:
                     c.Add(p => SdfCanvas.Capsule(p, V(6, 6), V(18, 18), 2f));
                     c.Add(p => SdfCanvas.Capsule(p, V(18, 6), V(6, 18), 2f));

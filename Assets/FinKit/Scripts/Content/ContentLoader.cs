@@ -20,7 +20,7 @@ namespace FinanceQuest
                 var course = new CourseData
                 {
                     Id = cd.id,
-                    Title = cd.title,
+                    Title = Cap(cd.title),
                     ShortName = string.IsNullOrEmpty(cd.shortName) ? cd.title : cd.shortName,
                     Color = ParseColor(cd.color, Palette.Petrol),
                     Art = ParseEnum(cd.art, CourseArt.Portfolio),
@@ -28,7 +28,7 @@ namespace FinanceQuest
                 };
                 foreach (var chd in b.chapters)
                 {
-                    var ch = new ChapterData { Id = course.Id + "/" + chd.id, Title = chd.title, Color = ParseColor(chd.color, course.Color) };
+                    var ch = new ChapterData { Id = course.Id + "/" + chd.id, Title = Cap(chd.title), Color = ParseColor(chd.color, course.Color) };
                     int n = 0;
                     foreach (var ld in chd.levels)
                     {
@@ -39,7 +39,7 @@ namespace FinanceQuest
                             Id = ch.Id + "/" + (string.IsNullOrEmpty(ld.id) ? n.ToString() : ld.id),
                             Number = n,
                             Kind = ParseKind(ld.kind),
-                            Title = ld.title,
+                            Title = Cap(ld.title),
                             Def = ld,
                         });
                     }
@@ -48,6 +48,13 @@ namespace FinanceQuest
                 list.Add(course);
             }
             return list;
+        }
+
+        // Tytuły zawsze z wielkiej litery – nawet gdy ktoś w edytorze wpisze „inflation video”.
+        static string Cap(string s)
+        {
+            if (string.IsNullOrEmpty(s) || !char.IsLower(s[0])) return s;
+            return char.ToUpperInvariant(s[0]) + s.Substring(1);
         }
 
         static LevelKind ParseKind(string k)

@@ -28,7 +28,7 @@ namespace FinanceQuest
         RectTransform stage, home, overlay, bar, track, fill, knob, bigPlay;
         Image playIcon, ccBg;
         TextMeshProUGUI timeLabel, ccLabel;
-        RectTransform cc, close;
+        RectTransform cc, close, skip;
         VideoClip mainClip, subClip;
         RenderTexture hold;         // ostatnia klatka na czas przełączania wersji – bez mignięcia czernią
         bool subsOn, switching, swapReady, resumePlay;
@@ -123,6 +123,14 @@ namespace FinanceQuest
             var ci = Ui.Icon("Icon", close, IconId.Close, Color.white, 16f);
             Ui.Center(ci.rectTransform, 16f, 16f);
 
+            // Pomiń filmik: okrągły przycisk jak ✕ i CC, w lewym dolnym rogu nad paskiem – tylko na pauzie na pełnym ekranie.
+            var skipBg = Ui.Rounded("Skip", stage, CornerBg, Corner * 0.5f);
+            skipBg.raycastTarget = true;
+            skipBg.gameObject.AddComponent<TapCatcher>().OnTap = Skip;
+            skip = skipBg.rectTransform;
+            var si = Ui.Icon("Icon", skip, IconId.Skip, Color.white, 16f);
+            Ui.Center(si.rectTransform, 16f, 16f, 1f, 0f);
+
             bar = Ui.Rect("Bar", stage);
             var barBg = bar.gameObject.AddComponent<Image>();
             barBg.color = new Color(0f, 0f, 0f, 0.28f);
@@ -195,6 +203,8 @@ namespace FinanceQuest
             Ui.Place(bar, 0, h - BarH, w, BarH);
             Ui.Place(close, CornerGap, CornerGap, Corner, Corner);
             close.gameObject.SetActive(full);
+            Ui.Place(skip, CornerGap, h - BarH - CornerGap - Corner, Corner, Corner);
+            skip.gameObject.SetActive(full && !player.isPlaying);
             if (cc != null) Ui.Place(cc, w - CornerGap - Corner - 4f, CornerGap - 4f, Corner + 8f, Corner + 8f);
             // Wąska karta (reels w treści): sam bieżący czas zamiast „0:12 / 0:45”, żeby suwak był wygodny.
             timeW = w < 300f ? TimeWShort : TimeW;
@@ -229,6 +239,7 @@ namespace FinanceQuest
                 playIcon.sprite = ProceduralSprites.Icon(playing ? IconId.Pause : IconId.Play);
                 bigPlay.gameObject.SetActive(!playing);
                 bar.gameObject.SetActive(!full || !playing);   // na pełnym ekranie pasek tylko na pauzie – nic nie zasłania filmu
+                skip.gameObject.SetActive(full && !playing);
             }
 
             // Pozycja suwaka: przy przeciąganiu palec, inaczej czas filmu. Przesuwamy tylko, gdy coś się zmieniło.
@@ -404,6 +415,14 @@ namespace FinanceQuest
         }
 
         bool OnBack() { Minimize(); return true; }
+
+        // Pomiń: zamyka filmik i od razu przechodzi dalej w lekcji (jak DALEJ – lekcja ustawia to jako SwipeForward).
+        void Skip()
+        {
+            Minimize();
+            var app = FinanceQuestApp.Instance;
+            if (app != null && app.SwipeForward != null) app.SwipeForward();
+        }
 
         void ReleaseBack()
         {
