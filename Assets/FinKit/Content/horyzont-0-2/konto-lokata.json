@@ -4,8 +4,8 @@
   "title": "Konto oszczędnościowe i lokata",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "Jan",
-    "editedAt": "2026-11-21T12:43:36Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T18:29:44Z"
   },
   "levels": [
     {
@@ -79,6 +79,13 @@
             {
               "type": "callout",
               "text": "Nie trzymaj nadwyżek na koncie bieżącym – tam **zjada je inflacja**."
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2a5b4992-42be-402d-ac85-4e9f3f.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             }
           ]
         }
