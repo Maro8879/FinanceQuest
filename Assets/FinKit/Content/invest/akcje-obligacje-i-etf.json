@@ -127,11 +127,35 @@
               "text": "An ETF's value still **moves up and down with the market**."
             },
             {
-              "type": "image",
-              "image": "obrazki/download.jpg",
-              "width": 1,
-              "maxHeight": 220,
-              "caption": ""
+              "type": "offers",
+              "text": "Example ETFs",
+              "image": "obrazki/commerzbank-mark.png",
+              "caption": "COMMERZBANK",
+              "offers": [
+                {
+                  "title": "iShares Core MSCI World ETF",
+                  "value": "",
+                  "desc": "Global stock market",
+                  "badge": "iShares",
+                  "badgeColor": "#000000"
+                },
+                {
+                  "title": "Vanguard S&P 500 ETF",
+                  "value": "",
+                  "desc": "US companies",
+                  "badge": "Vanguard",
+                  "badgeColor": "#7E1C2C"
+                },
+                {
+                  "title": "SPDR Dow Jones Industrial Average ETF",
+                  "value": "",
+                  "desc": "US blue-chip stocks",
+                  "badge": "SPDR",
+                  "badgeColor": "#2C4A38"
+                }
+              ],
+              "button": "SEE MORE",
+              "url": ""
             }
           ]
         }

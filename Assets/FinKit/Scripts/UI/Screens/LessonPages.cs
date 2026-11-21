@@ -110,12 +110,18 @@ namespace FinanceQuest
             // Bez dopisku „LEKCJA” – tytuł widać w nagłówku, a numer strony w kropkach na dole.
             float m = ScreenKit.Margin, cw = W - 2 * m, y = 10f;
 
-            bool videoOpened = false;
+            bool videoOpened = false, firstHeading = true;
             for (int i = 0; i < blocks.Count; i++)
             {
                 var b = blocks[i];
-                // Pierwszy tytuł strony taki sam jak tytuł levelu w nagłówku – nie powtarzamy go drugi raz.
-                if (i == 0 && b.type == "heading" && SameTitle(b.text, levelTitle)) continue;
+                // Pierwszy nagłówek strony taki sam jak tytuł levelu – nie powtarzamy go, bo tytuł jest już duży
+                // w nagłówku aplikacji. Działa też, gdy przed nim stoi obrazek (dawniej tylko na samej górze strony).
+                if (b.type == "heading")
+                {
+                    bool skip = firstHeading && SameTitle(b.text, levelTitle);
+                    firstHeading = false;
+                    if (skip) continue;
+                }
                 switch (b.type)
                 {
                     case "heading": y += Heading(parent, b, m, y, cw) + 12f; break;
@@ -125,6 +131,7 @@ namespace FinanceQuest
                     case "callout": y += Callout(parent, b, m, y, cw) + 16f; break;
                     case "list": y += BulletList(parent, b, m, y, cw) + 10f; break;
                     case "table": y += TableBlock.Build(parent, b, m, y, cw) + 16f; break;
+                    case "offers": y += OfferCard.Build(parent, b, b.sprite != null ? b.sprite : LoadSprite(b.image), m, y, cw) + 16f; break;
                     case "divider": y += Divider(parent, m, y + 4f, cw) + 22f; break;
                     case "space": y += Mathf.Clamp(b.size, 0f, 200f); break;
                 }
@@ -169,16 +176,20 @@ namespace FinanceQuest
             const float lip = 4f, border = 2f, radius = 16f;
             // Obrazek z folderu kursu podpina importer; stare ścieżki do Resources wczytujemy tutaj.
             var sprite = b.sprite != null ? b.sprite : LoadSprite(b.image);
-            float w = cw * Mathf.Clamp(b.width <= 0f ? 1f : b.width, 0.3f, 1f);
-            float maxH = b.maxHeight <= 0f ? 220f : b.maxHeight;
+            // Każdy obrazek ma pełną szerokość strony (jak ramki „Ważne” i karty ofert) – szerokość i maks. wysokość
+            // z pliku treści są pomijane. Bardzo wysokie obrazki przycinamy do 1.25 szerokości: ramka zostaje
+            // na całą szerokość, a obrazek mieści się w niej w całości (po bokach tło karty).
+            float w = cw;
+            float maxH = cw * 1.25f;
             float h;
+            bool fit = false;
             if (sprite != null)
             {
                 float aspect = sprite.rect.height / Mathf.Max(1f, sprite.rect.width);
                 h = (w - 2 * border) * aspect + 2 * border;
-                if (h > maxH) { h = maxH; w = (h - 2 * border) / aspect + 2 * border; }
+                if (h > maxH) { h = maxH; fit = true; }
             }
-            else h = Mathf.Min(120f, maxH);
+            else h = 120f;
 
             float px = x + (cw - w) * 0.5f;
             var card = LipCard.Create(parent, "Image", px, y, w, h + lip, Palette.CardFill, Palette.CardEdge, Palette.CardLip, radius, lip, border);
@@ -191,6 +202,7 @@ namespace FinanceQuest
                 var img = Ui.Rect("Picture", mask.transform).gameObject.AddComponent<Image>();
                 img.sprite = sprite;
                 img.raycastTarget = false;
+                img.preserveAspect = fit;
                 Ui.Stretch(img.rectTransform);
             }
             else

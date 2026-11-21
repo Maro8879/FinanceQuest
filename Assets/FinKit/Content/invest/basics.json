@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-21T21:55:19Z"
+    "editedAt": "2026-11-21T22:41:09Z"
   },
   "levels": [
     {
@@ -330,7 +330,7 @@
     {
       "id": "l7",
       "kind": "minigame",
-      "title": "",
+      "title": "Investment Simulation",
       "pages": [
         {
           "blocks": [

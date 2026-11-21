@@ -96,7 +96,7 @@ namespace FinanceQuest.EditorTools
                     foreach (var b in ContentBlocks.Of(page))
                     {
                         if (b.type == "video") { w += AttachVideo(b, courseDir, courseId, file); continue; }
-                        if (b.type != "image") continue;
+                        if (b.type != "image" && b.type != "offers") continue;   // karta ofert ma logo jak obrazek
                         b.sprite = null;
                         b.image = ContentBlocks.NormalizeImagePath(b.image, courseId);
                         if (string.IsNullOrEmpty(b.image)) continue;
