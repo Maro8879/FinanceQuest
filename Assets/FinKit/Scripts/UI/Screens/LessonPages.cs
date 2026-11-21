@@ -111,6 +111,7 @@ namespace FinanceQuest
             Ui.Place(k.rectTransform, m, y, cw, 16);
             y += 28f;
 
+            bool videoOpened = false;
             for (int i = 0; i < blocks.Count; i++)
             {
                 var b = blocks[i];
@@ -119,7 +120,7 @@ namespace FinanceQuest
                     case "heading": y += Heading(parent, b, m, y, cw) + 12f; break;
                     case "text": y += Paragraph(parent, b.text, m, y, cw) + 14f; break;
                     case "image": y += Picture(parent, b, m, y, cw) + 16f; break;
-                    case "video": y += VideoBlock.Build(parent, b, m, y, cw) + 16f; break;
+                    case "video": y += VideoBlock.Build(parent, b, m, y, cw, !videoOpened) + 16f; videoOpened = true; break;   // sam otwiera się tylko pierwszy filmik
                     case "callout": y += Callout(parent, b, m, y, cw) + 16f; break;
                     case "list": y += BulletList(parent, b, m, y, cw) + 10f; break;
                     case "table": y += TableBlock.Build(parent, b, m, y, cw) + 16f; break;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -8,7 +9,8 @@ using UnityEngine.Video;
 namespace FinanceQuest
 {
     // Filmik w lekcji: obraz w karcie z wargą, pod nim pasek (play/pauza, przewijanie, czas).
-    // Tap w obraz = pełny ekran, tap na pełnym ekranie = z powrotem w treść.
+    // Filmik otwiera się sam na pełnym ekranie i od razu gra (jak reels). Na pełnym ekranie tap = pauza / dalej,
+    // ✕ w rogu (albo „wstecz”) i koniec filmu = powrót do lekcji. W lekcji zostaje karta – tap otwiera film ponownie.
     // Gdy filmik ma drugą wersję z napisami, w pasku jest przycisk „CC” – przełącza wersję w tym samym momencie filmu.
     // Przy przełączaniu przenosimy ten sam obiekt (nie tworzymy drugiego odtwarzacza),
     // więc filmik gra dalej bez przerwy i bez ponownego wczytywania.
@@ -25,7 +27,7 @@ namespace FinanceQuest
         RectTransform stage, home, overlay, bar, track, fill, knob, bigPlay;
         Image playIcon, ccBg;
         TextMeshProUGUI timeLabel, ccLabel;
-        RectTransform cc;
+        RectTransform cc, close;
         VideoClip mainClip, subClip;
         RenderTexture hold;         // ostatnia klatka na czas przełączania wersji – bez mignięcia czernią
         bool subsOn, switching, swapReady, resumePlay;
@@ -37,7 +39,8 @@ namespace FinanceQuest
         int shownSec = -1;
 
         // Zwraca wysokość bloku razem z podpisem.
-        public static float Build(RectTransform parent, BlockDef b, float x, float y, float cw)
+        // autoOpen: po wejściu na stronę filmik sam otwiera się na pełnym ekranie i gra (pierwszy filmik na stronie).
+        public static float Build(RectTransform parent, BlockDef b, float x, float y, float cw, bool autoOpen = false)
         {
             // Wersja bez napisów jest główna; gdy jest tylko jedna z dwóch, gra ona i nie ma przycisku CC.
             var clip = b.clip != null ? b.clip : b.clipSub;
@@ -69,6 +72,7 @@ namespace FinanceQuest
                 mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
                 var vb = Ui.Rect("Stage", mask.transform).gameObject.AddComponent<VideoBlock>();
                 vb.Init(clip, sub, aspect, mask.rectTransform, new Vector2(w - 2 * Border, vh + BarH));
+                if (autoOpen) vb.StartCoroutine(vb.AutoOpen());
             }
 
             float used = h + Lip;
@@ -108,6 +112,14 @@ namespace FinanceQuest
             bigPlay = circle.rectTransform;
             var bi = Ui.Icon("Icon", bigPlay, IconId.Play, Palette.OnAccent, 26f);
             Ui.Center(bi.rectTransform, 26f, 26f, 2f, 0f);   // trójkąt optycznie w środku koła
+
+            // ✕ tylko na pełnym ekranie – tap w obraz pauzuje, więc wyjście musi mieć własny przycisk.
+            var closeBg = Ui.Rounded("Close", stage, new Color(0f, 0f, 0f, 0.45f), 18f);
+            closeBg.raycastTarget = true;
+            closeBg.gameObject.AddComponent<TapCatcher>().OnTap = Minimize;
+            close = closeBg.rectTransform;
+            var ci = Ui.Icon("Icon", close, IconId.Close, Color.white, 16f);
+            Ui.Center(ci.rectTransform, 16f, 16f);
 
             bar = Ui.Rect("Bar", stage);
             var barBg = bar.gameObject.AddComponent<Image>();
@@ -151,7 +163,8 @@ namespace FinanceQuest
             player.audioOutputMode = VideoAudioOutputMode.Direct;
             player.isLooping = false;
             player.skipOnDrop = true;   // na słabszym telefonie lepiej zgubić klatkę, niż rozjechać obraz z dźwiękiem
-            player.loopPointReached += p => { p.Pause(); p.time = 0; };   // po końcu wracamy na start, gotowi do ponownego obejrzenia
+            // Po końcu: z powrotem do lekcji, a film na start – gotowy do ponownego obejrzenia.
+            player.loopPointReached += p => { p.Pause(); p.time = 0; if (full) Minimize(); };
             player.prepareCompleted += OnPrepared;
             player.seekCompleted += p => { if (switching) FinishSwitch(); };
             player.Prepare();   // pierwsza klatka służy za okładkę, zanim ktoś kliknie
@@ -176,6 +189,8 @@ namespace FinanceQuest
             Ui.Place(bigPlay, (w - Big) * 0.5f, (vh - Big) * 0.5f, Big, Big);
 
             Ui.Place(bar, 0, vh, w, BarH);
+            Ui.Place(close, 10f, 10f, 36f, 36f);
+            close.gameObject.SetActive(full);
             float ccw = cc != null ? CcW : 0f;
             // Wąska karta (reels w treści): sam bieżący czas zamiast „0:12 / 0:45”, żeby suwak był wygodny.
             timeW = w < 300f ? TimeWShort : TimeW;
@@ -207,7 +222,7 @@ namespace FinanceQuest
             {
                 shownPlaying = playing;
                 playIcon.sprite = ProceduralSprites.Icon(playing ? IconId.Pause : IconId.Play);
-                bigPlay.gameObject.SetActive(!playing && !full);
+                bigPlay.gameObject.SetActive(!playing);
             }
 
             // Pozycja suwaka: przy przeciąganiu palec, inaczej czas filmu. Przesuwamy tylko, gdy coś się zmieniło.
@@ -236,9 +251,18 @@ namespace FinanceQuest
             return (t / 60) + ":" + (t % 60).ToString("00");
         }
 
+        // Czekamy, aż skończy się przejście na stronę – inaczej pełny ekran wskoczyłby w trakcie animacji.
+        IEnumerator AutoOpen()
+        {
+            yield return new WaitForSecondsRealtime(0.35f);
+            if (full || player == null) yield break;
+            Maximize();
+            player.Play();
+        }
+
         public void OnPointerClick(PointerEventData e)
         {
-            if (full) Minimize();
+            if (full) TogglePlay();
             else
             {
                 Haptics.Tap();
@@ -333,7 +357,7 @@ namespace FinanceQuest
             overlay = Ui.Rect("VideoFullscreen", root);
             Ui.Stretch(overlay);
             overlay.gameObject.AddComponent<Image>().color = Color.black;
-            overlay.gameObject.AddComponent<TapCatcher>().OnTap = Minimize;   // tap w czarne pole obok obrazu też wraca
+            overlay.gameObject.AddComponent<TapCatcher>().OnTap = TogglePlay;   // tap w czarne pole obok obrazu działa jak tap w obraz
 
             // Obraz i pasek tylko w bezpiecznym obszarze (notch, zaokrąglone rogi); czarne tło na cały ekran.
             float s = canvas.scaleFactor;
@@ -360,6 +384,8 @@ namespace FinanceQuest
             if (!full) return;
             Haptics.Tap();
             full = false;
+            // Zamknięcie = koniec oglądania: film staje (w lekcji nie gra „w tle” pod tekstem).
+            if (switching) resumePlay = false; else player.Pause();
             stage.SetParent(home, false);
             stage.localRotation = Quaternion.identity;
             Ui.Stretch(stage);
