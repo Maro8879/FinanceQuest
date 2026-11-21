@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Jan",
-    "editedAt": "2026-11-21T09:50:53Z"
+    "editedAt": "2026-11-21T09:53:54Z"
   },
   "levels": [
     {
@@ -134,7 +134,7 @@
             },
             {
               "type": "image",
-              "image": "obrazki/2-nie-wkladaj-jajek-do-jednego.png",
+              "image": "obrazki/2-nie-wkladaj-jajek-do-jednego-2.png",
               "width": 1,
               "maxHeight": 240,
               "caption": ""
