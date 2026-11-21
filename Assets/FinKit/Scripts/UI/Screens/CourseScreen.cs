@@ -23,22 +23,59 @@ namespace FinanceQuest
                 }
             float m = ScreenKit.Margin, cw = W - 2 * m;
 
-            // Postęp całego kursu.
+            // Postęp kursu: pierścień z procentem, ile rozdziałów zostało do pucharu i sam puchar (szary, dopóki niezdobyty).
             float value = app.Progress.CourseProgress(course);
-            var label = Ui.Text("CourseLabel", content, "Kurs", 13f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.CaplineLeft);
-            Ui.Place(label.rectTransform, m, 4, 40, 16);
-            ScreenKit.BarRow(content, m + 42, 4, cw - 42, value, Palette.Track, Palette.Text, ScreenKit.Pct(value));
+            const float ring = 64f;
+            RingProgress.Create(content, m + 2f, 4f, ring, value, Palette.Track, Palette.Accent, 7f);
+            var pct = Ui.Text("Pct", content, ScreenKit.Pct(value), 15f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+            Ui.Place(pct.rectTransform, m + 2f, 4f, ring, ring);
 
-            float y = 36f;
+            int total = course.Chapters.Count, done = 0;
+            foreach (var c in course.Chapters) if (app.Progress.IsComplete(c)) done++;
+            bool won = done == total && total > 0;
+            const float trophyW = 44f, trophyH = 44f * TrophyArt.BoxH / TrophyArt.BoxW;
+            float tx = m + ring + 16f, tw = cw - ring - 16f - trophyW - 10f;
+            var line1 = Ui.Text("Chapters", content, done + " z " + total + " rozdziałów", 15f, Palette.Text, FontWeight.ExtraBold);
+            Ui.Place(line1.rectTransform, tx, 4f + ring * 0.5f - 20f, tw, 20f);
+            int left = total - done;
+            var line2 = Ui.Text("ToTrophy", content, won ? "Puchar zdobyty!" : "Jeszcze " + left + " do pucharu", 12.5f, Palette.TextMuted, FontWeight.SemiBold);
+            Ui.Place(line2.rectTransform, tx, 4f + ring * 0.5f + 2f, tw, 18f);
+
+            var cup = Ui.Rect("Trophy", content).gameObject.AddComponent<UnityEngine.UI.Image>();
+            var kind = TrophyArt.ForCourse(course);
+            cup.sprite = won ? TrophyArt.Earned(kind, course.Color) : TrophyArt.Locked(kind);
+            cup.raycastTarget = false;
+            Ui.Place(cup.rectTransform, m + cw - trophyW - 2f, 4f + (ring - trophyH) * 0.5f, trophyW, trophyH);
+
+            float y = 4f + ring + 18f;
             for (int i = 0; i < course.Chapters.Count; i++)
-                y += ChapterCard(content, m, y, cw, app, course, i) + 14f;
+                y += Chapter(content, m, y, cw, app, course, i) + 14f;
             ScreenKit.SetContentHeight(content, y + 24f);
         }
 
-        static float ChapterCard(RectTransform parent, float x, float y, float w, FinanceQuestApp app, CourseData course, int index)
+        // Karta rozdziału; jeśli rozdział właśnie się otworzył – z animacją odblokowania (tylko raz).
+        static float Chapter(RectTransform parent, float x, float y, float w, FinanceQuestApp app, CourseData course, int index)
         {
             var ch = course.Chapters[index];
-            var state = app.Progress.ChapterState(course, index);
+            if (ch.Id != app.UnlockedChapter || app.Progress.ChapterState(course, index) != ItemState.Current)
+                return ChapterCard(parent, x, y, w, app, course, index, null, 0f);
+
+            app.UnlockedChapter = null;
+            var box = UnlockReveal.Box(parent, "Unlock_" + index, x, y);
+            float fh = ChapterCard(box, 0f, 0f, w, app, course, index, null, 0f);
+            var fin = (RectTransform)box.GetChild(box.childCount - 1);
+            // Zablokowana wersja dostaje tę samą wysokość, żeby fala odsłaniała kartę bez skoku.
+            ChapterCard(box, 0f, 0f, w, app, course, index, ItemState.Locked, fh - ScreenKit.Lip);
+            var lck = (RectTransform)box.GetChild(box.childCount - 1);
+            UnlockReveal.Play(box, lck, fin, w, fh, app.Refreshing ? 0.12f : 0.6f);
+            return fh;
+        }
+
+        static float ChapterCard(RectTransform parent, float x, float y, float w, FinanceQuestApp app, CourseData course, int index,
+            ItemState? force, float forceFace)
+        {
+            var ch = course.Chapters[index];
+            var state = force ?? app.Progress.ChapterState(course, index);
             const float pad = 16f, iconSpace = 40f;
 
             Color fill, edge, lip, title, sub;
@@ -72,12 +109,12 @@ namespace FinanceQuest
                 ScreenKit.BarRow(card.Content, pad, pad + th + 10f, w - 2 * pad, v, Palette.TrackOnColor, Color.white, ScreenKit.Pct(v));
                 face += 26f;
             }
+            if (forceFace > 0f) face = forceFace;
             ((RectTransform)card.transform).sizeDelta = new Vector2(w, face + ScreenKit.Lip);
 
-            // Wykres świecowy w tle: biały na kolorowych kartach, ledwie widoczny na zablokowanych.
-            card.AddBackgroundChart(ScreenKit.CardRadius,
-                state == ItemState.Locked ? new Color(0.64f, 0.62f, 0.58f, 0.22f) : new Color(1f, 1f, 1f, 0.16f));
-            if (state == ItemState.Current) card.AddFocusRing(Palette.Accent, ScreenKit.CardRadius, 3f, 3f);
+            // Rosnące słupki w prawym dolnym rogu (białe, delikatne). Na zablokowanych kartach bez nich.
+            if (state != ItemState.Locked)
+                card.AddBackgroundBars(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.06f), index);
 
             if (state != ItemState.Current)
             {

@@ -30,6 +30,13 @@ namespace FinanceQuest
         // Trofeum „Start”: przyznawane za pierwszy ukończony level (rozpoczęcie edukacji finansowej).
         public bool Started { get { return done.Count > 0; } }
 
+        // Ustawienia → reset: kasuje ukończone levele we wszystkich kursach.
+        public void ResetAll()
+        {
+            done.Clear();
+            Save();
+        }
+
         public void Complete(LevelData l)
         {
             if (done.Add(l.Id)) Save();

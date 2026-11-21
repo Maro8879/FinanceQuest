@@ -3,17 +3,17 @@
   "id": "horyzont-0-2",
   "title": "Horyzont 0–2 lata",
   "shortName": "0–2 lata",
-  "color": "#3F6B5C",
-  "art": "Wallet",
+  "color": "#5E8A3A",
+  "art": "Sprout",
   "icon": "Wallet",
-  "order": 6,
+  "order": 3,
   "chapters": [
     "konto-lokata",
     "oszustwa",
     "fundusze-rp"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:02Z"
+    "editedBy": "marek",
+    "editedAt": "2026-11-21T06:54:22Z"
   }
 }

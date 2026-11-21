@@ -123,7 +123,7 @@ namespace FinanceQuest
                     float pw = probe.GetPreferredValues(ContentBlocks.Rich(rows[r][c]), 10000f, 0f).x;
                     pref[c] = Mathf.Max(pref[c], pw + 2 * PadX);
                 }
-            Object.Destroy(probe.gameObject);
+            Object.DestroyImmediate(probe.gameObject);
 
             // Mieści się – dzielimy zapas po równo. Nie mieści się – kolumny proporcjonalnie, ale nie węższe niż MinCol.
             float sum = 0f;

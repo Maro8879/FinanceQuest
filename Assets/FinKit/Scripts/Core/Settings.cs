@@ -20,6 +20,14 @@ namespace FinanceQuest
             set { PlayerPrefs.SetInt(SoundKey, value ? 1 : 0); PlayerPrefs.Save(); }
         }
 
+        // Wibracja przy kliknięciach – domyślnie włączona, delikatna.
+        const string VibeKey = "fq.set.vibe";
+        public static bool Vibration
+        {
+            get { return PlayerPrefs.GetInt(VibeKey, 1) == 1; }
+            set { PlayerPrefs.SetInt(VibeKey, value ? 1 : 0); PlayerPrefs.Save(); }
+        }
+
         public static bool Reminders
         {
             get { return PlayerPrefs.GetInt(RemindKey, 1) == 1; }

@@ -64,7 +64,7 @@ namespace FinanceQuest
         ScrollRect scroll;
         ScrollRect Scroll { get { if (scroll == null) scroll = GetComponentInParent<ScrollRect>(); return scroll; } }
 
-        public void OnPointerClick(PointerEventData e) { if (!e.dragging && OnTap != null) OnTap(); }
+        public void OnPointerClick(PointerEventData e) { if (!e.dragging && OnTap != null) { Haptics.Tap(); OnTap(); } }
         public void OnInitializePotentialDrag(PointerEventData e) { if (Scroll != null) Scroll.OnInitializePotentialDrag(e); }
         public void OnBeginDrag(PointerEventData e) { if (Scroll != null) Scroll.OnBeginDrag(e); }
         public void OnDrag(PointerEventData e) { if (Scroll != null) Scroll.OnDrag(e); }

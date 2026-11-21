@@ -4,16 +4,16 @@
   "title": "Horyzont 10–40 lat",
   "shortName": "10–40 lat",
   "color": "#0E4A55",
-  "art": "Portfolio",
+  "art": "Tree",
   "icon": "Star",
-  "order": 8,
+  "order": 5,
   "chapters": [
     "plan-regularny",
     "psychologia-krachu",
     "cykl-zycia"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:10Z"
+    "editedBy": "marek",
+    "editedAt": "2026-11-21T06:54:22Z"
   }
 }

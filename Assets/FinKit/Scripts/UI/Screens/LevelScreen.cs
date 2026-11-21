@@ -7,6 +7,15 @@ namespace FinanceQuest
     // Zadania i mini gry mają na razie tymczasowy ekran z przyciskiem „Ukończ (test)”, żeby dało się sprawdzić postęp.
     public static class LevelScreen
     {
+        // Czy level ma już treść do przejścia (strony lekcji albo zadania). Pusty level zalicza się samym kliknięciem.
+        public static bool HasContent(LevelData level)
+        {
+            var def = level.Def;
+            if (def == null) return false;
+            bool pages = level.Kind == LevelKind.Lesson && def.pages != null && def.pages.Count > 0;
+            return pages || (def.tasks != null && def.tasks.Count > 0);
+        }
+
         public static void Build(RectTransform screen, FinanceQuestApp app, CourseData course, int chapterIndex, int levelIndex)
         {
             var ch = course.Chapters[chapterIndex];
@@ -25,21 +34,21 @@ namespace FinanceQuest
                         // Podmieniamy treść tego samego ekranu, więc „wstecz” wraca od razu do rozdziału.
                         for (int i = screen.childCount - 1; i >= 0; i--) Object.Destroy(screen.GetChild(i).gameObject);
                         app.SwipeForward = null;
-                        Placeholder(screen, app, ch, level, "Zadania na koniec lekcji: " + def.tasks.Count + ".\nEkran zadań jest w przygotowaniu.");
+                        Placeholder(screen, app, course, ch, level, "Zadania na koniec lekcji: " + def.tasks.Count + ".\nEkran zadań jest w przygotowaniu.");
                     }
                     else
                     {
-                        app.Progress.Complete(level);
+                        app.CompleteLevel(course, level);
                         app.Back();
                     }
                 });
                 return;
             }
-            Placeholder(screen, app, ch, level, "Tu pojawi się treść levelu (mini gra lub zadania).");
+            Placeholder(screen, app, course, ch, level, "Tu pojawi się treść levelu (mini gra lub zadania).");
         }
 
         // Tymczasowy ekran: pozwala oznaczyć level jako ukończony, zanim powstaną zadania i mini gry.
-        static void Placeholder(RectTransform screen, FinanceQuestApp app, ChapterData ch, LevelData level, string info)
+        static void Placeholder(RectTransform screen, FinanceQuestApp app, CourseData course, ChapterData ch, LevelData level, string info)
         {
             float W = app.ScreenWidth;
             float m = ScreenKit.Margin, cw = W - 2 * m, y = 8f;
@@ -59,7 +68,7 @@ namespace FinanceQuest
                 16f, 5f, 0f);
             var dl = Ui.Text("Label", done.Content, "UKOŃCZ (TEST)", 16f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
             Ui.Stretch(dl.rectTransform);
-            done.SetClickable(() => { app.Progress.Complete(level); app.Back(); });
+            done.SetClickable(() => { app.CompleteLevel(course, level); app.Back(); });
 
             y += 54 + 14f;
             var back = LipCard.Create(screen, "Back", m, y, cw, 54, Palette.CardFill, Palette.CardEdge, Palette.CardLip,

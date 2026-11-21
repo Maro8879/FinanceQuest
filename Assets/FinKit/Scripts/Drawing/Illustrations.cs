@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FinanceQuest
 {
-    public enum CourseArt { Portfolio, Magnifier, Laptop, Wallet, Cards }
+    public enum CourseArt { Portfolio, Magnifier, Laptop, Wallet, Cards, Candles, Platform, Sprout, Sapling, Tree }
 
     // Ilustracje na kartach kursów (wariant B). Projektowane w polu 132 x 86 jednostek (oś Y w dół),
     // tak żeby nic nie wychodziło poza kartę. Kolory zależą od koloru karty (ciemny odcień),
@@ -35,6 +35,11 @@ namespace FinanceQuest
                     case CourseArt.Laptop: Laptop(c, dark); break;
                     case CourseArt.Wallet: Wallet(c, dark); break;
                     case CourseArt.Cards: Cards(c, dark); break;
+                    case CourseArt.Candles: Candles(c); break;
+                    case CourseArt.Platform: Platform(c, dark); break;
+                    case CourseArt.Sprout: Sprout(c); break;
+                    case CourseArt.Sapling: Sapling(c); break;
+                    case CourseArt.Tree: Tree(c); break;
                 }
                 return Sprite.Create(c.ToTexture("fq_" + key), new Rect(0, 0, c.Width, c.Height), new Vector2(0.5f, 0.5f),
                     100f, 0, SpriteMeshType.FullRect);
@@ -115,6 +120,99 @@ namespace FinanceQuest
             RotCircle(c, V(112, 46), 7, new Color(dark.r, dark.g, dark.b, 0.35f), 5f, p2);
         }
 
+        // Inwestowanie krótkoterminowe: sam wykres świecowy – rozedrgany, ale z trendem w górę.
+        // Świece na zmianę żółte i białe, żeby wykres był czytelny także na ciemnej karcie.
+        static void Candles(ColorCanvas c)
+        {
+            // x, góra korpusu, wysokość korpusu, góra knota, dół knota
+            float[,] d =
+            {
+                { 6, 44, 22, 36, 72 }, { 23, 30, 30, 22, 66 }, { 40, 48, 16, 40, 70 }, { 57, 22, 34, 12, 62 },
+                { 74, 36, 22, 28, 66 }, { 91, 14, 30, 6, 52 }, { 108, 26, 18, 18, 50 },
+            };
+            for (int i = 0; i < d.GetLength(0); i++)
+            {
+                float x = d[i, 0] + 6f;
+                Line(c, x, d[i, 3], x, d[i, 4], 1f, W3);
+                RectTL(c, d[i, 0], d[i, 1], 12, d[i, 2], 3, i % 2 == 0 ? Y : W3);
+            }
+        }
+
+        // Obsługa platformy: telefon z aplikacją stoi przed monitorem – jedna scena zamiast dwóch osobnych rzeczy.
+        static void Platform(ColorCanvas c, Color dark)
+        {
+            RectTL(c, 6, 8, 92, 62, 8, W2);
+            RectTL(c, 12, 14, 80, 48, 4, dark);
+            Polyline(c, new[] { V(18, 52), V(32, 42), V(44, 46), V(60, 28), V(74, 34), V(86, 22) }, 1.5f, W3);
+            RectTL(c, 44, 70, 16, 8, 2, W2);                   // nóżka monitora
+            RectTL(c, 80, 26, 42, 60, 8, W4);                  // telefon
+            RectTL(c, 84, 34, 34, 40, 3, dark);
+            Polyline(c, new[] { V(88, 64), V(96, 56), V(104, 60), V(114, 44) }, 1.25f, Y);
+            RectTL(c, 88, 77, 26, 5, 2, W3);
+        }
+
+        // Seria „Horyzont”: roślina rośnie razem z horyzontem (kiełek w doniczce → drzewko w doniczce → drzewo w ziemi).
+        // Liście i korony są złote (pełny kolor, bez przezroczystości), więc nakładające się koła nie robią szwów.
+        static void Pot(ColorCanvas c)
+        {
+            Poly(c, new[] { V(44, 66), V(88, 66), V(82, 84), V(50, 84) }, W3);
+            RectTL(c, 40, 59, 52, 9, 3, W4);
+        }
+
+        static void Sprout(ColorCanvas c)
+        {
+            Pot(c);
+            Line(c, 66, 60, 66, 40, 0.8f, W4);
+            Leaf(c, V(66, 46), 22, -160, 8, Y);
+            Leaf(c, V(66, 42), 24, -25, 9, YL);
+        }
+
+        static void Sapling(ColorCanvas c)
+        {
+            Pot(c);
+            Line(c, 66, 60, 66, 30, 1f, W4);
+            Line(c, 66, 46, 56, 38, 0.75f, W4);
+            Circle(c, V(66, 24), 15, Y);
+            Circle(c, V(54, 30), 11, Y);
+            Circle(c, V(78, 30), 11, Y);
+            Circle(c, V(66, 34), 11, Y);
+            Circle(c, V(60, 22), 6, YL);    // odblask
+        }
+
+        static void Tree(ColorCanvas c)
+        {
+            RectTL(c, 8, 80, 116, 5, 2, W2);                   // ziemia
+            Poly(c, new[] { V(60, 82), V(72, 82), V(69, 44), V(63, 44) }, W4);
+            Line(c, 67, 58, 54, 46, 1.2f, W4);
+            Line(c, 66, 54, 80, 44, 1.2f, W4);
+            Circle(c, V(66, 22), 20, Y);
+            Circle(c, V(46, 32), 16, Y);
+            Circle(c, V(86, 32), 16, Y);
+            Circle(c, V(56, 42), 14, Y);
+            Circle(c, V(76, 42), 14, Y);
+            Circle(c, V(66, 36), 16, Y);
+            Circle(c, V(56, 20), 9, YL);    // odblaski
+            Circle(c, V(82, 28), 6, YL);
+        }
+
+        // Liść w kształcie soczewki: od podstawy w kierunku kąta (stopnie, 0° = w prawo, oś Y w dół), najszerszy w połowie.
+        static void Leaf(ColorCanvas c, Vector2 b, float length, float deg, float width, Color col)
+        {
+            float a = deg * Mathf.Deg2Rad;
+            var u = V(Mathf.Cos(a), Mathf.Sin(a));
+            var n = V(-u.y, u.x);
+            const int Steps = 20;
+            // Podstawa i czubek tylko raz – powtórzony punkt (odcinek zerowej długości) psuje liczenie odległości od wielokąta.
+            var pts = new Vector2[Steps * 2];
+            for (int i = 0; i <= Steps; i++)
+            {
+                float t = i / (float)Steps, w = Mathf.Sin(Mathf.PI * t) * width;
+                pts[i] = b + u * (length * t) + n * w;
+                if (i > 0 && i < Steps) pts[Steps * 2 - i] = b + u * (length * t) - n * w;
+            }
+            Poly(c, pts, col);
+        }
+
         // ---------- pomocnicze kształty (wszystko w jednostkach 132 x 86) ----------
 
         static Vector2 V(float x, float y) { return new Vector2(x, y); }
@@ -129,6 +227,11 @@ namespace FinanceQuest
         {
             float R = r + t;
             c.Fill(p => Mathf.Abs((p - o).magnitude - r) - t * 0.5f, col, o.x - R, o.y - R, o.x + R, o.y + R);
+        }
+
+        static void Polyline(ColorCanvas c, Vector2[] pts, float r, Color col)
+        {
+            for (int i = 1; i < pts.Length; i++) Line(c, pts[i - 1].x, pts[i - 1].y, pts[i].x, pts[i].y, r, col);
         }
 
         static void Line(ColorCanvas c, float x0, float y0, float x1, float y1, float r, Color col)

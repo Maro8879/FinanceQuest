@@ -3,17 +3,17 @@
   "id": "horyzont-3-10",
   "title": "Horyzont 3–10 lat",
   "shortName": "3–10 lat",
-  "color": "#9C7A2E",
-  "art": "Portfolio",
+  "color": "#3F6B5C",
+  "art": "Sapling",
   "icon": "Chart",
-  "order": 7,
+  "order": 4,
   "chapters": [
     "twoj-cel",
     "obligacje",
     "portfel-zrownowazony"
   ],
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:06Z"
+    "editedBy": "marek",
+    "editedAt": "2026-11-21T06:54:22Z"
   }
 }

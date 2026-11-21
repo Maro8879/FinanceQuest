@@ -30,7 +30,36 @@ namespace FinanceQuest
         // Dokąd prowadzi swipe w lewo z bieżącego ekranu (ustawia ekran przy budowaniu; null = nigdzie).
         public Action SwipeForward;
         // Ostatnio oglądany kurs – cel swipe'a w lewo w menu.
-        public CourseData LastCourse;
+        [System.NonSerialized] public CourseData LastCourse;   // tylko w pamięci – Unity nie ma tego zapisywać
+        // Co właśnie się odblokowało – ekran rozdziału / kursu pokaże to animacją (raz) i wyczyści.
+        [System.NonSerialized] public string UnlockedLevel, UnlockedChapter;
+
+        // Reset postępu ze wszystkich kursów (z ustawień). Czyścimy też to, co pamiętamy tylko w trakcie sesji.
+        public void ResetProgress()
+        {
+            Progress.ResetAll();
+            LastCourse = null;
+            UnlockedLevel = UnlockedChapter = null;
+        }
+
+        // Wołane po ukończeniu levelu: zapisuje postęp i zapamiętuje, co się przez to otworzyło.
+        public void CompleteLevel(CourseData course, LevelData level)
+        {
+            Progress.Complete(level);
+            UnlockedLevel = UnlockedChapter = null;
+            for (int c = 0; c < course.Chapters.Count; c++)
+            {
+                var ch = course.Chapters[c];
+                for (int i = 0; i < ch.Levels.Count; i++)
+                {
+                    if (Progress.LevelState(course, c, i) != ItemState.Current) continue;
+                    UnlockedLevel = ch.Levels[i].Id;
+                    // Pierwszy level nowego rozdziału = otworzył się cały rozdział.
+                    if (i == 0 && c > 0 && !ch.Levels.Contains(level)) UnlockedChapter = ch.Id;
+                    return;
+                }
+            }
+        }
         readonly List<Action<RectTransform>> stack = new List<Action<RectTransform>>();
         float navLockUntil;
         int lastW, lastH;
@@ -61,7 +90,9 @@ namespace FinanceQuest
         void Start()
         {
             ApplyScale();
-            Push(r => MenuScreen.Build(r, this));
+            // Pierwsze uruchomienie: od razu ankieta (pod nią menu – domek albo koniec ankiety wraca do menu).
+            if (Recommendations.Done) Push(r => MenuScreen.Build(r, this));
+            else PushPath(r => MenuScreen.Build(r, this), r => SurveyScreen.Build(r, this));
         }
 
         void Update()
@@ -95,6 +126,15 @@ namespace FinanceQuest
             Rebuild(Nav.Forward, horizontal);
         }
 
+        // Kilka ekranów naraz (np. kurs → rozdział → level z karty „Kontynuuj”): jedno przejście,
+        // a „wstecz” cofa potem po kolei przez rozdział i kurs.
+        public void PushPath(params Action<RectTransform>[] builds)
+        {
+            if (Time.unscaledTime < navLockUntil || builds.Length == 0) return;
+            stack.AddRange(builds);
+            Rebuild(Nav.Forward);
+        }
+
         void BackSwipe()
         {
             if (stack.Count <= 1 || Time.unscaledTime < navLockUntil) return;
@@ -107,6 +147,20 @@ namespace FinanceQuest
             if (stack.Count <= 1 || Time.unscaledTime < navLockUntil) return;
             stack.RemoveAt(stack.Count - 1);
             Rebuild(Nav.Back);
+        }
+
+        // Przebudowa bieżącego ekranu w miejscu (bez przejścia), z zachowaniem przewinięcia listy.
+        [System.NonSerialized] public bool Refreshing;
+        public void Refresh()
+        {
+            if (currentScreen == null) return;
+            var oldList = currentScreen.Find("Scroll/Content") as RectTransform;
+            Vector2 scroll = oldList != null ? oldList.anchoredPosition : Vector2.zero;
+            Refreshing = true;
+            try { Rebuild(Nav.None); }
+            finally { Refreshing = false; }
+            var list = currentScreen.Find("Scroll/Content") as RectTransform;
+            if (list != null) list.anchoredPosition = scroll;
         }
 
         public void Home()

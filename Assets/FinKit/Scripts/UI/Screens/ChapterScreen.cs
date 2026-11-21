@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace FinanceQuest
 {
-    // Ekran 3: nagłówek rozdziału z postępem + levele ułożone lekkim zygzakiem (jak na szkicu).
+    // Ekran 3: nagłówek rozdziału z postępem + levele jako kafelki w dwóch kolumnach.
+    // Aktualny level jest żółty ze START. Gdy zaczyna nowy wiersz, zajmuje go całego; gdy obok poprzedniego
+    // kafelka jest wolne miejsce, staje tam jako zwykły kafelek – dzięki temu w siatce nie ma dziur.
     public static class ChapterScreen
     {
-        // Przesunięcia kolejnych kart – daje wrażenie „ścieżki” bez rysowania drogi.
-        static readonly float[] Offsets = { 0f, 14f, 28f, 14f };
-        const float Zig = 28f;
+        const float TileH = 140f, CurrentH = 96f, Gap = 14f;
 
         public static void Build(RectTransform screen, FinanceQuestApp app, CourseData course, int chapterIndex)
         {
@@ -23,7 +23,7 @@ namespace FinanceQuest
                 if (app.Progress.LevelState(course, chapterIndex, i) == ItemState.Current)
                 {
                     int idx = i;
-                    app.SwipeForward = () => app.Push(r => LevelScreen.Build(r, app, course, chapterIndex, idx), true);
+                    app.SwipeForward = () => Open(app, course, chapterIndex, idx, true);
                     break;
                 }
             float m = ScreenKit.Margin, cw = W - 2 * m;
@@ -40,77 +40,128 @@ namespace FinanceQuest
                 Color.white, app.Progress.DoneCount(ch) + "/" + ch.Levels.Count);
             float headFace = barY + 16 + pad;
             ((RectTransform)head.transform).sizeDelta = new Vector2(cw, headFace + ScreenKit.Lip);
-            head.AddBackgroundChart(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.16f));
+            head.AddBackgroundBars(ScreenKit.CardRadius, new Color(1f, 1f, 1f, 0.06f), chapterIndex);
 
             float y = 4 + headFace + ScreenKit.Lip + 14f;
+            float half = (cw - Gap) * 0.5f;
+            int col = 0;   // 0 = lewa kolumna wolna, 1 = lewa zajęta (czekamy na prawą)
             for (int i = 0; i < ch.Levels.Count; i++)
             {
-                float off = Offsets[i % Offsets.Length];
-                y += LevelCard(content, m + off, y, cw - Zig, app, course, chapterIndex, i) + 12f;
+                bool current = app.Progress.LevelState(course, chapterIndex, i) == ItemState.Current;
+                if (current && col == 0)
+                {
+                    // Aktualny level na początku wiersza: na całą szerokość, wysokość z treści (0).
+                    y += Tile(content, m, y, cw, 0f, app, course, chapterIndex, i) + Gap;
+                    continue;
+                }
+                Tile(content, col == 0 ? m : m + half + Gap, y, half, TileH, app, course, chapterIndex, i);
+                if (col == 0) col = 1;
+                else { col = 0; y += TileH + ScreenKit.Lip + Gap; }
             }
-            ScreenKit.SetContentHeight(content, y + 24f);
+            if (col == 1) y += TileH + ScreenKit.Lip + Gap;
+            ScreenKit.SetContentHeight(content, y + 10f);
         }
 
-        static float LevelCard(RectTransform parent, float x, float y, float w, FinanceQuestApp app,
+        // Otwiera level. Level bez treści (jeszcze nienapisany) zaliczamy od razu kliknięciem – bez osobnego ekranu –
+        // i odświeżamy rozdział, żeby było widać odblokowanie następnego.
+        static void Open(FinanceQuestApp app, CourseData course, int chapterIndex, int levelIndex, bool swipe)
+        {
+            var level = course.Chapters[chapterIndex].Levels[levelIndex];
+            if (LevelScreen.HasContent(level))
+            {
+                app.Push(r => LevelScreen.Build(r, app, course, chapterIndex, levelIndex), swipe);
+                return;
+            }
+            if (app.Progress.IsDone(level)) return;   // już zaliczony – nie ma czego robić
+            app.CompleteLevel(course, level);
+            app.Refresh();
+        }
+
+        // Kafelek levelu; jeśli ten level właśnie się odblokował – z animacją odblokowania (tylko raz).
+        static float Tile(RectTransform parent, float x, float y, float w, float h, FinanceQuestApp app,
             CourseData course, int chapterIndex, int levelIndex)
+        {
+            var level = course.Chapters[chapterIndex].Levels[levelIndex];
+            if (level.Id != app.UnlockedLevel || app.Progress.LevelState(course, chapterIndex, levelIndex) != ItemState.Current)
+                return LevelTile(parent, x, y, w, h, app, course, chapterIndex, levelIndex, null);
+
+            app.UnlockedLevel = null;
+            var box = UnlockReveal.Box(parent, "Unlock_" + level.Number, x, y);
+            float fh = LevelTile(box, 0f, 0f, w, h, app, course, chapterIndex, levelIndex, null);
+            var fin = (RectTransform)box.GetChild(box.childCount - 1);
+            // Zablokowana wersja o tym samym rozmiarze – leży pod spodem, dopóki fala jej nie zakryje.
+            LevelTile(box, 0f, 0f, w, fh - ScreenKit.Lip, app, course, chapterIndex, levelIndex, ItemState.Locked);
+            var lck = (RectTransform)box.GetChild(box.childCount - 1);
+            UnlockReveal.Play(box, lck, fin, w, fh, app.Refreshing ? 0.12f : 0.6f);
+            return fh;
+        }
+
+        // Kafelek levelu: duży numer w lewym górnym rogu, tytuł przy dolnej krawędzi.
+        // Ukończony – w kolorze rozdziału z ptaszkiem; aktualny – żółty ze START; zablokowany – szary z kłódką.
+        static float LevelTile(RectTransform parent, float x, float y, float w, float h, FinanceQuestApp app,
+            CourseData course, int chapterIndex, int levelIndex, ItemState? force)
         {
             var ch = course.Chapters[chapterIndex];
             var level = ch.Levels[levelIndex];
-            var state = app.Progress.LevelState(course, chapterIndex, levelIndex);
-            const float face = 64f, pad = 14f, icon = 28f;
+            var state = force ?? app.Progress.LevelState(course, chapterIndex, levelIndex);
+            const float pad = 12f;
 
-            Color fill, edge, lip, iconC, title, sub;
+            Color fill, lip, text;
             switch (state)
             {
-                case ItemState.Done:
-                    fill = ch.Color; edge = ch.Color; lip = Palette.Darker(ch.Color);
-                    iconC = Color.white; title = Color.white; sub = Palette.WhiteSoft;
-                    break;
-                case ItemState.Current:
-                    fill = Palette.CardFill; edge = Palette.Accent; lip = Palette.AccentLip;
-                    iconC = Palette.AccentDark; title = Palette.Text; sub = Palette.TextMuted;
-                    break;
-                default:
-                    fill = Palette.LockedFill; edge = Palette.LockedEdge; lip = Palette.LockedLip;
-                    iconC = Palette.LockedIcon; title = Palette.TextLocked; sub = Palette.TextLocked;
-                    break;
+                case ItemState.Done: fill = ch.Color; lip = Palette.Darker(ch.Color); text = Color.white; break;
+                case ItemState.Current: fill = Palette.Accent; lip = Palette.AccentLip; text = Palette.OnAccent; break;
+                default: fill = Palette.LockedFill; lip = Palette.LockedLip; text = Palette.TextLocked; break;
             }
 
-            var card = LipCard.Create(parent, "Level_" + level.Number, x, y, w, face + ScreenKit.Lip, fill, edge, lip,
-                ScreenKit.CardRadius, ScreenKit.Lip, 2f);
-
-            var ic = Ui.Icon("KindIcon", card.Content, ContentText.KindIcon(level.Kind), iconC, icon);
-            Ui.Place(ic.rectTransform, pad, (face - icon) * 0.5f, icon, icon);
-
-            float textX = pad + icon + 14f;
-            var t = Ui.Text("Title", card.Content, "Level " + level.Number, 17f, title, FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
-            Ui.Place(t.rectTransform, textX, 11, w - textX - 100, 24);
-            var s = Ui.Text("Kind", card.Content, (string.IsNullOrEmpty(level.Title) ? ContentText.KindLabel(level.Kind) : level.Title), 12.5f, sub, FontWeight.SemiBold, TextAlignmentOptions.TopLeft);
-            Ui.Place(s.rectTransform, textX, 34, w - textX - 100, 18);
-
-            System.Action open = () => app.Push(r => LevelScreen.Build(r, app, course, chapterIndex, levelIndex));
-
-            if (state == ItemState.Current)
+            // Tytuł liczymy przed kartą – aktualny kafelek dopasowuje wysokość, żeby numer nie nachodził na tytuł.
+            float tw = w - 2 * pad;
+            string titleText = string.IsNullOrEmpty(level.Title) ? "Level " + level.Number : level.Title;
+            const float numberH = 40f, sh = 24f, sw = 68f;
+            if (h <= 0f)
             {
-                // Żółty START – wyraźnie pokazuje, gdzie jest użytkownik.
-                const float bw = 78f, bh = 38f;
-                var start = LipCard.Create(card.Content, "Start", w - pad - bw, (face - bh) * 0.5f, bw, bh,
-                    Palette.Accent, Palette.Accent, Palette.AccentLip, 12f, 4f, 0f);
-                var st = Ui.Text("Label", start.Content, "START", 14f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
-                Ui.Stretch(st.rectTransform);
-                start.SetClickable(open);
+                var probe = Ui.Text("Probe", parent, titleText, 14.5f, text, FontWeight.ExtraBold);
+                float ph = Mathf.Min(Ui.TextHeight(probe, tw), 56f);
+                Object.DestroyImmediate(probe.gameObject);
+                h = Mathf.Max(CurrentH, pad + numberH + 4f + ph + 8f + sh + pad);
             }
-            else
+
+            var card = LipCard.Create(parent, "Level_" + level.Number, x, y, w, h + ScreenKit.Lip, fill, fill, lip,
+                18f, ScreenKit.Lip, 0f);
+
+            var num = Ui.Text("Number", card.Content, level.Number.ToString(), 34f, text, FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
+            num.textWrappingMode = TextWrappingModes.NoWrap;
+            Ui.Place(num.rectTransform, pad, pad - 2f, 80f, numberH);
+
+            if (state != ItemState.Current)
             {
                 var si = Ui.Icon("StateIcon", card.Content, state == ItemState.Done ? IconId.Check : IconId.Lock,
-                    state == ItemState.Done ? Color.white : Palette.LockedIcon, state == ItemState.Done ? 24f : 22f);
-                var rt = si.rectTransform;
-                rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(1f, 0.5f);
-                rt.anchoredPosition = new Vector2(-pad - 4f, 0f);
+                    state == ItemState.Done ? Color.white : Palette.LockedIcon, state == ItemState.Done ? 22f : 18f);
+                Ui.Place(si.rectTransform, w - pad - 22f, pad, 22f, 22f);
             }
 
+            // Tytuł przy dole kafelka (do 3 linii; dłuższy dostaje „…”).
+            var t = Ui.Text("Title", card.Content, titleText, 14.5f, text, FontWeight.ExtraBold, TextAlignmentOptions.BottomLeft);
+            t.overflowMode = TextOverflowModes.Ellipsis;
+            t.maxVisibleLines = 3;
+            // Tytuł nie może wejść na numer: tyle miejsca, ile zostaje pod numerem (i nad START w aktualnym).
+            float room = h - pad - numberH - 4f - (state == ItemState.Current ? 8f + sh : 0f) - pad;
+            float th = Mathf.Min(Ui.TextHeight(t, tw), Mathf.Min(56f, room));
+
+            System.Action open = () => Open(app, course, chapterIndex, levelIndex, false);
+            if (state == ItemState.Current)
+            {
+                // START jako ciemna plakietka pod tytułem; kliknąć można cały kafelek.
+                Ui.Place(t.rectTransform, pad, h - pad - sh - 8f - th, tw, th);
+                var pill = Ui.Rounded("StartPill", card.Content, Palette.Text, 8f);
+                Ui.Place(pill.rectTransform, pad, h - pad - sh, sw, sh);
+                var st = Ui.Text("Label", pill.transform, "START", 12f, Palette.Accent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+                Ui.Stretch(st.rectTransform);
+            }
+            else Ui.Place(t.rectTransform, pad, h - pad - th, tw, th);
+
             if (state != ItemState.Locked) card.SetClickable(open);
-            return face + ScreenKit.Lip;
+            return h + ScreenKit.Lip;
         }
     }
 }

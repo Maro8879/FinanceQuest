@@ -111,6 +111,52 @@ namespace FinanceQuest
             return img;
         }
 
+        // Rosnące słupki w prawym dolnym rogu – mały wykres wzrostu (karty rozdziałów i nagłówek rozdziału).
+        // Słupki wystają lekko poza dół karty, maska je przycina. seed zmienia, który słupek jest trochę wyższy.
+        public void AddBackgroundBars(float radius, Color color, int seed)
+        {
+            var layer = BackgroundLayer(radius);
+            float h = ((RectTransform)transform).sizeDelta.y - LipHeight;
+            const int count = 6;
+            const float bw = 16f, gap = 8f, right = 8f;
+            for (int i = 0; i < count; i++)
+            {
+                // Niskie słupki (najwyższy ok. 40% karty), żeby nie wchodziły pod napisy i pasek postępu.
+                float bh = 8f + i * Mathf.Min(h * 0.065f, 6.5f) + ((i + seed) % 3 == 0 ? 4f : 0f);
+                var bar = Ui.Rounded("Bar", layer, color, 4f);
+                var rt = bar.rectTransform;
+                rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(1f, 0f);
+                rt.sizeDelta = new Vector2(bw, bh + 8f);
+                rt.anchoredPosition = new Vector2(-right - (count - 1 - i) * (bw + gap), -8f);
+            }
+        }
+
+        // Łagodna linia wykresu na całej karcie (karty rozdziałów i nagłówek rozdziału).
+        public WaveLine AddBackgroundLine(float radius, Color color, float phase)
+        {
+            var go = Ui.Rect("BgLine", BackgroundLayer(radius)).gameObject;
+            go.AddComponent<CanvasRenderer>();
+            var line = go.AddComponent<WaveLine>();
+            line.Phase = phase;
+            line.color = color;
+            line.raycastTarget = false;
+            Ui.Stretch(line.rectTransform);
+            return line;
+        }
+
+        // Duży, półprzezroczysty numer w prawym dolnym rogu, przycięty przez kartę (karty leveli).
+        public TMPro.TextMeshProUGUI AddBackgroundNumber(string text, float radius, Color color, float size)
+        {
+            var t = Ui.Text("BgNumber", BackgroundLayer(radius), text, size, color, FontWeight.ExtraBold, TMPro.TextAlignmentOptions.BottomRight);
+            t.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
+            t.characterSpacing = -6f;
+            var rt = t.rectTransform;
+            rt.anchorMin = rt.anchorMax = rt.pivot = new Vector2(1f, 0f);
+            rt.sizeDelta = new Vector2(size * 2f, size);
+            rt.anchoredPosition = new Vector2(4f, -size * 0.28f);   // wystaje poza dół karty – maska go przytnie
+            return t;
+        }
+
         // Żółta obwódka wokół karty = „tu jesteś”. Nie zapada się przy dotyku (siedzi na korzeniu karty).
         public void AddFocusRing(Color color, float radius, float gap, float thickness)
         {
@@ -146,6 +192,7 @@ namespace FinanceQuest
         public void OnPointerClick(PointerEventData e)
         {
             if (OnClick == null) return;
+            Haptics.Tap();   // tyknięcie od razu – opóźnienie poniżej dotyczy tylko zmiany ekranu
             // Chwilę czekamy, żeby było widać odbicie, zanim ekran się zmieni.
             FinanceQuestApp.RunLater(0.09f, OnClick);
         }

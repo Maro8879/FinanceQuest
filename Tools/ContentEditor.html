@@ -36,6 +36,11 @@ button{font:inherit;cursor:pointer}
 .row.sel{background:#E7F0F1}
 .row .grow{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .dot{width:10px;height:10px;border-radius:5px;flex:none}
+/* strzałki kolejności: widoczne po najechaniu albo na zaznaczonym wierszu */
+.mv{display:none;width:20px;height:20px;border-radius:6px;border:2px solid var(--edge);background:#fff;color:var(--mut);font-size:11px;font-weight:800;line-height:15px;text-align:center;flex:none;cursor:pointer}
+.mv:hover{border-color:var(--pet);color:var(--pet)}
+.mv.off{opacity:.3;pointer-events:none}
+.row:hover .mv,.row.sel .mv{display:block}
 .st{font-size:11px;font-weight:600;white-space:nowrap}
 .st.ok{color:var(--ok)} .st.mod{color:var(--mod)} .st.disk{color:var(--bad)} .st.other{color:var(--other)} .st.warn{color:var(--bad)}
 .course{font-weight:800}
@@ -174,8 +179,10 @@ code{background:#EEE9DF;padding:1px 5px;border-radius:5px}
 <script>
 "use strict";
 // ======================= stałe =======================
-const PALETTE = {Petrol:"#0E4A55", Moss:"#3F6B5C", Mustard:"#9C7A2E", Brick:"#8E4A36", Slate:"#4A5D73"};
-const ARTS = ["Portfolio","Magnifier","Laptop","Wallet","Cards"];
+const PALETTE = {Petrol:"#0E4A55", Moss:"#3F6B5C", Leaf:"#5E8A3A", Mustard:"#9C7A2E", Brick:"#8E4A36", Slate:"#4A5D73"};
+// Ilustracje na kartach kursów: nazwa w treści → opis w edytorze.
+const ARTS = {Portfolio:"Wykres kołowy", Magnifier:"Lupa nad świecami", Laptop:"Laptop z wykresem", Wallet:"Portfel", Cards:"Karty płatnicze",
+  Candles:"Wykres świecowy", Platform:"Telefon przed monitorem", Sprout:"Kiełek (krótki horyzont)", Sapling:"Drzewko (średni horyzont)", Tree:"Drzewo (długi horyzont)"};
 const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
@@ -310,6 +317,28 @@ const Store = {
   async size(path){   // -1 = nie ma takiego pliku
     if (Store.kind === "fs"){ try { return (await (await Store.fsFile(path)).getFile()).size; } catch(e){ return -1; } }
     return Store.tree[path] ? Store.tree[path].size : -1;
+  },
+  // Usuwa cały folder kursu (rozdziały, obrazki, pliki .meta Unity). Na GitHubie – jednym commitem.
+  async removeCourse(id, message){
+    if (Store.kind === "fs"){
+      await S.dir.removeEntry(id, {recursive: true});
+      try { await S.dir.removeEntry(id + ".meta"); } catch(e){}   // .meta folderu – zostawiony narobiłby ostrzeżeń w Unity
+      return;
+    }
+    await Store.refreshTree();
+    const paths = Object.keys(Store.tree).filter(p => p.startsWith(id + "/") || p === id + ".meta");
+    if (!paths.length) return;
+    const root = Store.gh.root.replace(/\/+$/, "") + "/", br = encodeURIComponent(Store.gh.branch);
+    for (let attempt = 0; attempt < 2; attempt++){
+      const ref = await Store.api("GET", Store.repoUrl() + "/git/ref/heads/" + br);
+      const head = await Store.api("GET", Store.repoUrl() + "/git/commits/" + ref.object.sha);
+      const tree = await Store.api("POST", Store.repoUrl() + "/git/trees", {base_tree: head.tree.sha,
+        tree: paths.map(p => ({path: root + p, mode: "100644", type: "blob", sha: null}))});
+      const commit = await Store.api("POST", Store.repoUrl() + "/git/commits", {message, tree: tree.sha, parents: [ref.object.sha]});
+      try { await Store.api("PATCH", Store.repoUrl() + "/git/refs/heads/" + br, {sha: commit.sha}); break; }
+      catch(e){ if (attempt || e.status !== 422) throw e; }   // ktoś właśnie zrobił commit – próbujemy jeszcze raz od nowa
+    }
+    for (const p of paths) delete Store.tree[p];
   },
   async writeBlob(path, blob, message){
     if (Store.kind === "fs"){ const w = await (await Store.fsFile(path, true)).createWritable(); await w.write(blob); await w.close(); return; }
@@ -869,6 +898,11 @@ function status(f){
   return '<span class="st ok">✓</span>';
 }
 
+// Strzałki ↑ ↓ przy kursie / rozdziale (pierwszy nie idzie wyżej, ostatni niżej).
+const moveBtns = (act, i, n, data) => n < 2 ? "" :
+  `<span class="mv ${i === 0 ? "off" : ""}" data-act="${act}" data-dir="-1" ${data} title="Wyżej">▲</span>` +
+  `<span class="mv ${i === n - 1 ? "off" : ""}" data-act="${act}" data-dir="1" ${data} title="Niżej">▼</span>`;
+
 let treeTimer = 0;
 function renderTreeSoon(){ clearTimeout(treeTimer); treeTimer = setTimeout(renderTree, 150); }
 
@@ -877,11 +911,11 @@ function renderTree(){
   let h = '<div class="th">Kursy i rozdziały</div>';
   S.courses.forEach((c, ci) => {
     const d = c.file.data, selC = S.sel.c === ci && S.sel.part === "course";
-    h += `<div class="row course ${selC ? "sel" : ""}" data-act="sel" data-c="${ci}"><span class="dot" style="background:${esc(d.color)}"></span><span class="grow">${esc(d.title || c.id)}</span>${status(c.file)}</div>`;
+    h += `<div class="row course ${selC ? "sel" : ""}" data-act="sel" data-c="${ci}"><span class="dot" style="background:${esc(d.color)}"></span><span class="grow">${esc(d.title || c.id)}</span>${moveBtns("move-course", ci, S.courses.length, `data-c="${ci}"`)}${status(c.file)}</div>`;
     c.chapters.forEach((f, chi) => {
       const cd = f.data, open = S.sel.c === ci && S.sel.ch === chi, wc = chapterWarnCount(cd);
       h += `<div class="row indent ${open && S.sel.part === "chapter" ? "sel" : ""}" data-act="sel" data-c="${ci}" data-ch="${chi}">
-        <span class="grow">${esc(f.name)}</span>${wc ? `<span class="st warn">⚠${wc}</span>` : ""}${status(f)}</div>`;
+        <span class="grow">${esc(f.name)}</span>${moveBtns("tree-move-chapter", chi, c.chapters.length, `data-c="${ci}" data-ch="${chi}"`)}${wc ? `<span class="st warn">⚠${wc}</span>` : ""}${status(f)}</div>`;
       if (open){
         cd.levels.forEach((l, li) => {
           const lw = levelWarnings(l).length;
@@ -940,12 +974,13 @@ function courseForm(){
     <div class="grid2"><div><label>Krótka nazwa <span class="hint">podpis pucharu</span></label>${one("shortName", d.shortName)}</div>
     <div><label>Kolejność w menu</label><input type="number" data-bind="order" data-num="1" value="${esc(d.order)}"></div></div>
     <label>Kolor karty</label>${swatches("color", d.color)}
-    <div class="grid2"><div><label>Ilustracja na karcie</label>${sel("art", d.art, Object.fromEntries(ARTS.map(a=>[a,a])))}</div>
+    <div class="grid2"><div><label>Ilustracja na karcie</label>${sel("art", d.art, ARTS)}</div>
     <div><label>Ikona</label>${sel("icon", d.icon, Object.fromEntries(ICONS.map(a=>[a,a])))}</div></div>
     <label>Rozdziały (kolejność)</label>
     ${c.chapters.map((f,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px">${i+1}. ${esc(f.data.title)} <span class="sub">· ${esc(f.name)}</span></div>
       <button class="mini" data-act="move-chapter" data-i="${i}" data-dir="-1">↑</button><button class="mini" data-act="move-chapter" data-i="${i}" data-dir="1">↓</button></div>`).join("")}
     <div class="btns"><button class="btn small" data-act="add-chapter" data-c="${S.sel.c}">+ rozdział</button></div>
+    <div class="btns" style="margin-top:22px"><button class="btn small danger" data-act="delete-course">Usuń kurs</button></div>
     ${metaLine(c.file)}`;
 }
 
@@ -1273,6 +1308,42 @@ document.addEventListener("click", async e => {
       d.levels.push(nl); const cf = curChapterFile(); S.sel = {c:S.sel.c, ch:S.sel.ch, lv:d.levels.length-1, part:"level", idx:-1}; markDirty(cf); return renderAll();
     }
     case "move-chapter": { const c = curCourse(); if (moveIn(c.chapters, i, dir)){ c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,"")); markDirty(c.file); renderAll(); } return; }
+    case "delete-course": {
+      const c = curCourse();
+      if (!Store.kind){ alert("Kurs można usunąć po otwarciu folderu Content (Chrome/Edge) albo po połączeniu z GitHubem."); return; }
+      const n = c.chapters.length;
+      if (!confirm(`Usunąć cały kurs „${c.file.data.title}”?\n\nZniknie folder ${c.id} – ${n} rozdział(ów), obrazki i niezapisane zmiany w tym kursie. Tego nie da się cofnąć w edytorze.`)) return;
+      if (prompt(`Dla pewności wpisz nazwę folderu kursu: ${c.id}`) !== c.id){ toast("Nie usunięto – nazwa się nie zgadza."); return; }
+      try { await Store.removeCourse(c.id, "Usunięto kurs: " + c.id + (S.me ? " (" + S.me + ")" : "")); }
+      catch(err){ alert("Nie udało się usunąć kursu: " + err.message); return; }
+      for (const f of [c.file, ...c.chapters]) S.knownPaths.delete(f.path);
+      S.courses.splice(S.sel.c, 1);
+      S.sel = {c: S.courses.length ? 0 : -1, ch:-1, lv:-1, part: S.courses.length ? "course" : null, idx:-1};
+      renderAll();
+      toast("Usunięto kurs " + c.id + (Store.kind === "gh" ? " (commit na GitHubie)." : ". Pamiętaj o Commit + Push."));
+      return;
+    }
+    case "move-course": {
+      // Zamieniamy miejscami i numerujemy wszystkie kursy od nowa (1, 2, 3…), żeby „order” nigdy się nie dublował.
+      const ci = Number(a.dataset.c), to = ci + Number(a.dataset.dir);
+      if (to < 0 || to >= S.courses.length) return;
+      const selCourse = S.courses[S.sel.c];
+      [S.courses[ci], S.courses[to]] = [S.courses[to], S.courses[ci]];
+      S.courses.forEach((c, k) => { if (c.file.data.order !== k + 1){ c.file.data.order = k + 1; markDirty(c.file); } });
+      if (selCourse) S.sel.c = S.courses.indexOf(selCourse);
+      return renderAll();
+    }
+    case "tree-move-chapter": {
+      // Kolejność rozdziałów trzyma lista „chapters” w pliku kursu – zmienia się tylko ten jeden plik.
+      const c = S.courses[Number(a.dataset.c)], chi = Number(a.dataset.ch), to = chi + Number(a.dataset.dir);
+      if (to < 0 || to >= c.chapters.length) return;
+      const selCh = S.sel.c === S.courses.indexOf(c) ? c.chapters[S.sel.ch] : null;
+      [c.chapters[chi], c.chapters[to]] = [c.chapters[to], c.chapters[chi]];
+      c.file.data.chapters = c.chapters.map(x => x.name.replace(/\.json$/,""));
+      markDirty(c.file);
+      if (selCh) S.sel.ch = c.chapters.indexOf(selCh);
+      return renderAll();
+    }
     case "add-chapter": {
       const c = S.courses[Number(a.dataset.c)]; const title = prompt("Tytuł nowego rozdziału:"); if (!title) return;
       let id = slug(title); while (c.chapters.some(x => x.name === id + ".json")) id += "-2";

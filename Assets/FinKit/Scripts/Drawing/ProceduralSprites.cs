@@ -239,10 +239,20 @@ namespace FinanceQuest
                     }
                     c.Cut(p => SdfCanvas.Circle(p, V(12, 12), 3.2f));
                     break;
+                case IconId.Vibrate:
+                    // Telefon w ramce + po dwie krótkie kreski drgań z każdej strony.
+                    c.Add(p => SdfCanvas.RoundRect(p, V(12, 12), V(9.5f, 16), 2.4f));
+                    c.Cut(p => SdfCanvas.RoundRect(p, V(12, 12), V(6.3f, 12.8f), 1f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(4.6f, 9.5f), V(4.6f, 14.5f), 0.9f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(19.4f, 9.5f), V(19.4f, 14.5f), 0.9f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(1.9f, 10.8f), V(1.9f, 13.2f), 0.9f));
+                    c.Add(p => SdfCanvas.Capsule(p, V(22.1f, 10.8f), V(22.1f, 13.2f), 0.9f));
+                    break;
                 case IconId.SoundOff:
                 case IconId.BellOff:
+                case IconId.VibrateOff:
                     // Wersja „wyłączona” = ta sama ikona przekreślona ukośną kreską.
-                    DrawIcon(c, id == IconId.SoundOff ? IconId.Sound : IconId.Bell);
+                    DrawIcon(c, id == IconId.SoundOff ? IconId.Sound : id == IconId.BellOff ? IconId.Bell : IconId.Vibrate);
                     StrikeThrough(c);
                     break;
                 case IconId.Lock:

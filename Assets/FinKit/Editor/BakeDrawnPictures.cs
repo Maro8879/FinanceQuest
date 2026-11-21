@@ -55,12 +55,14 @@ namespace FinanceQuest.EditorTools
             var unused = ProceduralSprites.Rounded; unused = ProceduralSprites.Ring; unused = ProceduralSprites.Candles;
             unused = WallStreetArt.Night; unused = WallStreetArt.Day;
             TrophyArt.Locked();
-            TrophyArt.Earned(Palette.Accent, Palette.AccentLip, Palette.Brand);
+            foreach (TrophyKind k in System.Enum.GetValues(typeof(TrophyKind))) TrophyArt.Locked(k);
+            TrophyArt.Earned(TrophyKind.Start, Palette.Text);
+            TrophyArt.Earned(TrophyKind.Master, Palette.Text);
             // Te same kursy co w grze: z zaimportowanych plików JSON, a gdy ich brak – demo.
             foreach (var course in ContentLoader.Load() ?? DemoContent.Build())
             {
                 Illustrations.Get(course.Art, course.Color);
-                TrophyArt.Earned(course.Color, Palette.Darker(course.Color, 0.78f), Palette.Accent);
+                TrophyArt.Earned(TrophyArt.ForCourse(course), course.Color);
             }
         }
 

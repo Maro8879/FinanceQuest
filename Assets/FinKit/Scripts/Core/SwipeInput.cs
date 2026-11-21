@@ -10,7 +10,10 @@ namespace FinanceQuest
         const float MaxTime = 0.6f;        // dłuższy ruch to raczej przeciąganie niż swipe
         const float HorizontalRatio = 1.6f; // poziomo musi być wyraźnie więcej niż pionowo
 
-        bool down;
+        // Ustawiane przez poziome przewijanie (np. rząd trofeów): ten ruch palca nie jest swipem między ekranami.
+        public static bool Suppress;
+
+        bool down, suppressed;
         Vector2 start, last;
         float startTime;
 
@@ -22,13 +25,16 @@ namespace FinanceQuest
 
             if (pressed)
             {
-                if (!down) { down = true; start = pos; startTime = Time.unscaledTime; }
+                if (!down) { down = true; suppressed = false; start = pos; startTime = Time.unscaledTime; }
                 last = pos;   // po puszczeniu pozycja dotyku bywa nieaktualna – liczymy od ostatniej znanej
+                if (Suppress) suppressed = true;
                 return 0;
             }
             if (!down) return 0;
 
             down = false;
+            Suppress = false;
+            if (suppressed) return 0;
             Vector2 d = (last - start) * (1f / Mathf.Max(0.01f, canvasScale));
             float dt = Time.unscaledTime - startTime;
             if (dt <= MaxTime && Mathf.Abs(d.x) >= MinDistance && Mathf.Abs(d.x) >= Mathf.Abs(d.y) * HorizontalRatio)
