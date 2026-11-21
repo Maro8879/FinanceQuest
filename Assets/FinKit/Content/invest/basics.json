@@ -4,8 +4,8 @@
   "title": "Inflacja i procent składany",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Jan",
-    "editedAt": "2026-11-21T12:43:35Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T13:12:27Z"
   },
   "levels": [
     {
@@ -124,12 +124,50 @@
               "text": "Im wcześniej zaczniesz, tym mniej musisz wpłacić na ten sam cel. Długi horyzont wygładza krachy, bo rynek w dekadach historycznie rośnie."
             },
             {
-              "type": "space",
-              "size": 16
+              "type": "divider"
             },
             {
               "type": "text",
-              "text": "dodac przyklad"
+              "text": "Ile musisz odkładać, żeby mieć 100 000 € w wieku 65 lat"
+            },
+            {
+              "type": "table",
+              "rows": [
+                {
+                  "cells": [
+                    "Start w wieku",
+                    "Lata wpłat",
+                    "Wpłacone",
+                    "Kapitał w wieku 65 lat"
+                  ]
+                },
+                {
+                  "cells": [
+                    "25 lat",
+                    "40",
+                    "96 000 €",
+                    "479 000 €"
+                  ]
+                },
+                {
+                  "cells": [
+                    "35 lat",
+                    "30",
+                    "72 000 €",
+                    "227 000 €"
+                  ]
+                },
+                {
+                  "cells": [
+                    "45 lat",
+                    "20",
+                    "48 000 €",
+                    "98 000 €"
+                  ]
+                }
+              ],
+              "header": true,
+              "style": "a"
             }
           ]
         }
