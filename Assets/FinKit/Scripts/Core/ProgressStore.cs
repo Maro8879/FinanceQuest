@@ -9,6 +9,9 @@ namespace FinanceQuest
     {
         public const string PrefsKey = "fq.progress.v1";
         readonly HashSet<string> done = new HashSet<string>();
+        // Gwiazdki z testów i zadań (1–3) – zapamiętujemy najlepszy wynik każdego levelu.
+        public const string StarsKey = "fq.stars.v1";
+        readonly Dictionary<string, int> stars = new Dictionary<string, int>();
 
         public static ProgressStore Load()
         {
@@ -16,6 +19,12 @@ namespace FinanceQuest
             string raw = PlayerPrefs.GetString(PrefsKey, "");
             foreach (var id in raw.Split('|'))
                 if (id.Length > 0) s.done.Add(id);
+            foreach (var entry in PlayerPrefs.GetString(StarsKey, "").Split('|'))
+            {
+                int eq = entry.LastIndexOf('=');
+                int n;
+                if (eq > 0 && int.TryParse(entry.Substring(eq + 1), out n)) s.stars[entry.Substring(0, eq)] = n;
+            }
             return s;
         }
 
@@ -27,14 +36,39 @@ namespace FinanceQuest
 
         public bool IsDone(LevelData l) { return done.Contains(l.Id); }
 
+        // Najlepszy wynik levelu w gwiazdkach; -1 = level bez wyniku (np. zwykła lekcja).
+        public int Stars(LevelData l)
+        {
+            int s;
+            return stars.TryGetValue(l.Id, out s) ? s : -1;
+        }
+
+        // Zapisuje wynik, tylko jeśli jest lepszy od dotychczasowego.
+        public void SetStars(LevelData l, int value)
+        {
+            if (value <= Stars(l)) return;
+            stars[l.Id] = value;
+            SaveStars();
+        }
+
+        void SaveStars()
+        {
+            var parts = new List<string>();
+            foreach (var kv in stars) parts.Add(kv.Key + "=" + kv.Value);
+            PlayerPrefs.SetString(StarsKey, string.Join("|", parts.ToArray()));
+            PlayerPrefs.Save();
+        }
+
         // Trofeum „Start”: przyznawane za pierwszy ukończony level (rozpoczęcie edukacji finansowej).
         public bool Started { get { return done.Count > 0; } }
 
-        // Ustawienia → reset: kasuje ukończone levele we wszystkich kursach.
+        // Ustawienia → reset: kasuje ukończone levele i gwiazdki we wszystkich kursach.
         public void ResetAll()
         {
             done.Clear();
             Save();
+            stars.Clear();
+            SaveStars();
         }
 
         public void Complete(LevelData l)

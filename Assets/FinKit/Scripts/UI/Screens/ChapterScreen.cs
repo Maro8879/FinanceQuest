@@ -133,7 +133,10 @@ namespace FinanceQuest
             num.textWrappingMode = TextWrappingModes.NoWrap;
             Ui.Place(num.rectTransform, pad, pad - 2f, 80f, numberH);
 
-            if (state != ItemState.Current)
+            // Ukończony test / zadania: zamiast ptaszka najlepszy wynik w gwiazdkach (i zachęta, gdy nie ma kompletu).
+            int stars = state == ItemState.Done ? app.Progress.Stars(level) : -1;
+            if (stars >= 0) StarRow(card.Content, w - pad, pad, stars, w - 2 * pad - 44f);
+            else if (state != ItemState.Current)
             {
                 var si = Ui.Icon("StateIcon", card.Content, state == ItemState.Done ? IconId.Check : IconId.Lock,
                     state == ItemState.Done ? Color.white : Palette.LockedIcon, state == ItemState.Done ? 22f : 18f);
@@ -162,6 +165,22 @@ namespace FinanceQuest
 
             if (state != ItemState.Locked) card.SetClickable(open);
             return h + ScreenKit.Lip;
+        }
+
+        // Trzy gwiazdki wyrównane do prawej (right = prawa krawędź); poniżej „Popraw wynik”, jeśli nie ma kompletu.
+        static void StarRow(RectTransform parent, float right, float y, int stars, float hintW)
+        {
+            const float size = 17f, gap = 2f;
+            float x = right - 3 * size - 2 * gap;
+            for (int i = 0; i < 3; i++)
+            {
+                var s = Ui.Icon("Star", parent, IconId.Star, i < stars ? Palette.Accent : new Color(1f, 1f, 1f, 0.3f), size);
+                Ui.Place(s.rectTransform, x + i * (size + gap), y, size, size);
+            }
+            if (stars >= 3) return;
+            var hint = Ui.Text("Retry", parent, "Popraw wynik", 10.5f, Palette.WhiteSoft, FontWeight.SemiBold, TextAlignmentOptions.TopRight);
+            hint.textWrappingMode = TextWrappingModes.NoWrap;
+            Ui.Place(hint.rectTransform, right - hintW, y + size + 4f, hintW, 14f);
         }
     }
 }

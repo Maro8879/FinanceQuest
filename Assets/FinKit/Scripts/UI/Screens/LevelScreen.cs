@@ -24,7 +24,14 @@ namespace FinanceQuest
 
             var def = level.Def;
             bool hasTasks = def != null && def.tasks != null && def.tasks.Count > 0;
-            System.Action finish = () => { app.CompleteLevel(course, level); app.Back(); };
+            // Zaliczenie levelu; z zadań przychodzi też wynik w gwiazdkach (zapamiętujemy najlepszy).
+            System.Action<int> finish = stars =>
+            {
+                if (stars >= 0) app.Progress.SetStars(level, stars);
+                app.CompleteLevel(course, level);
+                app.Back();
+            };
+            int best = app.Progress.Stars(level);
             if (level.Kind == LevelKind.Lesson && def != null && def.pages != null && def.pages.Count > 0)
             {
                 LessonPages.Build(screen, app, level, () =>
@@ -34,15 +41,15 @@ namespace FinanceQuest
                         // Zadania na końcu lekcji – podmieniamy treść tego samego ekranu, więc „wstecz” wraca od razu do rozdziału.
                         for (int i = screen.childCount - 1; i >= 0; i--) Object.Destroy(screen.GetChild(i).gameObject);
                         app.SwipeForward = null;
-                        QuizScreen.Build(screen, app, def.tasks, false, finish);
+                        QuizScreen.Build(screen, app, def.tasks, false, best, finish);
                     }
-                    else finish();
+                    else finish(-1);
                 });
                 return;
             }
             if (hasTasks && level.Kind != LevelKind.MiniGame)
             {
-                QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, finish);
+                QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, best, finish);
                 return;
             }
             Placeholder(screen, app, course, ch, level, "Tu pojawi się mini gra.");

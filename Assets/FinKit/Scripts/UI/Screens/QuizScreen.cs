@@ -9,7 +9,8 @@ namespace FinanceQuest
 {
     // Ekran zadań: test rozdziału, level „Zadania” i zadania na końcu lekcji.
     // Jedno zadanie na raz: polecenie → odpowiedź → SPRAWDŹ → kolorowy pasek z wyjaśnieniem albo ciekawostką → DALEJ.
-    // Na końcu wynik (gwiazdki) i UKOŃCZ. Typy jak w edytorze treści: choice, gap, tiles, pairs, zones.
+    // Na końcu wynik w gwiazdkach: 0 gwiazdek = trzeba spróbować ponownie, 1–2 = można zaliczyć albo poprawić, 3 = komplet.
+    // Najlepszy wynik zapisuje LevelScreen (ProgressStore). Typy jak w edytorze treści: choice, gap, tiles, pairs, zones.
     // Wszystko działa na stuknięcia (bez przeciągania) – pewniej na telefonie i nie gryzie się z przewijaniem.
     // Ekran budujemy od nowa przy każdej zmianie (jak ankieta) – to kilkanaście kart, więc jest szybko i prosto.
     public class QuizScreen
@@ -33,7 +34,8 @@ namespace FinanceQuest
         readonly RectTransform screen;
         readonly List<TaskDef> tasks;
         readonly bool isTest;
-        readonly Action onFinish;
+        readonly int best;                  // dotychczasowy najlepszy wynik w gwiazdkach (-1 = jeszcze nie zaliczony)
+        readonly Action<int> onFinish;      // dostaje zdobyte gwiazdki
         readonly System.Random rng = new System.Random();
         readonly float W, m, cw;
 
@@ -55,17 +57,18 @@ namespace FinanceQuest
         RectTransform bar;
         TMP_InputField input;
 
-        public static void Build(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, Action onFinish)
+        public static void Build(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, int bestStars, Action<int> onFinish)
         {
-            new QuizScreen(screen, app, tasks, isTest, onFinish);
+            new QuizScreen(screen, app, tasks, isTest, bestStars, onFinish);
         }
 
-        QuizScreen(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, Action onFinish)
+        QuizScreen(RectTransform screen, FinanceQuestApp app, List<TaskDef> tasks, bool isTest, int bestStars, Action<int> onFinish)
         {
             this.screen = screen;
             this.app = app;
             this.tasks = tasks;
             this.isTest = isTest;
+            this.best = bestStars;
             this.onFinish = onFinish;
             W = app.ScreenWidth;
             m = ScreenKit.Margin;
@@ -170,6 +173,8 @@ namespace FinanceQuest
             float y = 6f;
             ProgressBar.Create(c, m, y, cw, 12f, Palette.Track, (index + (answered ? 1f : 0f)) / Mathf.Max(1, tasks.Count));
             y += 12f + 22f;
+
+            if (index == 0 && best >= 0 && best < 3) y += BestNote(c, y);
 
             var kick = Ui.Text("Kicker", c, (isTest ? "PYTANIE " : "ZADANIE ") + (index + 1) + " Z " + tasks.Count, 11.5f, Palette.TextMuted);
             kick.characterSpacing = 6f;
@@ -284,11 +289,19 @@ namespace FinanceQuest
 
         // ---------------- wynik ----------------
 
+        // 3 gwiazdki = bezbłędnie; 2 = co najmniej 2/3 poprawnych; 1 = co najmniej 1/3; mniej = 0 (trzeba powtórzyć).
+        int Stars()
+        {
+            int total = Mathf.Max(1, tasks.Count);
+            float ratio = (float)score / total;
+            return score >= total ? 3 : ratio >= 0.66f ? 2 : ratio >= 0.34f ? 1 : 0;
+        }
+
         float BuildSummary(RectTransform c)
         {
             int total = Mathf.Max(1, tasks.Count);
             float ratio = (float)score / total;
-            int stars = score == total ? 3 : ratio >= 0.66f ? 2 : ratio >= 0.34f ? 1 : 0;
+            int stars = Stars();
             float y = 30f;
 
             const float star = 54f, sgap = 14f;
@@ -302,7 +315,7 @@ namespace FinanceQuest
             }
             y += star + 12f + 26f;
 
-            string head = score == total ? "Bezbłędnie!" : ratio >= 0.5f ? "Dobra robota!" : "Prawie! Spróbuj jeszcze raz";
+            string head = stars == 3 ? "Bezbłędnie!" : stars == 2 ? "Dobra robota!" : stars == 1 ? "Zaliczone!" : "Spróbuj jeszcze raz";
             var title = Ui.Text("Title", c, head, 26f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.Top);
             float th = Ui.TextHeight(title, cw);
             Ui.Place(title.rectTransform, m, y, cw, th);
@@ -314,7 +327,48 @@ namespace FinanceQuest
             y += 22f + 24f;
 
             ProgressBar.Create(c, m + 24f, y, cw - 48f, 16f, Palette.Track, ratio);
-            return y + 16f;
+            y += 16f + 24f;
+
+            // Co dalej: przy 0 gwiazdek – powtórka; przy 1–2 – można poprawić; plus porównanie z najlepszym wynikiem.
+            string note;
+            if (stars == 0) note = "Zdobądź co najmniej 1 gwiazdkę, żeby zaliczyć ten level.";
+            else if (best > stars) note = "Twój najlepszy wynik to " + StarsText(best) + " – zostaje zapisany.";
+            else if (best >= 1 && stars > best) note = "Nowy rekord! Poprzednio " + StarsText(best) + ".";
+            else if (stars < 3) note = "Możesz spróbować ponownie i zdobyć 3 gwiazdki.";
+            else note = null;
+            if (note != null)
+            {
+                var n = Ui.Text("Note", c, note, 14.5f, Palette.TextMuted, FontWeight.Regular, TextAlignmentOptions.Top);
+                float nh = Ui.TextHeight(n, cw - 32f);
+                Ui.Place(n.rectTransform, m + 16f, y, cw - 32f, nh);
+                y += nh;
+            }
+            return y;
+        }
+
+        static string StarsText(int n)
+        {
+            return n + (n == 1 ? " gwiazdka" : " gwiazdki");
+        }
+
+        // Na pierwszym pytaniu powtórki: przypomnienie najlepszego wyniku i zachęta do kompletu.
+        float BestNote(RectTransform c, float y)
+        {
+            const float pad = 12f, star = 16f;
+            string text = "Twój najlepszy wynik: " + StarsText(best) + " z 3. Spróbuj zdobyć komplet!";
+            var t = Ui.Text("Best", c, text, 13.5f, Palette.Text, FontWeight.SemiBold);
+            float tw = cw - 2 * pad - 3 * star - 14f;
+            float th = Ui.TextHeight(t, tw);
+            float h = Mathf.Max(star, th) + 2 * pad;
+            var card = LipCard.Create(c, "BestNote", m, y, cw, h + 4f, SelFill, Palette.Accent, Palette.AccentLip, 14f, 4f, 2f);
+            for (int i = 0; i < 3; i++)
+            {
+                var s = Ui.Icon("Star", card.Content, IconId.Star, i < best ? Palette.AccentLip : Palette.LockedFill, star);
+                Ui.Place(s.rectTransform, pad + i * (star + 2f), (h - star) * 0.5f, star, star);
+            }
+            t.transform.SetParent(card.Content, false);
+            Ui.Place(t.rectTransform, pad + 3 * star + 14f, (h - th) * 0.5f, tw, th);
+            return h + 4f + 16f;
         }
 
         float BuildSummaryBar()
@@ -325,13 +379,20 @@ namespace FinanceQuest
             bar.pivot = new Vector2(0.5f, 0f);
             bar.anchoredPosition = Vector2.zero;
 
+            // 0 gwiazdek: tylko powtórka. 1–2: UKOŃCZ albo powtórka po lepszy wynik. 3: UKOŃCZ.
+            int stars = Stars();
             float y = 10f;
-            if (score < tasks.Count)
+            if (stars == 0)
+                Button(bar, m, y, cw, "SPRÓBUJ PONOWNIE", true, true, Restart);
+            else
             {
-                Button(bar, m, y, cw, "SPRÓBUJ JESZCZE RAZ", true, false, Restart);
-                y += ButtonH + 10f;
+                if (stars < 3)
+                {
+                    Button(bar, m, y, cw, "SPRÓBUJ PONOWNIE", true, false, Restart);
+                    y += ButtonH + 10f;
+                }
+                Button(bar, m, y, cw, "UKOŃCZ", true, true, () => onFinish(stars));
             }
-            Button(bar, m, y, cw, "UKOŃCZ", true, true, onFinish);
             float h = y + ButtonH + 20f;
             bar.sizeDelta = new Vector2(0f, h);
             return h;
