@@ -4,8 +4,8 @@
   "title": "Obligacje",
   "color": "#9C7A2E",
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:59:11Z"
+    "editedBy": "marek",
+    "editedAt": "2026-11-21T13:52:18Z"
   },
   "levels": [
     {
@@ -44,6 +44,28 @@
             {
               "type": "callout",
               "text": "Trzymasz do wykupu, a emitent nie zbankrutuje? Dostajesz **pełną kwotę**."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l6",
+      "kind": "lesson",
+      "title": "flimik obligacje",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "video",
+              "video": "filmy/obligacje-bez-napisow.mp4",
+              "videoSub": "filmy/obligacje-z-napisami.mp4",
+              "caption": ""
             }
           ]
         }
