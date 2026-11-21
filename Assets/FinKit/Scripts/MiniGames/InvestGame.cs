@@ -14,7 +14,7 @@ namespace FinanceQuest
         public const string Id = "12-miesiecy";
 
         const float ButtonH = 58f, BarH = 112f, ChartH = 170f;
-        const string Disclaimer = "To symulacja edukacyjna, nie stanowi doradztwa inwestycyjnego. Wyniki z przeszłości nie gwarantują przyszłych.";
+        const string Disclaimer = "This is an educational simulation, not investment advice. Past performance does not guarantee future results.";
 
         static readonly Color Good = Palette.Hex("3F8F5F"), Bad = Palette.Hex("C8553D");
         static readonly Color GoodFill = Palette.Hex("E7F3EB"), BadFill = Palette.Hex("FBE7E2"), SelFill = Palette.Hex("FFF6D1");
@@ -130,17 +130,17 @@ namespace FinanceQuest
         {
             // Tytuł gry stoi w nagłówku (tytuł levelu) – tu od razu treść.
             y += 4f;
-            y += Para(c, "Dostajesz wirtualne pieniądze. Wybierz, w co je włożyć, i przejdź rok miesiąc po miesiącu. " +
-                         "Będą spadki, decyzje pod presją i jedna próba oszustwa. Zobacz, jak działają emocje.", m, y, cw, 16f, Palette.Text) + 18f;
+            y += Para(c, "You get virtual money. Choose where to put it and go through a year, month by month. " +
+                         "Expect drops, decisions under pressure and one scam attempt. See how emotions work.", m, y, cw, 16f, Palette.Text) + 18f;
 
             var card = LipCard.Create(c, "Money", m, y, cw, 104f, Palette.Brand, Palette.Brand, Palette.Darker(Palette.Brand, 0.7f), ScreenKit.CardRadius, ScreenKit.Lip, 0f);
-            var l = Ui.Text("Label", card.Content, "TWÓJ WIRTUALNY KAPITAŁ", 11f, Palette.WhiteSoft);
+            var l = Ui.Text("Label", card.Content, "YOUR VIRTUAL CAPITAL", 11f, Palette.WhiteSoft);
             l.characterSpacing = 10f;
             Ui.Place(l.rectTransform, 18, 18, cw - 36, 16);
             var v = Ui.Text("Value", card.Content, Money(InvestConfig.Start), 34f, Color.white);
             Ui.Place(v.rectTransform, 18, 40, cw - 36, 44);
             y += 104f + 18f;
-            MainButton(bar, "ZACZYNAMY", () => Go(Stage.Choose));
+            MainButton(bar, "LET'S GO", () => Go(Stage.Choose));
             return y;
         }
 
@@ -148,11 +148,11 @@ namespace FinanceQuest
 
         float Choose(RectTransform c, float y)
         {
-            y += Kicker(c, "KROK 1 Z 2", y);
-            y += Para(c, "W co inwestujesz " + Money(InvestConfig.Start) + "?", m, y, cw, 22f, Palette.Text, FontWeight.ExtraBold) + 16f;
-            y += Option(c, y, Instrument.Etf, "ETF globalny", "Akcje firm z całego świata w jednym funduszu. Wyższy potencjał, duże wahania.", "RYZYKO: WYSOKIE", Bad) + 12f;
-            y += Option(c, y, Instrument.Bonds, "Obligacje", "Pożyczasz pieniądze państwu lub firmom. Niższe wahania, umiarkowany zysk.", "RYZYKO: NISKIE", Palette.Mustard) + 12f;
-            y += Option(c, y, Instrument.Deposit, "Lokata", "Gwarantowane odsetki ok. 3% rocznie. Żadnych wahań.", "BEZ WAHAŃ", Good) + 12f;
+            y += Kicker(c, "STEP 1 OF 2", y);
+            y += Para(c, "Where do you invest " + Money(InvestConfig.Start) + "?", m, y, cw, 22f, Palette.Text, FontWeight.ExtraBold) + 16f;
+            y += Option(c, y, Instrument.Etf, "Global ETF", "Shares of companies from all over the world in one fund. Higher potential, big swings.", "RISK: HIGH", Bad) + 12f;
+            y += Option(c, y, Instrument.Bonds, "Bonds", "You lend money to governments or companies. Smaller swings, moderate return.", "RISK: LOW", Palette.Mustard) + 12f;
+            y += Option(c, y, Instrument.Deposit, "Deposit", "Guaranteed interest of about 3% a year. No swings at all.", "NO SWINGS", Good) + 12f;
             return y;
         }
 
@@ -216,7 +216,7 @@ namespace FinanceQuest
             const float pad = 16f;
             float h = pad + 18f + 44f + 22f + 12f + ChartH + 18f + (sim.Sold ? 26f : 0f) + pad;
             var card = LipCard.Create(c, "Portfolio", m, y, cw, h, Palette.CardFill, Palette.CardEdge, Palette.CardLip, ScreenKit.CardRadius, ScreenKit.Lip, 2f);
-            var lab = Ui.Text("Label", card.Content, sim.Sold ? "TWOJA GOTÓWKA" : "WARTOŚĆ PORTFELA", 11f, Palette.TextMuted);
+            var lab = Ui.Text("Label", card.Content, sim.Sold ? "YOUR CASH" : "PORTFOLIO VALUE", 11f, Palette.TextMuted);
             lab.characterSpacing = 10f;
             Ui.Place(lab.rectTransform, pad, pad, cw - 2 * pad, 16f);
             valueText = Ui.Text("Value", card.Content, "", 34f, Palette.Text);
@@ -242,24 +242,24 @@ namespace FinanceQuest
             dot.sizeDelta = new Vector2(12f, 12f);
             var start = Ui.Text("Axis", card.Content, "start", 10.5f, Palette.TextMuted, FontWeight.SemiBold);
             Ui.Place(start.rectTransform, pad, cy + ChartH + 2f, 60f, 14f);
-            var end = Ui.Text("Axis", card.Content, "12 mies.", 10.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.TopRight);
+            var end = Ui.Text("Axis", card.Content, "12 mo.", 10.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.TopRight);
             Ui.Place(end.rectTransform, cw - pad - 34f - 80f, cy + ChartH + 2f, 80f, 14f);
             if (sim.Sold)
-                Para(card.Content, "Sprzedane w miesiącu " + sim.SoldMonth + ". Przerywana linia: **gdybyś trzymał**.",
+                Para(card.Content, "Sold in month " + sim.SoldMonth + ". Dashed line: **if you had held**.",
                     pad, cy + ChartH + 20f, cw - 2 * pad, 12.5f, Palette.TextMuted, FontWeight.SemiBold);
             y += h + ScreenKit.Lip + 12f;
 
             // Mały licznik wartości realnej.
             var real = LipCard.Create(c, "Real", m, y, cw, 54f, Palette.Background, Palette.CardEdge, Palette.CardEdge, 14f, 0f, 2f);
-            var rl = Ui.Text("Label", real.Content, "Realna wartość po inflacji (3%/rok)", 13f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.MidlineLeft);
+            var rl = Ui.Text("Label", real.Content, "Real value after inflation (3%/yr)", 13f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.MidlineLeft);
             Ui.Place(rl.rectTransform, 14f, 0f, cw - 140f, 50f);
             realText = Ui.Text("Value", real.Content, "", 16f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.MidlineRight);
             Ui.Place(realText.rectTransform, cw - 140f, 0f, 126f, 50f);
             y += 54f + 12f;
 
-            if (sim.Finished && animT >= 1f) MainButton(bar, "ZOBACZ WYNIK", () => Go(Stage.Summary));
-            else if (!playing) MainButton(bar, sim.Month == 0 ? "START" : "GRAJ DALEJ", () => { playing = true; Haptics.Tap(); Rebuild(); });
-            else Button(bar, m, 36f, cw, "PAUZA", false, () => { playing = false; Rebuild(); });
+            if (sim.Finished && animT >= 1f) MainButton(bar, "SEE RESULT", () => Go(Stage.Summary));
+            else if (!playing) MainButton(bar, sim.Month == 0 ? "START" : "RESUME", () => { playing = true; Haptics.Tap(); Rebuild(); });
+            else Button(bar, m, 36f, cw, "PAUSE", false, () => { playing = false; Rebuild(); });
 
             UpdateView();
             return y;
@@ -306,9 +306,9 @@ namespace FinanceQuest
             double pct = Lerp(sim.PctAt(prev), sim.PctAt(mo), t);
             float when = prev + (mo == 0 ? 0f : t);
 
-            kickerText.text = (mo == 0 ? "START" : "MIESIĄC " + mo + "/" + InvestConfig.Months) + " · " + InstrumentName(sim.Instrument).ToUpperInvariant();
+            kickerText.text = (mo == 0 ? "START" : "MONTH " + mo + "/" + InvestConfig.Months) + " · " + InstrumentName(sim.Instrument).ToUpperInvariant();
             valueText.text = Money(value);
-            changeText.text = PctSigned(pct) + " od wpłaty (" + Money(sim.PaidHistory[mo]) + ")";
+            changeText.text = PctSigned(pct) + " since paying in (" + Money(sim.PaidHistory[mo]) + ")";
             changeText.color = pct > 0.0005 ? Good : pct < -0.0005 ? Bad : Palette.TextMuted;
             realText.text = Money(InvestSim.Real(value, when));
 
@@ -392,7 +392,7 @@ namespace FinanceQuest
             float xh = Ui.TextHeight(probeX, tw);
             UnityEngine.Object.Destroy(probeX.gameObject);
 
-            string[] options = feedback != null ? new[] { "DALEJ" } : Options();
+            string[] options = feedback != null ? new[] { "NEXT" } : Options();
             float buttonsH = options.Length * (ButtonH + 10f);
             float h = pad + 18f + th + 10f + xh + 18f + buttonsH + pad - 10f;
 
@@ -401,7 +401,7 @@ namespace FinanceQuest
             Color edge = feedback == null ? Palette.CardEdge : feedbackGood ? Good : Bad;
             var card = LipCard.Create(holder, "Card", m, top, w, h, fill, edge, edge, ScreenKit.CardRadius, ScreenKit.Lip, 2f);
 
-            var k = Ui.Text("Kicker", card.Content, feedback != null ? (feedbackGood ? "DOBRZE" : "UWAGA") : kicker, 11f,
+            var k = Ui.Text("Kicker", card.Content, feedback != null ? (feedbackGood ? "WELL DONE" : "CAREFUL") : kicker, 11f,
                 feedback != null ? (feedbackGood ? Good : Bad) : Palette.TextMuted);
             k.characterSpacing = 12f;
             Ui.Place(k.rectTransform, pad, pad, tw, 16f);
@@ -425,9 +425,9 @@ namespace FinanceQuest
             switch (ev)
             {
                 case Ev.Crash1:
-                case Ev.Crash2: return new[] { "Sprzedaję wszystko", "Trzymam", "Dokupuję za " + Money(InvestConfig.TopUp) };
-                case Ev.Scam: return new[] { "Klikam w link", "Ignoruję i zgłaszam" };
-                default: return new[] { "DALEJ" };
+                case Ev.Crash2: return new[] { "I sell everything", "I hold", "I buy more for " + Money(InvestConfig.TopUp) };
+                case Ev.Scam: return new[] { "I click the link", "I ignore and report it" };
+                default: return new[] { "NEXT" };
             }
         }
 
@@ -444,18 +444,18 @@ namespace FinanceQuest
                 {
                     feedbackGood = false;
                     feedback = paperLoss > 0
-                        ? "Sprzedałeś. Strata **" + Money(paperLoss) + "** była dotąd tylko na papierze – teraz jest prawdziwa. Nie odrobisz jej, nawet gdy rynek wróci."
-                        : "Sprzedałeś. Od teraz Twoje pieniądze leżą w gotówce i nie rosną.";
+                        ? "You sold. The **" + Money(paperLoss) + "** loss was only on paper until now – now it's real. You won't win it back, even when the market recovers."
+                        : "You sold. From now on your money sits in cash and doesn't grow.";
                 }
                 else if (choice == CrashChoice.Hold)
                 {
                     feedbackGood = true;
-                    feedback = "Trzymasz. Spadek to na razie **strata na papierze** – realna staje się dopiero, gdy sprzedasz. Rynki po krachach zwykle z czasem odbijają.";
+                    feedback = "You hold. For now the drop is a **paper loss** – it only becomes real when you sell. Markets usually recover from crashes over time.";
                 }
                 else
                 {
                     feedbackGood = true;
-                    feedback = "Dokupiłeś w dołku za " + Money(InvestConfig.TopUp) + ". Za te same pieniądze masz teraz więcej jednostek niż przed spadkiem – gdy rynek odbije, zyskają najmocniej.";
+                    feedback = "You bought more in the dip for " + Money(InvestConfig.TopUp) + ". The same money now buys more units than before the drop – when the market recovers, they gain the most.";
                 }
             }
             else if (ev == Ev.Scam)
@@ -464,8 +464,8 @@ namespace FinanceQuest
                 sim.Scam(clicked);
                 feedbackGood = !clicked;
                 feedback = clicked
-                    ? "Straciłeś **" + Money(InvestConfig.ScamLoss) + "**. Czerwone flagi: presja czasu, skrócony link, nieznany numer. Bank nigdy nie prosi o logowanie przez link z SMS-a."
-                    : "Świetnie! Presja czasu i skrócony link to typowe oszustwo. Bank nie wysyła takich linków – zgłoś SMS w swoim banku i usuń go.";
+                    ? "You lost **" + Money(InvestConfig.ScamLoss) + "**. Red flags: time pressure, a shortened link, an unknown number. A bank never asks you to log in through a link in a text message."
+                    : "Great! Time pressure and a shortened link are a typical scam. Banks don't send links like that – report the text to your bank and delete it.";
             }
             Haptics.Tap();
             Rebuild();
@@ -478,35 +478,35 @@ namespace FinanceQuest
             switch (ev)
             {
                 case Ev.Crash1:
-                    kicker = "WIADOMOŚCI · MIESIĄC " + sim.Month;
-                    title = "Rynek mocno spada";
+                    kicker = "NEWS · MONTH " + sim.Month;
+                    title = "The market is falling hard";
                     text = etf
-                        ? "Nagłówki krzyczą o krachu. Twój portfel: **" + pct + "**. Znajomi mówią, że trzeba uciekać. Co robisz?"
-                        : "Akcje mocno spadają. Twoje obligacje też lekko tracą: **" + pct + "**. Znajomi sprzedają w panice. Co robisz?";
+                        ? "Headlines scream crash. Your portfolio: **" + pct + "**. Friends say it's time to get out. What do you do?"
+                        : "Stocks are falling hard. Your bonds are slightly down too: **" + pct + "**. Friends are panic-selling. What do you do?";
                     break;
                 case Ev.Crash2:
-                    kicker = "WIADOMOŚCI · MIESIĄC " + sim.Month;
-                    title = "Drugie, głębsze dno";
-                    text = "Kolejny miesiąc spadków – jesteś **" + pct + "** pod kreską. To najgorszy moment roku. Pamiętaj: strata na papierze staje się realna dopiero po sprzedaży.";
+                    kicker = "NEWS · MONTH " + sim.Month;
+                    title = "A second, deeper dip";
+                    text = "Another month of losses – you're **" + pct + "** down. This is the worst moment of the year. Remember: a paper loss only becomes real when you sell.";
                     break;
                 case Ev.Inflation:
-                    kicker = "TYMCZASEM · MIESIĄC " + sim.Month;
-                    title = "Akcje spadają, lokata rośnie";
-                    text = "Twoja lokata spokojnie rośnie: **" + Money(sim.Value) + "**. Ale ceny w sklepach też rosną, ok. 3% rocznie. Realnie masz **" +
-                           Money(sim.RealValue) + "** – inflacja zjada prawie cały zysk.";
+                    kicker = "MEANWHILE · MONTH " + sim.Month;
+                    title = "Stocks fall, the deposit grows";
+                    text = "Your deposit is growing steadily: **" + Money(sim.Value) + "**. But shop prices are rising too, about 3% a year. In real terms you have **" +
+                           Money(sim.RealValue) + "** – inflation eats almost all of the gain.";
                     break;
                 case Ev.Dividend:
-                    kicker = "DYWIDENDY · MIESIĄC " + sim.Month;
-                    title = "Spółki wypłaciły dywidendy";
-                    text = "Twój ETF jest **akumulujący** – sam reinwestuje dywidendy w kolejne akcje. Nic nie musisz robić, a zyski pracują dalej. To procent składany w praktyce.";
+                    kicker = "DIVIDENDS · MONTH " + sim.Month;
+                    title = "Companies paid dividends";
+                    text = "Your ETF is **accumulating** – it reinvests dividends into more shares by itself. You don't have to do anything, and the gains keep working. That's compound interest in practice.";
                     break;
                 default:
-                    kicker = "SMS · NIEZNANY NUMER";
-                    title = "Twoje konto jest zagrożone!";
-                    text = "„Wykryliśmy podejrzane logowanie. Zablokuj konto w ciągu 15 minut: **bit.ly/bank-pomoc**”";
+                    kicker = "TEXT · UNKNOWN NUMBER";
+                    title = "Your account is at risk!";
+                    text = "“We detected a suspicious login. Block your account within 15 minutes: **bit.ly/bank-help**”";
                     break;
             }
-            if (feedback != null) title = ev == Ev.Scam ? (feedbackGood ? "Oszustwo zatrzymane" : "To było oszustwo") : title;
+            if (feedback != null) title = ev == Ev.Scam ? (feedbackGood ? "Scam stopped" : "That was a scam") : title;
         }
 
         // ---------------- podsumowanie ----------------
@@ -534,11 +534,11 @@ namespace FinanceQuest
                 if (on && first) PopStar(s.rectTransform, star, i);
             }
             y = sy + star + 12f + 22f;
-            string head = stars == 3 ? "Komplet!" : stars == 2 ? "Dobra robota!" : "Ukończone!";
+            string head = stars == 3 ? "Full set!" : stars == 2 ? "Good job!" : "Completed!";
             var ht = Ui.Text("Title", c, head, 26f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.Top);
             Ui.Place(ht.rectTransform, m, y, cw, 34f);
             y += 34f + 4f;
-            var hs = Ui.Text("Sub", c, "Gwiazdki: " + stars + " z 3 · " + InstrumentName(sim.Instrument), 16f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Top);
+            var hs = Ui.Text("Sub", c, "Stars: " + stars + " of 3 · " + InstrumentName(sim.Instrument), 16f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Top);
             Ui.Place(hs.rectTransform, m, y, cw, 22f);
             y += 22f + 22f;
 
@@ -546,47 +546,47 @@ namespace FinanceQuest
             const float pad = 16f;
             double ch = sim.ChangeFromPaid;
             var card = LipCard.Create(c, "Result", m, y, cw, 128f, Palette.Brand, Palette.Brand, Palette.Darker(Palette.Brand, 0.7f), ScreenKit.CardRadius, ScreenKit.Lip, 0f);
-            var l = Ui.Text("Label", card.Content, "WARTOŚĆ KOŃCOWA", 11f, Palette.WhiteSoft);
+            var l = Ui.Text("Label", card.Content, "FINAL VALUE", 11f, Palette.WhiteSoft);
             l.characterSpacing = 10f;
             Ui.Place(l.rectTransform, pad, pad, cw - 2 * pad, 16f);
             var v = Ui.Text("Value", card.Content, Money(sim.Value), 34f, Color.white);
             Ui.Place(v.rectTransform, pad, pad + 18f, cw - 2 * pad, 44f);
-            var p = Ui.Text("Pct", card.Content, PctSigned(ch) + " od wpłaty · realnie " + Money(sim.RealValue), 14f,
+            var p = Ui.Text("Pct", card.Content, PctSigned(ch) + " since paying in · real " + Money(sim.RealValue), 14f,
                 ch >= 0 ? Palette.Hex("BFE6CC") : Palette.Hex("F6C5B8"), FontWeight.ExtraBold);
             Ui.Place(p.rectTransform, pad, pad + 66f, cw - 2 * pad, 40f);
             y += 128f + ScreenKit.Lip + 14f;
 
             // Porównanie wariantów.
-            y += Para(c, "Porównanie", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
+            y += Para(c, "Comparison", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
             string r1, r2, r3; double v1, v2, v3;
             if (sim.HasCrash)
             {
-                r1 = "Twój wynik"; v1 = sim.Value;
-                r2 = "Gdybyś sprzedał w panice"; v2 = InvestSim.PanicSell(sim.Instrument);
-                r3 = "Gdybyś trzymał do końca"; v3 = InvestSim.HoldToEnd(sim.Instrument);
+                r1 = "Your result"; v1 = sim.Value;
+                r2 = "If you had panic-sold"; v2 = InvestSim.PanicSell(sim.Instrument);
+                r3 = "If you had held to the end"; v3 = InvestSim.HoldToEnd(sim.Instrument);
             }
             else
             {
-                r1 = "Twój wynik (lokata)"; v1 = sim.Value;
-                r2 = "Lokata realnie, po inflacji"; v2 = InvestSim.Real(InvestSim.HoldToEnd(Instrument.Deposit), InvestConfig.Months);
-                r3 = "ETF trzymany do końca"; v3 = InvestSim.HoldToEnd(Instrument.Etf);
+                r1 = "Your result (deposit)"; v1 = sim.Value;
+                r2 = "Deposit in real terms, after inflation"; v2 = InvestSim.Real(InvestSim.HoldToEnd(Instrument.Deposit), InvestConfig.Months);
+                r3 = "ETF held to the end"; v3 = InvestSim.HoldToEnd(Instrument.Etf);
             }
             y += CompareRow(c, y, r1, v1, true) + 8f;
             y += CompareRow(c, y, r2, v2, false) + 8f;
             y += CompareRow(c, y, r3, v3, false) + 16f;
 
             // Wnioski.
-            y += Para(c, "Wnioski", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 6f;
+            y += Para(c, "Takeaways", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 6f;
             y += Para(c, Lessons(), m, y, cw, 15f, Palette.Text) + 16f;
 
             // Za co są gwiazdki.
-            y += Para(c, "Za co gwiazdki", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
-            y += StarRow(c, y, "Ukończyłeś symulację", "Cały rok, miesiąc po miesiącu", sim.FirstSteps) + 8f;
-            y += StarRow(c, y, "Nie spanikowałeś", sim.HasCrash ? "Trzymałeś albo dokupiłeś w krachu" : "Lokata nie ma krachu – spróbuj ETF albo obligacji", sim.NoPanic) + 8f;
-            y += StarRow(c, y, "Czujny na oszustwa", "Zgłosiłeś podejrzany SMS", sim.ScamAware) + 8f;
+            y += Para(c, "How you earn stars", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
+            y += StarRow(c, y, "You finished the simulation", "A whole year, month by month", sim.FirstSteps) + 8f;
+            y += StarRow(c, y, "You didn't panic", sim.HasCrash ? "You held or bought more in the crash" : "A deposit has no crash – try the ETF or bonds", sim.NoPanic) + 8f;
+            y += StarRow(c, y, "Scam-aware", "You reported the suspicious text", sim.ScamAware) + 8f;
 
-            MainButton(bar, "KONTYNUUJ", () => { if (onFinish != null) onFinish(); });
-            Button(bar, m, 36f + ButtonH + 10f, cw, "ZAGRAJ PONOWNIE", false, () => { sim = null; completed = false; Go(Stage.Choose); });
+            MainButton(bar, "CONTINUE", () => { if (onFinish != null) onFinish(); });
+            Button(bar, m, 36f + ButtonH + 10f, cw, "PLAY AGAIN", false, () => { sim = null; completed = false; Go(Stage.Choose); });
             return y;
         }
 
@@ -645,17 +645,17 @@ namespace FinanceQuest
         {
             string s;
             if (!sim.HasCrash)
-                s = "Lokata dała pewne odsetki, ale inflacja zjadła prawie cały zysk – realnie masz tyle, co na starcie. Bezpiecznie nie znaczy, że pieniądze rosną.";
+                s = "The deposit paid sure interest, but inflation ate almost all of the gain – in real terms you have what you started with. Safe doesn't mean your money grows.";
             else if (sim.Sold)
-                s = "Sprzedaż w dołku zamieniła stratę na papierze w realną. Gdybyś trzymał, miałbyś " + Money(InvestSim.HoldToEnd(sim.Instrument)) +
-                    ". Największym wrogiem inwestora są emocje, nie spadki.";
+                s = "Selling in the dip turned a paper loss into a real one. If you had held, you'd have " + Money(InvestSim.HoldToEnd(sim.Instrument)) +
+                    ". An investor's worst enemy is emotion, not drops.";
             else if (sim.BoughtMore)
-                s = "Dokupiłeś, gdy było tanio – po odbiciu te pieniądze urosły najmocniej. Spadek był okazją, a nie końcem świata.";
+                s = "You bought more when it was cheap – after the rebound that money grew the most. The drop was an opportunity, not the end of the world.";
             else if (sim.Instrument == Instrument.Etf)
-                s = "Przetrwałeś spadek o ok. 15% i rynek odrobił stratę. Wahania to cena za wyższy potencjał – liczy się czas, nie pojedyncze miesiące.";
+                s = "You rode out a drop of about 15% and the market made up the loss. Swings are the price of higher potential – time matters, not single months.";
             else
-                s = "Obligacje wahały się mało i dały umiarkowany zysk. Mniejsze ryzyko to spokojniejsza głowa, ale i niższy potencjał.";
-            if (sim.ScamClicked) s += " A SMS z linkiem kosztował Cię " + Money(InvestConfig.ScamLoss) + " – bank nigdy nie wysyła takich wiadomości.";
+                s = "Bonds swung little and gave a moderate return. Lower risk means more peace of mind, but also lower potential.";
+            if (sim.ScamClicked) s += " And the text with a link cost you " + Money(InvestConfig.ScamLoss) + " – a bank never sends messages like that.";
             return s;
         }
 
@@ -670,10 +670,10 @@ namespace FinanceQuest
 
         static string InstrumentName(Instrument i)
         {
-            return i == Instrument.Etf ? "ETF globalny" : i == Instrument.Bonds ? "Obligacje" : "Lokata";
+            return i == Instrument.Etf ? "Global ETF" : i == Instrument.Bonds ? "Bonds" : "Deposit";
         }
 
-        // 1 045,30 € – polski zapis (spacja tysięcy, przecinek dziesiętny), niezależnie od ustawień telefonu.
+        // 1,045.30 € – zapis angielski (przecinek tysięcy, kropka dziesiętna), niezależnie od ustawień telefonu.
         public static string Money(double v)
         {
             string s = Math.Abs(v).ToString("0.00", CultureInfo.InvariantCulture);
@@ -682,16 +682,16 @@ namespace FinanceQuest
             var sb = new System.Text.StringBuilder();
             for (int i = 0; i < whole.Length; i++)
             {
-                if (i > 0 && (whole.Length - i) % 3 == 0) sb.Append(' ');   // twarda spacja – kwota nie łamie się na dwie linie
+                if (i > 0 && (whole.Length - i) % 3 == 0) sb.Append(',');
                 sb.Append(whole[i]);
             }
-            return (v < 0 ? "-" : "") + sb + "," + frac + " €";
+            return (v < 0 ? "-" : "") + sb + "." + frac + " €";
         }
 
         static string PctSigned(double v)
         {
             double p = Math.Round(v * 1000.0) / 10.0;   // jedno miejsce po przecinku
-            string s = Math.Abs(p).ToString("0.0", CultureInfo.InvariantCulture).Replace('.', ',');
+            string s = Math.Abs(p).ToString("0.0", CultureInfo.InvariantCulture);
             return (p > 0 ? "+" : p < 0 ? "−" : "") + s + "%";
         }
     }

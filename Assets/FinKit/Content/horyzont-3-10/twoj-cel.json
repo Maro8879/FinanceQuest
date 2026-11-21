@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "twoj-cel",
-  "title": "Twój cel",
+  "title": "Your goal",
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Dlaczego 3–10 lat to inna gra",
+      "title": "Why 3–10 years is a different game",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Dlaczego 3–10 lat to inna gra"
+              "text": "Why 3–10 years is a different game"
             },
             {
               "type": "image",
@@ -28,18 +28,18 @@
             },
             {
               "type": "text",
-              "text": "Masz czas, żeby **przeczekać część spadków**, ale nie tyle, żeby ignorować każdy krach. Dlatego łączy się różne aktywa:"
+              "text": "You have time to **ride out some of the drops**, but not enough to ignore every crash. That's why you combine different assets:"
             },
             {
               "type": "list",
               "items": [
-                "**Akcje** – dają wzrost",
-                "**Obligacje** – dają stabilność"
+                "**Stocks** – bring growth",
+                "**Bonds** – bring stability"
               ]
             },
             {
               "type": "callout",
-              "text": "Cel: **pobić inflację** bez ryzyka, że tuż przed wypłatą stracisz połowę."
+              "text": "The goal: **beat inflation** without the risk of losing half just before you withdraw."
             }
           ]
         }
@@ -53,13 +53,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Wyznaczanie celu i kwoty",
+      "title": "Setting a goal and an amount",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Wyznaczanie celu i kwoty"
+              "text": "Setting a goal and an amount"
             },
             {
               "type": "image",
@@ -70,15 +70,15 @@
             },
             {
               "type": "text",
-              "text": "Dobry cel ma **kwotę i datę**. Zamiast „chcę oszczędzać” – „**20 000 € na wkład własny za 6 lat**”."
+              "text": "A good goal has **an amount and a date**. Instead of “I want to save” – “**20,000 € for a down payment in 6 years**”."
             },
             {
               "type": "text",
-              "text": "Wtedy łatwo policzysz, **ile odkładać** co miesiąc i jakie ryzyko możesz przyjąć."
+              "text": "Then you can easily work out **how much to put aside** each month and what risk you can take."
             },
             {
               "type": "callout",
-              "text": "Im bliżej daty celu, tym więcej pieniędzy przenoś do **bezpieczniejszych aktywów**."
+              "text": "The closer the goal date, the more money you move into **safer assets**."
             }
           ]
         }
@@ -92,13 +92,13 @@
     {
       "id": "l3",
       "kind": "lesson",
-      "title": "Dlaczego nie wszystko na jedną kartę",
+      "title": "Why not put everything on one card",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Dlaczego nie wszystko na jedną kartę"
+              "text": "Why not put everything on one card"
             },
             {
               "type": "image",
@@ -109,15 +109,15 @@
             },
             {
               "type": "text",
-              "text": "Gdy cały kapitał siedzi w jednym aktywie, **jeden zły rok** może zniszczyć plan."
+              "text": "When all your capital sits in one asset, **one bad year** can destroy the plan."
             },
             {
               "type": "text",
-              "text": "Podział na **akcje, obligacje i gotówkę** sprawia, że gdy jedna część spada, inne zwykle trzymają wartość albo rosną."
+              "text": "Splitting into **stocks, bonds and cash** means that when one part falls, the others usually hold their value or rise."
             },
             {
               "type": "callout",
-              "text": "Portfel rośnie wolniej w najlepszym scenariuszu, ale **dużo mniej boli** w najgorszym."
+              "text": "The portfolio grows more slowly in the best case, but **hurts much less** in the worst."
             }
           ]
         }
@@ -131,28 +131,28 @@
     {
       "id": "l4",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Który cel jest dobrze ustawiony?",
+          "prompt": "Which goal is set well?",
           "options": [
             {
-              "text": "Chcę więcej oszczędzać",
+              "text": "I want to save more",
               "correct": false
             },
             {
-              "text": "20 000 € na wkład własny za 6 lat",
+              "text": "20,000 € for a down payment in 6 years",
               "correct": true
             },
             {
-              "text": "Chcę być bogaty",
+              "text": "I want to be rich",
               "correct": false
             }
           ],
           "multi": false,
-          "explain": "Dobry cel ma kwotę i datę – wtedy policzysz, ile odkładać co miesiąc.",
-          "fact": "Z kwotą i datą łatwiej też dobrać ryzyko.",
+          "explain": "A good goal has an amount and a date – then you can work out how much to put aside each month.",
+          "fact": "With an amount and a date it's also easier to choose the risk.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -166,18 +166,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Im bliżej daty celu, tym więcej pieniędzy przenosisz do ___ aktywów.",
+          "prompt": "Complete the sentence",
+          "text": "The closer the goal date, the more money you move into ___ assets.",
           "answers": [
-            "bezpieczniejszych"
+            "safer"
           ],
           "wrong": [
-            "ryzykowniejszych",
-            "tańszych"
+            "riskier",
+            "cheaper"
           ],
           "mode": "choose",
-          "explain": "Tuż przed wypłatą nie możesz sobie pozwolić na duży spadek.",
-          "fact": "Tak działają fundusze z datą docelową – z czasem same zmniejszają udział akcji.",
+          "explain": "Right before you withdraw, you can't afford a big drop.",
+          "fact": "That's how target-date funds work – over time they reduce the share of stocks on their own.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -189,23 +189,23 @@
         },
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
-              "left": "Akcje",
-              "right": "Dają wzrost"
+              "left": "Stocks",
+              "right": "Bring growth"
             },
             {
-              "left": "Obligacje",
-              "right": "Dają stabilność"
+              "left": "Bonds",
+              "right": "Bring stability"
             },
             {
-              "left": "Gotówka",
-              "right": "Jest dostępna od razu"
+              "left": "Cash",
+              "right": "Available right away"
             }
           ],
-          "explain": "Na 3–10 lat łączysz różne aktywa – każde ma w portfelu inne zadanie.",
-          "fact": "Podział pieniędzy na kilka aktywów to dywersyfikacja.",
+          "explain": "For 3–10 years you combine different assets – each has a different job in the portfolio.",
+          "fact": "Splitting money across several assets is called diversification.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -220,14 +220,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Jeden zły rok nie zniszczy planu",
+          "prompt": "Build the sentence",
+          "answer": "One bad year won't destroy the plan",
           "extra": [
-            "dobry",
-            "zawsze"
+            "good",
+            "always"
           ],
-          "explain": "Gdy pieniądze są podzielone między różne aktywa, spadek jednego nie przekreśla celu.",
-          "fact": "Portfel rośnie wtedy wolniej w najlepszym scenariuszu, ale dużo mniej boli w najgorszym.",
+          "explain": "When your money is split across different assets, a drop in one doesn't wipe out the goal.",
+          "fact": "The portfolio then grows more slowly in the best case, but hurts much less in the worst.",
           "options": [],
           "pairs": [],
           "zones": [],

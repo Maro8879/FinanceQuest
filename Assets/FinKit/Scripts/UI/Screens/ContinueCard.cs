@@ -31,7 +31,7 @@ namespace FinanceQuest
             float cy = Pad - 2f;
 
             // Nagłówek karty + plakietka z nazwą kursu w jego kolorze.
-            var label = Ui.Text("Label", root, started ? "KONTYNUUJ" : "ZACZNIJ", 11.5f, Palette.TextMuted, FontWeight.ExtraBold, TextAlignmentOptions.CaplineLeft);
+            var label = Ui.Text("Label", root, started ? "CONTINUE" : "START", 11.5f, Palette.TextMuted, FontWeight.ExtraBold, TextAlignmentOptions.CaplineLeft);
             label.characterSpacing = 6f;
             Ui.Place(label.rectTransform, Pad, cy, inner * 0.5f, 20f);
             var tag = Ui.Text("Tag", root, course.ShortName, 11f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
@@ -48,7 +48,7 @@ namespace FinanceQuest
             float th = Ui.TextHeight(title, inner);
             Ui.Place(title.rectTransform, Pad, cy, inner, th);
             cy += th + 2f;
-            var where = Ui.Text("Where", root, "Rozdział " + (chIndex + 1) + " · " + ch.Title + " · level " + level.Number + " z " + ch.Levels.Count,
+            var where = Ui.Text("Where", root, "Chapter " + (chIndex + 1) + " · " + ch.Title + " · level " + level.Number + " of " + ch.Levels.Count,
                 12.5f, Palette.TextMuted, FontWeight.SemiBold);
             float wh = Ui.TextHeight(where, inner);
             Ui.Place(where.rectTransform, Pad, cy, inner, wh);
@@ -68,7 +68,7 @@ namespace FinanceQuest
 
             // Duży żółty przycisk.
             var btn = LipCard.Create(root, "Go", Pad, cy, inner, ButtonH, Palette.Accent, Palette.Accent, Palette.AccentLip, 14f, 5f, 0f);
-            var bl = Ui.Text("Label", btn.Content, started ? "KONTYNUUJ" : "ZACZNIJ", 16f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+            var bl = Ui.Text("Label", btn.Content, started ? "CONTINUE" : "START", 16f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
             Ui.Stretch(bl.rectTransform);
             int ci = chIndex, li = lvIndex;
             btn.SetClickable(() =>

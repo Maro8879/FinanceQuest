@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "akcje-obligacje-i-etf",
-  "title": "Akcje, obligacje i ETF",
+  "title": "Stocks, bonds and ETFs",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Maro",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Co to jest akcja?",
+      "title": "What is a share?",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Co to jest akcja?"
+              "text": "What is a share?"
             },
             {
               "type": "image",
@@ -28,17 +28,17 @@
             },
             {
               "type": "text",
-              "text": "**Akcja** to udział w firmie. Kupując choćby jedną, stajesz się **współwłaścicielem** spółki i masz prawo do części jej zysków."
+              "text": "A **share** is a stake in a company. By buying even one, you become a **co-owner** of the company and have a right to part of its profits."
             },
             {
               "type": "text",
-              "text": "Zarabiasz na dwa sposoby:"
+              "text": "You make money in two ways:"
             },
             {
               "type": "list",
               "items": [
-                "**Wzrost kursu** – firma się rozwija i ktoś odkupi Twój udział drożej",
-                "**Dywidenda** – firma dzieli się z Tobą zyskiem"
+                "**Price growth** – the company grows and someone buys your stake for more",
+                "**Dividend** – the company shares its profit with you"
               ]
             }
           ]
@@ -53,13 +53,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Co to jest dywidenda?",
+      "title": "What is a dividend?",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Co to jest dywidenda?"
+              "text": "What is a dividend?"
             },
             {
               "type": "image",
@@ -70,18 +70,18 @@
             },
             {
               "type": "text",
-              "text": "**Dywidenda** to część zysku, którą spółka wypłaca akcjonariuszom, najczęściej w gotówce. To nagroda za powierzenie firmie kapitału."
+              "text": "A **dividend** is the part of the profit a company pays out to shareholders, most often in cash. It's a reward for trusting the company with your capital."
             },
             {
               "type": "list",
               "items": [
-                "**Młode, szybko rosnące firmy** – zwykle cały zysk inwestują w rozwój",
-                "**Dojrzałe, stabilne firmy** – wypłacają regularnie, np. raz w roku lub co kwartał"
+                "**Young, fast-growing companies** – usually invest all their profit in growth",
+                "**Mature, stable companies** – pay out regularly, e.g. once a year or every quarter"
               ]
             },
             {
               "type": "callout",
-              "text": "O wypłacie decyduje spółka – dywidenda **nie jest gwarantowana**."
+              "text": "The company decides on the payout – a dividend is **not guaranteed**."
             }
           ]
         }
@@ -95,13 +95,13 @@
     {
       "id": "l3",
       "kind": "lesson",
-      "title": "Co to jest ETF?",
+      "title": "What is an ETF?",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Co to jest ETF?"
+              "text": "What is an ETF?"
             },
             {
               "type": "image",
@@ -112,19 +112,19 @@
             },
             {
               "type": "text",
-              "text": "**ETF** (Exchange-Traded Fund) to fundusz notowany na giełdzie – gotowy **koszyk** dziesiątek, a nawet tysięcy akcji lub obligacji. Jedna jednostka to kawałek wszystkich firm w środku."
+              "text": "An **ETF** (Exchange-Traded Fund) is a fund listed on the stock exchange – a ready-made **basket** of dozens or even thousands of stocks or bonds. One unit is a piece of every company inside."
             },
             {
               "type": "list",
               "items": [
-                "**Naśladuje indeks**, np. S&P 500 lub MSCI World",
-                "**Od razu dywersyfikuje** Twoje pieniądze",
-                "**Ma niskie opłaty** w porównaniu z tradycyjnymi funduszami"
+                "**It tracks an index**, e.g. the S&P 500 or MSCI World",
+                "**It diversifies** your money straight away",
+                "**It has low fees** compared with traditional funds"
               ]
             },
             {
               "type": "callout",
-              "text": "Wartość ETF-u nadal **waha się razem z rynkiem**."
+              "text": "An ETF's value still **moves up and down with the market**."
             },
             {
               "type": "image",
@@ -145,7 +145,7 @@
     {
       "id": "l6",
       "kind": "lesson",
-      "title": "flimik etf",
+      "title": "ETF video",
       "pages": [
         {
           "blocks": [
@@ -167,13 +167,13 @@
     {
       "id": "l4",
       "kind": "lesson",
-      "title": "Co to jest obligacja?",
+      "title": "What is a bond?",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Co to jest obligacja?"
+              "text": "What is a bond?"
             },
             {
               "type": "image",
@@ -184,18 +184,18 @@
             },
             {
               "type": "text",
-              "text": "**Obligacja** to pożyczka: pożyczasz pieniądze państwu, samorządowi albo firmie. Nie jesteś współwłaścicielem, tylko **wierzycielem**."
+              "text": "A **bond** is a loan: you lend money to a state, a local government or a company. You're not a co-owner, but a **creditor**."
             },
             {
               "type": "list",
               "items": [
-                "**Odsetki (kupon)** – Twoje wynagrodzenie za pożyczkę",
-                "**Dzień wykupu** – termin, w którym dostajesz z powrotem całą kwotę"
+                "**Interest (coupon)** – your payment for the loan",
+                "**Maturity date** – the day you get the whole amount back"
               ]
             },
             {
               "type": "text",
-              "text": "Obligacje są zwykle **bezpieczniejsze i bardziej przewidywalne** niż akcje – ale tylko na tyle, na ile wypłacalny jest emitent."
+              "text": "Bonds are usually **safer and more predictable** than stocks – but only as safe as the issuer is solvent."
             }
           ]
         }
@@ -209,7 +209,7 @@
     {
       "id": "l7",
       "kind": "lesson",
-      "title": "filmik akcja vs obligacja",
+      "title": "share vs bond video",
       "pages": [
         {
           "blocks": [
@@ -231,31 +231,31 @@
     {
       "id": "l5",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
-              "left": "Akcja",
-              "right": "Udział w firmie"
+              "left": "Share",
+              "right": "A stake in a company"
             },
             {
-              "left": "Obligacja",
-              "right": "Pożyczka dla państwa lub firmy"
+              "left": "Bond",
+              "right": "A loan to a state or a company"
             },
             {
               "left": "ETF",
-              "right": "Koszyk wielu akcji lub obligacji"
+              "right": "A basket of many stocks or bonds"
             },
             {
-              "left": "Dywidenda",
-              "right": "Część zysku wypłacana akcjonariuszom"
+              "left": "Dividend",
+              "right": "Part of the profit paid to shareholders"
             }
           ],
-          "explain": "Akcja to udział, obligacja to pożyczka, ETF to koszyk, a dywidenda to wypłata części zysku.",
-          "fact": "Jeden globalny ETF może mieć w środku tysiące spółek z całego świata.",
+          "explain": "A share is a stake, a bond is a loan, an ETF is a basket, and a dividend is a payout of part of the profit.",
+          "fact": "A single global ETF can hold thousands of companies from all over the world.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -270,24 +270,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Na czym możesz zarobić, mając akcje?",
+          "prompt": "How can you make money from owning shares?",
           "options": [
             {
-              "text": "Na wzroście kursu",
+              "text": "From price growth",
               "correct": true
             },
             {
-              "text": "Na stałym kuponie",
+              "text": "From a fixed coupon",
               "correct": false
             },
             {
-              "text": "Na dywidendzie",
+              "text": "From dividends",
               "correct": true
             }
           ],
           "multi": true,
-          "explain": "Akcje zarabiają przez wzrost kursu i dywidendy. Stały kupon to cecha obligacji.",
-          "fact": "Nie każda spółka wypłaca dywidendę – młode firmy często inwestują cały zysk w rozwój.",
+          "explain": "Shares make money through price growth and dividends. A fixed coupon is a feature of bonds.",
+          "fact": "Not every company pays a dividend – young companies often invest all their profit in growth.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -301,18 +301,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Kupując obligację, stajesz się ___ emitenta.",
+          "prompt": "Complete the sentence",
+          "text": "When you buy a bond, you become the issuer's ___.",
           "answers": [
-            "wierzycielem"
+            "creditor"
           ],
           "wrong": [
-            "współwłaścicielem",
-            "pracownikiem"
+            "co-owner",
+            "employee"
           ],
           "mode": "choose",
-          "explain": "Obligacja to pożyczka – nie masz udziału w firmie, tylko prawo do zwrotu pieniędzy z odsetkami.",
-          "fact": "Dzień, w którym dostajesz z powrotem pożyczoną kwotę, to dzień wykupu.",
+          "explain": "A bond is a loan – you don't own part of the company, you have a right to get your money back with interest.",
+          "fact": "The day you get the lent amount back is the maturity date.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -324,24 +324,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Co robi większość ETF-ów?",
+          "prompt": "What do most ETFs do?",
           "options": [
             {
-              "text": "Wybiera akcje, które na pewno urosną",
+              "text": "Pick stocks that are sure to rise",
               "correct": false
             },
             {
-              "text": "Gwarantuje stały zysk",
+              "text": "Guarantee a fixed profit",
               "correct": false
             },
             {
-              "text": "Naśladuje wybrany indeks, np. S&P 500",
+              "text": "Track a chosen index, e.g. the S&P 500",
               "correct": true
             }
           ],
           "multi": false,
-          "explain": "ETF-y pasywne kopiują indeks – nie próbują przechytrzyć rynku i nie dają gwarancji.",
-          "fact": "Dzięki temu mają zwykle dużo niższe opłaty niż tradycyjne fundusze.",
+          "explain": "Passive ETFs copy an index – they don't try to outsmart the market and give no guarantees.",
+          "fact": "That's why they usually have much lower fees than traditional funds.",
           "extra": [],
           "pairs": [],
           "zones": [],

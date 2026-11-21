@@ -35,10 +35,10 @@ namespace FinanceQuest
             bool won = done == total && total > 0;
             const float trophyW = 44f, trophyH = 44f * TrophyArt.BoxH / TrophyArt.BoxW;
             float tx = m + ring + 16f, tw = cw - ring - 16f - trophyW - 10f;
-            var line1 = Ui.Text("Chapters", content, done + " z " + total + " rozdziałów", 15f, Palette.Text, FontWeight.ExtraBold);
+            var line1 = Ui.Text("Chapters", content, done + " of " + total + " chapters", 15f, Palette.Text, FontWeight.ExtraBold);
             Ui.Place(line1.rectTransform, tx, 4f + ring * 0.5f - 20f, tw, 20f);
             int left = total - done;
-            var line2 = Ui.Text("ToTrophy", content, won ? "Puchar zdobyty!" : "Jeszcze " + left + " do pucharu", 12.5f, Palette.TextMuted, FontWeight.SemiBold);
+            var line2 = Ui.Text("ToTrophy", content, won ? "Trophy won!" : left + " more to the trophy", 12.5f, Palette.TextMuted, FontWeight.SemiBold);
             Ui.Place(line2.rectTransform, tx, 4f + ring * 0.5f + 2f, tw, 18f);
 
             var cup = Ui.Rect("Trophy", content).gameObject.AddComponent<UnityEngine.UI.Image>();
@@ -100,17 +100,17 @@ namespace FinanceQuest
             {
                 case ItemState.Done:
                     fill = ch.Color; edge = ch.Color; lip = Palette.Darker(ch.Color);
-                    title = Color.white; sub = Palette.WhiteSoft; subText = "Ukończony";
+                    title = Color.white; sub = Palette.WhiteSoft; subText = "Completed";
                     break;
                 case ItemState.Current:
                     fill = ch.Color; edge = ch.Color; lip = Palette.Darker(ch.Color);
                     title = Color.white; sub = Palette.WhiteSoft;
-                    subText = app.Progress.DoneCount(ch) + " / " + ContentText.Plural(ch.Levels.Count, "level", "levele", "leveli");
+                    subText = app.Progress.DoneCount(ch) + " / " + ContentText.Plural(ch.Levels.Count, "level", "levels", "levels");
                     break;
                 default:
                     fill = Palette.LockedFill; edge = Palette.LockedEdge; lip = Palette.LockedLip;
                     title = Palette.TextLocked; sub = Palette.TextLocked;
-                    subText = "0 / " + ContentText.Plural(ch.Levels.Count, "level", "levele", "leveli");
+                    subText = "0 / " + ContentText.Plural(ch.Levels.Count, "level", "levels", "levels");
                     break;
             }
 

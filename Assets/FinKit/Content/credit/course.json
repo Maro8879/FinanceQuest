@@ -1,8 +1,8 @@
 {
   "format": 1,
   "id": "credit",
-  "title": "INWESTOWANIE KRÓTKOTERMINOWE (obarczone dużym ryzykiem)",
-  "shortName": "Krótkoterminowe",
+  "title": "SHORT-TERM INVESTING (high risk)",
+  "shortName": "Short-term",
   "color": "#4A5D73",
   "art": "Candles",
   "icon": "Chart",

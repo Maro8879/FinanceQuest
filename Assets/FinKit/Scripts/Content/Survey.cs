@@ -25,7 +25,7 @@ namespace FinanceQuest
         public static List<SurveyQuestion> Test(List<CourseData> courses)
         {
             var list = new List<SurveyQuestion>();
-            string[] questions = { "Który kurs brzmi dla Ciebie najciekawiej?", "Od którego kursu chcesz zacząć?" };
+            string[] questions = { "Which course sounds most interesting to you?", "Which course do you want to start with?" };
             var rng = new System.Random();
             foreach (var text in questions)
             {

@@ -323,7 +323,7 @@ namespace FinanceQuest
 
             // Bez paska „Twój najlepszy wynik…” przed pierwszym pytaniem – wynik widać na kafelku levelu.
 
-            var kick = Ui.Text("Kicker", c, (isTest ? "PYTANIE " : "ZADANIE ") + (index + 1) + " Z " + tasks.Count, 11.5f, Palette.TextMuted);
+            var kick = Ui.Text("Kicker", c, (isTest ? "QUESTION " : "EXERCISE ") + (index + 1) + " OF " + tasks.Count, 11.5f, Palette.TextMuted);
             kick.characterSpacing = 6f;
             Ui.Place(kick.rectTransform, m, y, cw, 16f);
             y += 22f;
@@ -342,7 +342,7 @@ namespace FinanceQuest
                 case "pairs": return Pairs(c, t, y);
                 case "zones": return Zones(c, t, y);
             }
-            return y + Hint(c, y, "Tego typu zadania aplikacja jeszcze nie pokazuje.");
+            return y + Hint(c, y, "The app can't show this type of exercise yet.");
         }
 
         // Dolny pasek: SPRAWDŹ (szary, dopóki nie ma odpowiedzi) albo kolorowy pasek z wynikiem i DALEJ.
@@ -358,18 +358,18 @@ namespace FinanceQuest
             if (!answered)
             {
                 bool ready = Ready();
-                Button(bar, m, 18f, cw, "SPRAWDŹ", ready, true, Check);
+                Button(bar, m, 18f, cw, "CHECK", ready, true, Check);
                 h = 18f + ButtonH + 20f;
             }
             else
             {
                 var t = tasks[index];
-                string head = lastCorrect ? "Dobrze!" : "Nie tym razem";
+                string head = lastCorrect ? "Correct!" : "Not this time";
                 string body = lastCorrect ? t.fact : t.explain;
                 string sol = lastCorrect ? null : Solution(t);
                 float ph = Feedback(bar, m, 10f, cw, head, body, sol);
                 bool last = index == tasks.Count - 1;
-                Button(bar, m, 10f + ph + 12f, cw, last ? "ZOBACZ WYNIK" : "DALEJ", true, true, Next);
+                Button(bar, m, 10f + ph + 12f, cw, last ? "SEE RESULT" : "NEXT", true, true, Next);
                 h = 10f + ph + 12f + ButtonH + 20f;
             }
             bar.sizeDelta = new Vector2(0f, h);
@@ -488,13 +488,13 @@ namespace FinanceQuest
             }
             y += star + 12f + 26f;
 
-            string head = stars == 3 ? "Bezbłędnie!" : stars == 2 ? "Dobra robota!" : stars == 1 ? "Zaliczone!" : "Spróbuj jeszcze raz";
+            string head = stars == 3 ? "Flawless!" : stars == 2 ? "Good job!" : stars == 1 ? "Passed!" : "Try again";
             var title = Ui.Text("Title", c, head, 26f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.Top);
             float th = Ui.TextHeight(title, cw);
             Ui.Place(title.rectTransform, m, y, cw, th);
             y += th + 10f;
 
-            var res = Ui.Text("Score", c, "Poprawne odpowiedzi: " + score + " z " + tasks.Count, 16f, Palette.TextMuted,
+            var res = Ui.Text("Score", c, "Correct answers: " + score + " z " + tasks.Count, 16f, Palette.TextMuted,
                 FontWeight.SemiBold, TextAlignmentOptions.Top);
             Ui.Place(res.rectTransform, m, y, cw, 22f);
             y += 22f + 24f;
@@ -504,10 +504,10 @@ namespace FinanceQuest
 
             // Co dalej: przy 0 gwiazdek – powtórka; przy 1–2 – można poprawić; plus porównanie z najlepszym wynikiem.
             string note;
-            if (stars == 0) note = "Zdobądź co najmniej 1 gwiazdkę, żeby zaliczyć ten level.";
-            else if (best > stars) note = "Twój najlepszy wynik to " + StarsText(best) + " – zostaje zapisany.";
-            else if (best >= 1 && stars > best) note = "Nowy rekord! Poprzednio " + StarsText(best) + ".";
-            else if (stars < 3) note = "Możesz spróbować ponownie i zdobyć 3 gwiazdki.";
+            if (stars == 0) note = "Get at least 1 star to pass this level.";
+            else if (best > stars) note = "Your best score is " + StarsText(best) + " – it stays saved.";
+            else if (best >= 1 && stars > best) note = "New record! Previously " + StarsText(best) + ".";
+            else if (stars < 3) note = "You can try again and get 3 stars.";
             else note = null;
             if (note != null)
             {
@@ -521,14 +521,14 @@ namespace FinanceQuest
 
         static string StarsText(int n)
         {
-            return n + (n == 1 ? " gwiazdka" : " gwiazdki");
+            return n + (n == 1 ? " star" : " stars");
         }
 
         // Na pierwszym pytaniu powtórki: przypomnienie najlepszego wyniku i zachęta do kompletu.
         float BestNote(RectTransform c, float y)
         {
             const float pad = 12f, star = 16f;
-            string text = "Twój najlepszy wynik: " + StarsText(best) + " z 3. Spróbuj zdobyć komplet!";
+            string text = "Your best score: " + StarsText(best) + " of 3. Try to get them all!";
             var t = Ui.Text("Best", c, text, 13.5f, Palette.Text, FontWeight.SemiBold);
             float tw = cw - 2 * pad - 3 * star - 14f;
             float th = Ui.TextHeight(t, tw);
@@ -558,18 +558,18 @@ namespace FinanceQuest
             if (stars == 0)
             {
                 // Niezaliczone: powtórka albo wyjście do rozdziału (level zostaje jak był – wcześniejszy wynik się nie zmienia).
-                Button(bar, m, y, cw, "SPRÓBUJ PONOWNIE", true, true, Restart);
+                Button(bar, m, y, cw, "TRY AGAIN", true, true, Restart);
                 y += ButtonH + 10f;
-                Button(bar, m, y, cw, "WRÓĆ DO ROZDZIAŁU", true, false, app.Back);
+                Button(bar, m, y, cw, "BACK TO CHAPTER", true, false, app.Back);
             }
             else
             {
                 if (stars < 3)
                 {
-                    Button(bar, m, y, cw, "SPRÓBUJ PONOWNIE", true, false, Restart);
+                    Button(bar, m, y, cw, "TRY AGAIN", true, false, Restart);
                     y += ButtonH + 10f;
                 }
-                Button(bar, m, y, cw, "UKOŃCZ", true, true, () => onFinish(stars));
+                Button(bar, m, y, cw, "FINISH", true, true, () => onFinish(stars));
             }
             float h = y + ButtonH + 20f;
             bar.sizeDelta = new Vector2(0f, h);
@@ -581,7 +581,7 @@ namespace FinanceQuest
         // Wybór odpowiedzi (jedna albo kilka poprawnych).
         float Choice(RectTransform c, TaskDef t, float y)
         {
-            if (t.multi) y += Hint(c, y, "Zaznacz wszystkie poprawne odpowiedzi.");
+            if (t.multi) y += Hint(c, y, "Select all correct answers.");
             foreach (int i in order)
             {
                 var o = t.options[i];
@@ -642,7 +642,7 @@ namespace FinanceQuest
                 return y + 56f;
             }
 
-            if (!answered) y += Hint(c, y, "Stuknij słowo, które pasuje do luki.");
+            if (!answered) y += Hint(c, y, "Tap the word that fits the gap.");
             return y + 12f + Flow(c, m, y, cw, order, k => words[k], k =>
             {
                 if (!answered) return k == gapPick ? Look.Selected : Look.Normal;
@@ -665,7 +665,7 @@ namespace FinanceQuest
             var area = LipCard.Create(c, "Answer", m, y, cw, h + 4f, Palette.CardFill, edge, lip, 16f, 4f, 2f);
             if (placed.Count == 0)
             {
-                var ph = Ui.Text("Placeholder", area.Content, "Stuknij słowa poniżej w dobrej kolejności", 14f, Palette.TextLocked,
+                var ph = Ui.Text("Placeholder", area.Content, "Tap the words below in the right order", 14f, Palette.TextLocked,
                     FontWeight.Regular, TextAlignmentOptions.Center);
                 Ui.Stretch(ph.rectTransform, pad, 0f, pad, 0f);
             }
@@ -683,7 +683,7 @@ namespace FinanceQuest
         // Pary: stuknij pojęcie po lewej, potem pasujący opis po prawej. Połączone karty mają ten sam kolor i numer.
         float Pairs(RectTransform c, TaskDef t, float y)
         {
-            if (!answered) y += Hint(c, y, "Stuknij pojęcie po lewej, a potem pasujący opis po prawej.");
+            if (!answered) y += Hint(c, y, "Tap a term on the left, then the matching description on the right.");
             const float gap = 10f, pad = 12f, badge = 22f;
             float colW = (cw - gap) * 0.5f;
             float tw = colW - 2 * pad - badge - 6f;
@@ -738,7 +738,7 @@ namespace FinanceQuest
         // Strefy: stuknij element, potem strefę. Stuknięcie elementu w strefie oddaje go na dół.
         float Zones(RectTransform c, TaskDef t, float y)
         {
-            if (!answered) y += Hint(c, y, zoneSel >= 0 ? "Teraz stuknij strefę." : "Stuknij element, a potem strefę, do której pasuje.");
+            if (!answered) y += Hint(c, y, zoneSel >= 0 ? "Now tap a zone." : "Tap an item, then the zone it belongs to.");
             const float gap = 10f, pad = 10f, head = 34f;
             int nz = t.zones.Count;
             if (nz == 0) return y;
@@ -845,13 +845,13 @@ namespace FinanceQuest
         {
             switch (t.type)
             {
-                case "gap": return t.answers.Count > 0 ? "Poprawnie: " + t.answers[0] : null;
-                case "tiles": return "Poprawnie: " + t.answer;
+                case "gap": return t.answers.Count > 0 ? "Correct: " + t.answers[0] : null;
+                case "tiles": return "Correct: " + t.answer;
                 case "pairs":
                 {
                     var parts = new List<string>();
                     foreach (var p in t.pairs) parts.Add(p.left + " – " + p.right);
-                    return "Poprawnie: " + string.Join("; ", parts.ToArray());
+                    return "Correct: " + string.Join("; ", parts.ToArray());
                 }
                 case "zones":
                 {
@@ -862,7 +862,7 @@ namespace FinanceQuest
                         foreach (var it in t.items) if (it.zone == z.id) items.Add(it.text);
                         parts.Add(z.label + ": " + string.Join(", ", items.ToArray()));
                     }
-                    return "Poprawnie – " + string.Join(" · ", parts.ToArray());
+                    return "Correct – " + string.Join(" · ", parts.ToArray());
                 }
             }
             return null;
@@ -1113,7 +1113,7 @@ namespace FinanceQuest
             var area = Ui.Rect("TextArea", host);
             Ui.Stretch(area, 16f, 4f, 16f, 4f);
             area.gameObject.AddComponent<RectMask2D>();
-            var ph = Ui.Text("Placeholder", area, "Wpisz odpowiedź…", 16f, Palette.TextLocked, FontWeight.Regular, TextAlignmentOptions.MidlineLeft);
+            var ph = Ui.Text("Placeholder", area, "Type your answer…", 16f, Palette.TextLocked, FontWeight.Regular, TextAlignmentOptions.MidlineLeft);
             Ui.Stretch(ph.rectTransform);
             var txt = Ui.Text("Text", area, "", 17f, tc, FontWeight.SemiBold, TextAlignmentOptions.MidlineLeft);
             Ui.Stretch(txt.rectTransform);

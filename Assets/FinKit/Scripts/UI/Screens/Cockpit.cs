@@ -29,7 +29,7 @@ namespace FinanceQuest
             bool master = courses > 0 && done == courses;
             int total = 2 + courses, earned = (app.Progress.Started ? 1 : 0) + done + (master ? 1 : 0);
 
-            Section(root, "TWOJE TROFEA", Pad, cy, inner * 0.7f);
+            Section(root, "YOUR TROPHIES", Pad, cy, inner * 0.7f);
             var cnt = Ui.Text("Count", root, earned + " / " + total, 13f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.CaplineRight);
             Ui.Place(cnt.rectTransform, Pad + inner - 60, cy, 60, 16);
             cy += 24f;
@@ -64,7 +64,7 @@ namespace FinanceQuest
                 else if (i == total - 1)
                 {
                     got = master;
-                    name = "Mistrz";
+                    name = "Master";
                     kind = TrophyKind.Master;
                 }
                 else

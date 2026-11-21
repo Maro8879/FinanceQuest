@@ -63,7 +63,7 @@ namespace FinanceQuest
 
             if (clip == null)
             {
-                var miss = Ui.Text("Missing", card.Content, "Brak filmiku\n" + b.video, 12.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
+                var miss = Ui.Text("Missing", card.Content, "No video\n" + b.video, 12.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
                 Ui.Stretch(miss.rectTransform, 10, 10, 10, 10);
             }
             else

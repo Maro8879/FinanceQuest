@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "twoja-pierwsza-inwestycja",
-  "title": "Twoja pierwsza inwestycja",
+  "title": "Your first investment",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Wybierz brokera",
+      "title": "Choose a broker",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Wybierz brokera"
+              "text": "Choose a broker"
             },
             {
               "type": "image",
@@ -28,19 +28,19 @@
             },
             {
               "type": "text",
-              "text": "**Broker** to firma, przez którą kupujesz akcje, ETF-y i obligacje – bez niego nie wejdziesz na giełdę. Przy wyborze sprawdź:"
+              "text": "A **broker** is the company through which you buy shares, ETFs and bonds – you can't get onto the stock exchange without one. When choosing, check:"
             },
             {
               "type": "list",
               "items": [
-                "**Licencję** nadzoru finansowego w UE",
-                "**Prowizje** i opłaty za konto",
-                "**Ofertę** – np. plan regularnego inwestowania w ETF"
+                "An EU financial regulator's **licence**",
+                "**Commissions** and account fees",
+                "**What's on offer** – e.g. a regular ETF investment plan"
               ]
             },
             {
               "type": "callout",
-              "text": "Twoje papiery są zapisane **na Ciebie** i oddzielone od majątku brokera. Jego upadłość nie oznacza ich utraty."
+              "text": "Your securities are registered **in your name** and kept separate from the broker's assets. If the broker goes bust, you don't lose them."
             }
           ]
         }
@@ -54,13 +54,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Pierwsze zlecenia",
+      "title": "First orders",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Pierwsze zlecenia"
+              "text": "First orders"
             },
             {
               "type": "image",
@@ -71,18 +71,18 @@
             },
             {
               "type": "text",
-              "text": "**Zlecenie** to polecenie kupna lub sprzedaży, które wysyłasz brokerowi. Dwa podstawowe:"
+              "text": "An **order** is an instruction to buy or sell that you send to your broker. The two basic ones:"
             },
             {
               "type": "list",
               "items": [
-                "**Rynkowe (market)** – wykonuje się od razu, po bieżącej cenie",
-                "**Z limitem (limit)** – tylko po Twojej cenie albo lepszej"
+                "**Market order** – executed straight away, at the current price",
+                "**Limit order** – only at your price or better"
               ]
             },
             {
               "type": "callout",
-              "text": "Na start: **mała kwota** (np. 25–50 €) i **zlecenie z limitem** – nie zapłacisz więcej, niż planowałeś."
+              "text": "To start: **a small amount** (e.g. 25–50 €) and **a limit order** – you won't pay more than you planned."
             }
           ]
         }
@@ -96,28 +96,28 @@
     {
       "id": "l3",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Co sprawdzić przy wyborze brokera?",
+          "prompt": "What should you check when choosing a broker?",
           "options": [
             {
-              "text": "Licencję nadzoru finansowego w UE",
+              "text": "An EU financial regulator's licence",
               "correct": true
             },
             {
-              "text": "Ilu ma obserwujących w social mediach",
+              "text": "How many followers it has on social media",
               "correct": false
             },
             {
-              "text": "Wysokość prowizji i opłat",
+              "text": "The level of commissions and fees",
               "correct": true
             }
           ],
           "multi": true,
-          "explain": "Licencja chroni Twoje pieniądze, a opłaty decydują o wyniku. Popularność w sieci niczego nie gwarantuje.",
-          "fact": "Twoje papiery są zapisane na Ciebie i oddzielone od majątku brokera.",
+          "explain": "A licence protects your money, and fees decide your result. Online popularity guarantees nothing.",
+          "fact": "Your securities are registered in your name and kept separate from the broker's assets.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -131,23 +131,23 @@
         },
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
-              "left": "Zlecenie rynkowe",
-              "right": "Od razu, po bieżącej cenie"
+              "left": "Market order",
+              "right": "Straight away, at the current price"
             },
             {
-              "left": "Zlecenie z limitem",
-              "right": "Po Twojej cenie albo lepszej"
+              "left": "Limit order",
+              "right": "At your price or better"
             },
             {
               "left": "Broker",
-              "right": "Firma, przez którą kupujesz na giełdzie"
+              "right": "The company you buy on the stock exchange through"
             }
           ],
-          "explain": "Rynkowe działa od razu, z limitem pilnuje ceny, a broker daje Ci dostęp do giełdy.",
-          "fact": "Plan regularnego inwestowania pozwala kupować ETF automatycznie co miesiąc.",
+          "explain": "A market order works straight away, a limit order guards the price, and a broker gives you access to the stock exchange.",
+          "fact": "A regular investment plan lets you buy an ETF automatically every month.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -162,18 +162,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Na start najbezpieczniej użyć zlecenia z ___.",
+          "prompt": "Complete the sentence",
+          "text": "To start, it's safest to use a ___ order.",
           "answers": [
-            "limitem"
+            "limit"
           ],
           "wrong": [
-            "dźwignią",
-            "kredytem"
+            "leverage",
+            "credit"
           ],
           "mode": "choose",
-          "explain": "Zlecenie z limitem sprawia, że nie zapłacisz więcej, niż planowałeś.",
-          "fact": "Na pierwszy zakup wystarczy mała kwota, np. 25–50 €.",
+          "explain": "A limit order makes sure you won't pay more than you planned.",
+          "fact": "A small amount is enough for your first purchase, e.g. 25–50 €.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -185,14 +185,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Upadłość brokera nie oznacza utraty akcji",
+          "prompt": "Build the sentence",
+          "answer": "A broker going bankrupt doesn't mean losing your shares",
           "extra": [
-            "zawsze",
-            "pieniędzy"
+            "always",
+            "money"
           ],
-          "explain": "Papiery są zapisane na Ciebie i oddzielone od majątku brokera.",
-          "fact": "Dlatego przy wyborze brokera tak ważna jest licencja nadzoru w UE.",
+          "explain": "Your securities are registered in your name and kept separate from the broker's assets.",
+          "fact": "That's why an EU regulator's licence matters so much when choosing a broker.",
           "options": [],
           "pairs": [],
           "zones": [],

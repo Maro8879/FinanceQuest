@@ -9,34 +9,34 @@ namespace FinanceQuest
         {
             var list = new List<CourseData>();
 
-            list.Add(Course("invest", "Podstawy", "Podstawy inwestowania", Palette.Petrol, IconId.Chart, CourseArt.Portfolio,
-                Ch("basics", "Czym jest inwestowanie", Palette.Petrol, 5),
-                Ch("risk", "Zarządzanie ryzykiem", Palette.Petrol, 5),
-                Ch("divers", "Dywersyfikacja", Palette.Moss, 4),
-                Ch("compound", "Procent składany", Palette.Mustard, 4)));
+            list.Add(Course("invest", "Basics", "Investing basics", Palette.Petrol, IconId.Chart, CourseArt.Portfolio,
+                Ch("basics", "What is investing", Palette.Petrol, 5),
+                Ch("risk", "Risk management", Palette.Petrol, 5),
+                Ch("divers", "Diversification", Palette.Moss, 4),
+                Ch("compound", "Compound interest", Palette.Mustard, 4)));
 
-            list.Add(Course("short", "Trading", "Inwestowanie krótkoterminowe", Palette.Slate, IconId.Chart, CourseArt.Magnifier,
-                Ch("trading", "Czym jest trading", Palette.Slate, 4),
-                Ch("ta", "Analiza techniczna", Palette.Petrol, 4),
-                Ch("position", "Zarządzanie pozycją", Palette.Brick, 4)));
+            list.Add(Course("short", "Trading", "Short-term investing", Palette.Slate, IconId.Chart, CourseArt.Magnifier,
+                Ch("trading", "What is trading", Palette.Slate, 4),
+                Ch("ta", "Technical analysis", Palette.Petrol, 4),
+                Ch("position", "Position management", Palette.Brick, 4)));
 
-            list.Add(Course("platform", "Platforma", "Obsługa platformy inwestycyjnej", Palette.Moss, IconId.Phone, CourseArt.Laptop,
-                Ch("account", "Zakładanie konta", Palette.Moss, 4),
-                Ch("orders", "Rodzaje zleceń", Palette.Petrol, 4),
-                Ch("fees", "Opłaty i podatki", Palette.Brick, 4)));
+            list.Add(Course("platform", "Platform", "Using an investment platform", Palette.Moss, IconId.Phone, CourseArt.Laptop,
+                Ch("account", "Opening an account", Palette.Moss, 4),
+                Ch("orders", "Order types", Palette.Petrol, 4),
+                Ch("fees", "Fees and taxes", Palette.Brick, 4)));
 
-            list.Add(Course("budget", "Budżet", "Budżet domowy", Palette.Mustard, IconId.Wallet, CourseArt.Wallet,
-                Ch("income", "Przychody i wydatki", Palette.Mustard, 4),
-                Ch("plan", "Plan na miesiąc", Palette.Petrol, 4),
-                Ch("save", "Poduszka finansowa", Palette.Moss, 4),
-                Ch("goals", "Cele oszczędnościowe", Palette.Brick, 4),
-                Ch("habits", "Dobre nawyki", Palette.Slate, 4)));
+            list.Add(Course("budget", "Budget", "Household budget", Palette.Mustard, IconId.Wallet, CourseArt.Wallet,
+                Ch("income", "Income and expenses", Palette.Mustard, 4),
+                Ch("plan", "Monthly plan", Palette.Petrol, 4),
+                Ch("save", "Emergency fund", Palette.Moss, 4),
+                Ch("goals", "Savings goals", Palette.Brick, 4),
+                Ch("habits", "Good habits", Palette.Slate, 4)));
 
-            list.Add(Course("credit", "Kredyty", "Karty i kredyty", Palette.Brick, IconId.Card, CourseArt.Cards,
-                Ch("cards", "Karta debetowa i kredytowa", Palette.Brick, 4),
-                Ch("rrso", "RRSO i koszt kredytu", Palette.Petrol, 4),
-                Ch("bik", "Historia kredytowa", Palette.Slate, 4),
-                Ch("debt", "Wychodzenie z długu", Palette.Moss, 4)));
+            list.Add(Course("credit", "Credit", "Cards and loans", Palette.Brick, IconId.Card, CourseArt.Cards,
+                Ch("cards", "Debit and credit cards", Palette.Brick, 4),
+                Ch("rrso", "APR and the cost of credit", Palette.Petrol, 4),
+                Ch("bik", "Credit history", Palette.Slate, 4),
+                Ch("debt", "Getting out of debt", Palette.Moss, 4)));
 
             // Id leveli dostają prefiks kursu i rozdziału, żeby były unikalne.
             foreach (var c in list)

@@ -31,7 +31,7 @@ namespace FinanceQuest
             const float pad = 16f;
             var head = LipCard.Create(content, "ChapterHeader", m, 4, cw, 100, ch.Color, ch.Color, Palette.Darker(ch.Color),
                 ScreenKit.CardRadius, ScreenKit.Lip, 0f);
-            var label = Ui.Text("Label", head.Content, "ROZDZIAŁ " + (chapterIndex + 1), 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
+            var label = Ui.Text("Label", head.Content, "CHAPTER " + (chapterIndex + 1), 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
             Ui.Place(label.rectTransform, pad, pad - 2, cw - 2 * pad, 18);
             float th = ScreenKit.TitleBlock(head.Content, pad, pad + 17, cw - 2 * pad, ch.Title, 19f, null, Color.white, Color.white);
             float barY = pad + 17 + th + 10;

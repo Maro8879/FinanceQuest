@@ -49,10 +49,10 @@ namespace FinanceQuest
         {
             switch (k)
             {
-                case LevelKind.Lesson: return "Lekcja";
-                case LevelKind.MiniGame: return "Mini gra";
-                case LevelKind.Task: return "Zadanie";
-                default: return "Test rozdziału";
+                case LevelKind.Lesson: return "Lesson";
+                case LevelKind.MiniGame: return "Mini game";
+                case LevelKind.Task: return "Exercise";
+                default: return "Chapter test";
             }
         }
 

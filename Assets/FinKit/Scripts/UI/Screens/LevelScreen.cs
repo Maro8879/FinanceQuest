@@ -85,7 +85,7 @@ namespace FinanceQuest
                 InvestGame.Build(screen, app, save, () => finish(-1));
                 return;
             }
-            Placeholder(screen, app, course, ch, level, "Tu pojawi się mini gra.");
+            Placeholder(screen, app, course, ch, level, "The mini game will appear here.");
         }
 
         // Tymczasowy ekran: pozwala oznaczyć level jako ukończony, zanim powstaną zadania i mini gry.
@@ -107,14 +107,14 @@ namespace FinanceQuest
             y += 150 + 20f;
             var done = LipCard.Create(screen, "Complete", m, y, cw, 54, Palette.Accent, Palette.Accent, Palette.AccentLip,
                 16f, 5f, 0f);
-            var dl = Ui.Text("Label", done.Content, "UKOŃCZ (TEST)", 16f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+            var dl = Ui.Text("Label", done.Content, "COMPLETE (TEST)", 16f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
             Ui.Stretch(dl.rectTransform);
             done.SetClickable(() => { app.CompleteLevel(course, level); app.Back(); });
 
             y += 54 + 14f;
             var back = LipCard.Create(screen, "Back", m, y, cw, 54, Palette.CardFill, Palette.CardEdge, Palette.CardLip,
                 16f, 5f, 2f);
-            var bl = Ui.Text("Label", back.Content, "WRÓĆ", 16f, Palette.TextMuted, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+            var bl = Ui.Text("Label", back.Content, "BACK", 16f, Palette.TextMuted, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
             Ui.Stretch(bl.rectTransform);
             back.SetClickable(app.Back);
         }

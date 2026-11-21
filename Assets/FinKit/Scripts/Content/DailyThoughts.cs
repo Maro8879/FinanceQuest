@@ -2,61 +2,39 @@ using System;
 
 namespace FinanceQuest
 {
-    // Cytat dnia nad trofeami – zdanie o pieniądzach i jego autor.
-    // Wybór zależy od dnia roku, więc przez cały dzień widać tę samą myśl, a jutro inną.
+    // Cytat nad trofeami – prawdziwe, znane zdanie o pieniądzach i inwestowaniu z prawdziwym autorem.
+    // Każdy cytat sprawdzony u źródła (list do akcjonariuszy, książka, wystąpienie) – nie dopisujemy „ładnych” cytatów bez źródła.
+    // Start zależy od dnia roku, potem karta sama przechodzi przez kolejne.
     public static class DailyThoughts
     {
-        static readonly string[] All =
+        static readonly string[,] All =
         {
-            "Nie chodzi o to, ile zarabiasz, tylko ile z tego zostaje.",
-            "Najpierw zapłać sobie, potem rachunkom.",
-            "Mały, regularny krok bije wielki zryw raz w roku.",
-            "Poduszka finansowa to spokój, którego nie widać na koncie.",
-            "Procent składany lubi cierpliwych.",
-            "Nie wkładaj wszystkich jajek do jednego koszyka.",
-            "Dług kosztuje więcej, niż pokazuje rata.",
-            "Budżet to nie kajdany, tylko mapa.",
-            "Ryzyko, którego nie rozumiesz, jest największe.",
-            "Wydatki rosną razem z dochodami – chyba że ich pilnujesz.",
-            "Opłaty po 1% potrafią zjeść lata zysków.",
-            "Kupuj tylko to, co rozumiesz.",
-            "Emocje to najdroższy doradca inwestycyjny.",
-            "Cel bez kwoty i daty to tylko marzenie.",
-            "Każda złotówka powinna mieć swoje zadanie.",
-            "Rynek rośnie schodami, a spada windą.",
-            "Oszczędzanie to nawyk, nie kwota.",
-            "Czas na rynku znaczy więcej niż idealny moment wejścia.",
-            "Tani kredyt też trzeba spłacić.",
-            "Zanim zainwestujesz, zbuduj fundament.",
-            "Inflacja po cichu podgryza pieniądze w skarpecie.",
-            "Nie goń za modą – trzymaj się planu.",
-            "Lepiej rozumieć jedno narzędzie niż mieć dziesięć.",
-            "Najtańszy kredyt to ten, którego nie musisz brać.",
-            "Wiedza o pieniądzach procentuje całe życie.",
-            "Rozkładaj ryzyko, a nie tylko pieniądze.",
-            "Patrz na RRSO, nie tylko na oprocentowanie.",
-            "Plan na gorsze dni robi się w dobre dni.",
-            "Mądre finanse bywają nudne – i bardzo dobrze.",
-            "Każdy wielki portfel zaczynał od pierwszej złotówki.",
+            { "Be fearful when others are greedy, and greedy when others are fearful.", "Warren Buffett" },
+            { "Price is what you pay; value is what you get.", "Warren Buffett" },
+            { "If you aren't willing to own a stock for ten years, don't even think about owning it for ten minutes.", "Warren Buffett" },
+            { "Our favorite holding period is forever.", "Warren Buffett" },
+            { "It's far better to buy a wonderful company at a fair price than a fair company at a wonderful price.", "Warren Buffett" },
+            { "For investors as a whole, returns decrease as motion increases.", "Warren Buffett" },
+            { "Don't look for the needle in the haystack. Just buy the haystack!", "John C. Bogle" },
+            { "Time is your friend; impulse is your enemy.", "John C. Bogle" },
+            { "The investor's chief problem \u2014 and even his worst enemy \u2014 is likely to be himself.", "Benjamin Graham" },
+            { "Know what you own, and know why you own it.", "Peter Lynch" },
+            { "In the stock market, the most important organ is the stomach. It's not the brain.", "Peter Lynch" },
+            { "The four most dangerous words in investing are: 'This time it's different.'", "Sir John Templeton" },
+            { "Bull markets are born on pessimism, grow on skepticism, mature on optimism, and die on euphoria.", "Sir John Templeton" },
+            { "The big money is not in the buying and the selling, but in the waiting.", "Charlie Munger" },
+            { "Beware of little expenses; a small leak will sink a great ship.", "Benjamin Franklin" },
         };
 
-        // TESTOWO – wyłącz przed wydaniem: wszystkie zdania wyżej są nasze, a nie tej osoby.
-        // Przed wydaniem trzeba podmienić je na prawdziwe cytaty z prawdziwymi autorami.
-        const string PlaceholderAuthor = "Warren Buffett";
-
-        // Ile razy w tej sesji kliknięto w kartę – każde kliknięcie pokazuje kolejny cytat.
+        // Ile razy w tej sesji karta przeszła dalej (kliknięcie albo automatyczna zmiana).
         static int skip;
 
-        public static string Today()
-        {
-            return All[(DateTime.Now.DayOfYear + skip) % All.Length];
-        }
+        static int Index { get { return (DateTime.Now.DayOfYear + skip) % All.GetLength(0); } }
+
+        public static string Today() { return All[Index, 0]; }
+
+        public static string TodayAuthor() { return All[Index, 1]; }
 
         public static void Next() { skip++; }
-
-        public static string TodayAuthor()
-        {
-            return PlaceholderAuthor;
-        }
     }
 }

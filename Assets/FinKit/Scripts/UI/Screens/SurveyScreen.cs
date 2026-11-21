@@ -28,7 +28,7 @@ namespace FinanceQuest
             this.questions = questions;
             chosen = new SurveyAnswer[questions.Count];
             // Domek = pomiń ankietę (można ją powtórzyć w ustawieniach).
-            app.Header.Set("Dobierzmy Ci kursy", true, IconId.Home, Palette.TextLocked, () => { Recommendations.Skip(); app.Back(); });
+            app.Header.Set("Let's find your courses", true, IconId.Home, Palette.TextLocked, () => { Recommendations.Skip(); app.Back(); });
             Show();
         }
 
@@ -46,7 +46,7 @@ namespace FinanceQuest
             ProgressBar.Create(content, m, y, cw, 12f, Palette.Track, (index + (chosen[index] != null ? 1f : 0.5f)) / questions.Count);
             y += 12f + 22f;
 
-            var kick = Ui.Text("Kicker", content, "PYTANIE " + (index + 1) + " Z " + questions.Count, 11.5f, Palette.TextMuted);
+            var kick = Ui.Text("Kicker", content, "QUESTION " + (index + 1) + " Z " + questions.Count, 11.5f, Palette.TextMuted);
             kick.characterSpacing = 6f;
             Ui.Place(kick.rectTransform, m, y, cw, 16f);
             y += 22f;
@@ -71,7 +71,7 @@ namespace FinanceQuest
             bool last = index == questions.Count - 1;
             var btn = LipCard.Create(bar, "Next", m, 18f, cw, ButtonH,
                 ready ? Palette.Accent : Palette.LockedFill, ready ? Palette.Accent : Palette.LockedFill, ready ? Palette.AccentLip : Palette.LockedLip, 16f, 5f, 0f);
-            var label = Ui.Text("Label", btn.Content, last ? "ZOBACZ POLECANE KURSY" : "DALEJ", 16f,
+            var label = Ui.Text("Label", btn.Content, last ? "SEE RECOMMENDED COURSES" : "NEXT", 16f,
                 ready ? Palette.OnAccent : Palette.TextLocked, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
             Ui.Stretch(label.rectTransform);
             if (ready) btn.SetClickable(Next);

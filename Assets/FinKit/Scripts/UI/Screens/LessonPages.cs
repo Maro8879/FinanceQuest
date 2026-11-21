@@ -56,7 +56,7 @@ namespace FinanceQuest
 
             float m = ScreenKit.Margin;
             var btn = LipCard.Create(bar, "Next", m, 28, W - 2 * m, ButtonH, Palette.Accent, Palette.Accent, Palette.AccentLip, 16f, 5f, 0f);
-            buttonLabel = Ui.Text("Label", btn.Content, "DALEJ", 17f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
+            buttonLabel = Ui.Text("Label", btn.Content, "NEXT", 17f, Palette.OnAccent, FontWeight.ExtraBold, TextAlignmentOptions.Capline);
             Ui.Stretch(buttonLabel.rectTransform);
             btn.SetClickable(Next);
 
@@ -81,7 +81,7 @@ namespace FinanceQuest
             if (scroll != null) scroll.velocity = Vector2.zero;
 
             bool last = page == pages.Count - 1;
-            buttonLabel.text = !last ? "DALEJ" : hasTasks ? "DO ZADAŃ" : "ROZUMIEM";
+            buttonLabel.text = !last ? "NEXT" : hasTasks ? "TO EXERCISES" : "GOT IT";
             BuildDots();
         }
 
@@ -193,7 +193,7 @@ namespace FinanceQuest
             }
             else
             {
-                var miss = Ui.Text("Missing", card.Content, "Brak obrazka\n" + b.image, 12.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
+                var miss = Ui.Text("Missing", card.Content, "No image\n" + b.image, 12.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
                 Ui.Stretch(miss.rectTransform, 10, 10, 10, 10);
             }
             float used = h + lip;

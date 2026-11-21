@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "cykl-zycia",
-  "title": "Cykl życia portfela i emerytura",
+  "title": "Portfolio life cycle and retirement",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Jan",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Alokacja a wiek (25-latek vs 60-latek)",
+      "title": "Allocation and age (25-year-old vs 60-year-old)",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Alokacja a wiek (25-latek vs 60-latek)"
+              "text": "Allocation and age (25-year-old vs 60-year-old)"
             },
             {
               "type": "image",
@@ -29,13 +29,13 @@
             {
               "type": "list",
               "items": [
-                "**25-latek** – ma przed sobą dekady, więc może trzymać większość w akcjach i przeczekać krachy",
-                "**60-latek** – za kilka lat potrzebuje pieniędzy, więc przenosi część do obligacji i gotówki"
+                "**25-year-old** – has decades ahead, so can keep most of the money in stocks and ride out crashes",
+                "**60-year-old** – will need the money in a few years, so moves part of it into bonds and cash"
               ]
             },
             {
               "type": "callout",
-              "text": "Ryzyko powinno **spadać razem z czasem**, który został do wypłaty."
+              "text": "Risk should **go down along with the time** left until you withdraw."
             }
           ]
         }
@@ -49,13 +49,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Ile potrzebuję na emeryturę",
+      "title": "How much do I need for retirement",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Ile potrzebuję na emeryturę"
+              "text": "How much do I need for retirement"
             },
             {
               "type": "image",
@@ -66,15 +66,15 @@
             },
             {
               "type": "text",
-              "text": "Policz, ile będziesz miesięcznie wydawać na emeryturze, i odejmij emeryturę z państwa. **Brakującą kwotę** pokrywasz z własnych oszczędności."
+              "text": "Work out how much you'll spend per month in retirement and subtract the state pension. **The missing amount** comes from your own savings."
             },
             {
               "type": "text",
-              "text": "Punkt startu to **zasada 4%**: jeśli co roku wypłacasz ok. 4% portfela, powinien wystarczyć na wiele lat."
+              "text": "A starting point is the **4% rule**: if you withdraw about 4% of the portfolio each year, it should last for many years."
             },
             {
               "type": "callout",
-              "text": "Przykład: **400 €** miesięcznie dodatkowo ≈ **120 000 €** kapitału. To reguła orientacyjna, nie gwarancja."
+              "text": "Example: an extra **400 €** a month ≈ **120,000 €** of capital. It's a rule of thumb, not a guarantee."
             }
           ]
         }
@@ -88,15 +88,15 @@
     {
       "id": "l3",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "zones",
-          "prompt": "Czyj to portfel?",
+          "prompt": "Whose portfolio is it?",
           "zones": [
             {
               "id": "a",
-              "label": "25-latek",
+              "label": "25-year-old",
               "x": 0.04,
               "y": 0.1,
               "w": 0.44,
@@ -104,7 +104,7 @@
             },
             {
               "id": "b",
-              "label": "60-latek",
+              "label": "60-year-old",
               "x": 0.52,
               "y": 0.1,
               "w": 0.44,
@@ -113,24 +113,24 @@
           ],
           "items": [
             {
-              "text": "Większość w akcjach",
+              "text": "Mostly stocks",
               "zone": "a"
             },
             {
-              "text": "Więcej obligacji i gotówki",
+              "text": "More bonds and cash",
               "zone": "b"
             },
             {
-              "text": "Przeczeka kilka krachów",
+              "text": "Will ride out several crashes",
               "zone": "a"
             },
             {
-              "text": "Za kilka lat wypłaca pieniądze",
+              "text": "Withdraws the money in a few years",
               "zone": "b"
             }
           ],
-          "explain": "Im mniej czasu do wypłaty, tym mniej ryzyka w portfelu.",
-          "fact": "Ryzyko powinno spadać razem z czasem, który został do wypłaty.",
+          "explain": "The less time until you withdraw, the less risk in the portfolio.",
+          "fact": "Risk should go down along with the time left until you withdraw.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -144,24 +144,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Według zasady 4%: ile kapitału potrzebujesz na 400 € dodatkowo co miesiąc?",
+          "prompt": "Under the 4% rule: how much capital do you need for an extra 400 € every month?",
           "options": [
             {
-              "text": "Ok. 48 000 €",
+              "text": "About 48,000 €",
               "correct": false
             },
             {
-              "text": "Ok. 120 000 €",
+              "text": "About 120,000 €",
               "correct": true
             },
             {
-              "text": "Ok. 400 000 €",
+              "text": "About 400,000 €",
               "correct": false
             }
           ],
           "multi": false,
-          "explain": "400 € × 12 = 4 800 € rocznie. To 4% ze 120 000 €.",
-          "fact": "Zasada 4% to reguła orientacyjna, nie gwarancja.",
+          "explain": "400 € × 12 = 4,800 € a year. That's 4% of 120,000 €.",
+          "fact": "The 4% rule is a rule of thumb, not a guarantee.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -175,18 +175,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Brakującą kwotę na emeryturze pokrywasz z ___ oszczędności.",
+          "prompt": "Complete the sentence",
+          "text": "In retirement you cover the missing amount from your ___ savings.",
           "answers": [
-            "własnych"
+            "own"
           ],
           "wrong": [
-            "państwowych",
-            "bankowych"
+            "state",
+            "bank"
           ],
           "mode": "choose",
-          "explain": "Liczysz wydatki, odejmujesz emeryturę z państwa – resztę dają Twoje oszczędności.",
-          "fact": "Im wcześniej zaczniesz, tym mniej musisz odkładać co miesiąc.",
+          "explain": "You add up your expenses, subtract the state pension – the rest comes from your savings.",
+          "fact": "The earlier you start, the less you have to put aside each month.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -198,14 +198,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Ryzyko spada razem z czasem do wypłaty",
+          "prompt": "Build the sentence",
+          "answer": "Risk goes down along with the time until withdrawal",
           "extra": [
-            "rośnie",
-            "zawsze"
+            "goes up",
+            "always"
           ],
-          "explain": "Gdy wypłata się zbliża, jeden zły rok mógłby zrujnować plan.",
-          "fact": "Dlatego portfel 60-latka wygląda inaczej niż portfel 25-latka.",
+          "explain": "As withdrawal gets close, one bad year could ruin the plan.",
+          "fact": "That's why a 60-year-old's portfolio looks different from a 25-year-old's.",
           "options": [],
           "pairs": [],
           "zones": [],

@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "zarzadzanie-kapitalem",
-  "title": "Zarządzanie kapitałem",
+  "title": "Money management",
   "color": "#4A5D73",
   "meta": {
     "editedBy": "Claude",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Zasada 1–2%",
+      "title": "The 1–2% rule",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Zasada 1–2%"
+              "text": "The 1–2% rule"
             },
             {
               "type": "image",
@@ -28,15 +28,15 @@
             },
             {
               "type": "text",
-              "text": "W jednej transakcji ryzykujesz najwyżej **1–2% całego portfela**."
+              "text": "In a single trade you risk at most **1–2% of your whole portfolio**."
             },
             {
               "type": "text",
-              "text": "Przy 5 000 € to maks. **50–100 € straty** na jednym pomyśle. Nawet 10 nieudanych transakcji z rzędu nie wyrzuca Cię z gry."
+              "text": "With 5,000 € that's at most **50–100 € of loss** on one idea. Even 10 losing trades in a row won't knock you out of the game."
             },
             {
               "type": "callout",
-              "text": "Profesjonaliści przetrwają nie dlatego, że zawsze mają rację, tylko dlatego, że ich **straty są małe**."
+              "text": "Professionals survive not because they're always right, but because their **losses are small**."
             }
           ]
         }
@@ -50,13 +50,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Wielkość pozycji",
+      "title": "Position size",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Wielkość pozycji"
+              "text": "Position size"
             },
             {
               "type": "image",
@@ -67,20 +67,20 @@
             },
             {
               "type": "text",
-              "text": "Wielkość pozycji wynika z tego, **ile chcesz ryzykować** i gdzie stoi Twój Stop-Loss. Przykład:"
+              "text": "Position size comes from **how much you want to risk** and where your Stop-Loss is. Example:"
             },
             {
               "type": "list",
               "items": [
-                "Portfel: **5 000 €**",
-                "Ryzyko 1%: **50 €**",
-                "Stop-Loss: 5% poniżej ceny wejścia",
-                "Pozycja: **1 000 €** (5% z 1 000 € = 50 €)"
+                "Portfolio: **5,000 €**",
+                "1% risk: **50 €**",
+                "Stop-Loss: 5% below the entry price",
+                "Position: **1,000 €** (5% of 1,000 € = 50 €)"
               ]
             },
             {
               "type": "callout",
-              "text": "Najpierw ustalasz **ryzyko**, dopiero potem kwotę zakupu – nigdy odwrotnie."
+              "text": "First you set the **risk**, only then the amount you buy – never the other way round."
             }
           ]
         }
@@ -94,13 +94,13 @@
     {
       "id": "l3",
       "kind": "lesson",
-      "title": "Bezpieczny poligon",
+      "title": "Safe training ground",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Bezpieczny poligon"
+              "text": "Safe training ground"
             },
             {
               "type": "image",
@@ -111,15 +111,15 @@
             },
             {
               "type": "text",
-              "text": "Zanim zaryzykujesz własne pieniądze, przetestuj strategię na **rachunku demo** albo w symulatorze z wirtualną gotówką."
+              "text": "Before you risk your own money, test your strategy on a **demo account** or in a simulator with virtual cash."
             },
             {
               "type": "text",
-              "text": "Zobaczysz, jak działają zlecenia, Stop-Loss i **Twoje emocje** przy stracie – i nic to nie kosztuje."
+              "text": "You'll see how orders, Stop-Loss and **your own emotions** work when you lose – and it costs nothing."
             },
             {
               "type": "callout",
-              "text": "Strategia nie zarabia na demo przez kilka miesięcy? Na prawdziwych pieniądzach **też nie zacznie**."
+              "text": "Strategy not making money on demo for a few months? It **won't start** with real money either."
             }
           ]
         }
@@ -133,14 +133,14 @@
     {
       "id": "l4",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Portfel 5 000 €. Ile najwyżej ryzykujesz w jednej transakcji według zasady 1–2%?",
+          "prompt": "Portfolio of 5,000 €. What's the most you risk in a single trade under the 1–2% rule?",
           "options": [
             {
-              "text": "500–1 000 €",
+              "text": "500–1,000 €",
               "correct": false
             },
             {
@@ -148,13 +148,13 @@
               "correct": true
             },
             {
-              "text": "Całość, jeśli jestem pewny",
+              "text": "All of it, if I'm sure",
               "correct": false
             }
           ],
           "multi": false,
-          "explain": "1–2% z 5 000 € to 50–100 €.",
-          "fact": "Nawet seria 10 strat z rzędu nie wyrzuca Cię wtedy z gry.",
+          "explain": "1–2% of 5,000 € is 50–100 €.",
+          "fact": "Then even a run of 10 losses in a row won't knock you out of the game.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -168,18 +168,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Najpierw ustalasz ___, dopiero potem kwotę zakupu.",
+          "prompt": "Complete the sentence",
+          "text": "First you set the ___, only then the amount you buy.",
           "answers": [
-            "ryzyko"
+            "risk"
           ],
           "wrong": [
-            "zysk",
-            "dźwignię"
+            "profit",
+            "leverage"
           ],
           "mode": "choose",
-          "explain": "Kwota zakupu wynika z tego, ile chcesz ryzykować i gdzie stoi Stop-Loss.",
-          "fact": "Profesjonaliści przetrwają, bo ich straty są małe.",
+          "explain": "The amount you buy comes from how much you want to risk and where your Stop-Loss is.",
+          "fact": "Professionals survive because their losses are small.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -191,24 +191,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Ryzyko 50 €, Stop-Loss 5% poniżej ceny wejścia. Jaka może być pozycja?",
+          "prompt": "Risk 50 €, Stop-Loss 5% below the entry price. How big can the position be?",
           "options": [
             {
               "text": "250 €",
               "correct": false
             },
             {
-              "text": "5 000 €",
+              "text": "5,000 €",
               "correct": false
             },
             {
-              "text": "1 000 €",
+              "text": "1,000 €",
               "correct": true
             }
           ],
           "multi": false,
-          "explain": "5% z 1 000 € to 50 € – dokładnie tyle, ile chcesz ryzykować.",
-          "fact": "Wielkość pozycji liczysz od ryzyka, nie od tego, ile masz na koncie.",
+          "explain": "5% of 1,000 € is 50 € – exactly what you want to risk.",
+          "fact": "You size a position from the risk, not from how much you have in the account.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -222,14 +222,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Najpierw przetestuj strategię na demo",
+          "prompt": "Build the sentence",
+          "answer": "First test the strategy on demo",
           "extra": [
-            "kredycie",
-            "prawdziwych"
+            "credit",
+            "real"
           ],
-          "explain": "Na demo uczysz się zleceń i własnych emocji bez ryzyka.",
-          "fact": "Strategia, która nie zarabia na demo, na prawdziwych pieniądzach też nie zacznie.",
+          "explain": "On demo you learn orders and your own emotions without risk.",
+          "fact": "A strategy that doesn't make money on demo won't start making it with real money either.",
           "options": [],
           "pairs": [],
           "zones": [],

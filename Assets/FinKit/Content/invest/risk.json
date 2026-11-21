@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "risk",
-  "title": "Ryzyko i dywersyfikacja",
+  "title": "Risk and diversification",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Jan",
@@ -11,28 +11,28 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Czym jest ryzyko",
+      "title": "What risk is",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Czym jest ryzyko?"
+              "text": "What is risk?"
             },
             {
               "type": "text",
-              "text": "Ryzyko to **szansa**, że wynik inwestycji będzie **inny**, niż zakładasz – lepszy albo gorszy."
+              "text": "Risk is the **chance** that an investment's result will be **different** from what you expect – better or worse."
             },
             {
               "type": "image",
               "image": "obrazki/wahania-2.png",
               "width": 1,
               "maxHeight": 200,
-              "caption": "Cena akcji w ciągu roku – w górę i w dół"
+              "caption": "A share price over a year – up and down"
             },
             {
               "type": "callout",
-              "text": "Wyższy możliwy zysk zwykle oznacza **wyższe ryzyko**."
+              "text": "A higher possible profit usually means **higher risk**."
             }
           ]
         },
@@ -40,14 +40,14 @@
           "blocks": [
             {
               "type": "heading",
-              "text": "Różne aktywa, różne wahania"
+              "text": "Different assets, different swings"
             },
             {
               "type": "list",
               "items": [
-                "**Lokata** – małe wahania",
-                "**Obligacje** – średnie wahania",
-                "**Akcje** – duże wahania"
+                "**Deposit** – small swings",
+                "**Bonds** – medium swings",
+                "**Stocks** – big swings"
               ]
             },
             {
@@ -55,7 +55,7 @@
             },
             {
               "type": "text",
-              "text": "Im dłużej inwestujesz, tym **łatwiej przeczekać** spadki."
+              "text": "The longer you invest, the **easier it is to ride out** drops."
             }
           ]
         }
@@ -63,24 +63,24 @@
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Co zwykle idzie w parze z wyższym możliwym zyskiem?",
+          "prompt": "What usually goes hand in hand with a higher possible profit?",
           "multi": false,
           "options": [
             {
-              "text": "Wyższe ryzyko",
+              "text": "Higher risk",
               "correct": true
             },
             {
-              "text": "Niższe ryzyko",
+              "text": "Lower risk",
               "correct": false
             },
             {
-              "text": "Brak ryzyka",
+              "text": "No risk",
               "correct": false
             }
           ],
-          "explain": "Im większy możliwy zysk, tym większa szansa, że wynik będzie inny, niż zakładasz.",
-          "fact": "Inwestorzy nazywają to premią za ryzyko.",
+          "explain": "The bigger the possible profit, the bigger the chance that the result will differ from what you expect.",
+          "fact": "Investors call this the risk premium.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -94,18 +94,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Akcje mają ___ wahania niż lokata.",
+          "prompt": "Complete the sentence",
+          "text": "Stocks have ___ swings than a deposit.",
           "mode": "choose",
           "answers": [
-            "większe"
+            "bigger"
           ],
           "wrong": [
-            "mniejsze",
-            "takie same"
+            "smaller",
+            "the same"
           ],
-          "explain": "Cena akcji zmienia się codziennie, a lokata ma stały procent.",
-          "fact": "Kurs akcji potrafi zmienić się o kilka procent w jeden dzień.",
+          "explain": "A share price changes every day, while a deposit has a fixed rate.",
+          "fact": "A share price can move several percent in a single day.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -124,13 +124,13 @@
     {
       "id": "l6",
       "kind": "lesson",
-      "title": "Nie wkładaj wszystkich jajek do jednego koszyka",
+      "title": "Don't put all your eggs in one basket",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Nie wkładaj wszystkich jajek do jednego koszyka"
+              "text": "Don't put all your eggs in one basket"
             },
             {
               "type": "image",
@@ -141,11 +141,11 @@
             },
             {
               "type": "text",
-              "text": "**Dywersyfikacja** to dzielenie pieniędzy między różne, niepowiązane ze sobą inwestycje, żeby **ograniczyć ryzyko**."
+              "text": "**Diversification** means splitting your money between different, unrelated investments to **reduce risk**."
             },
             {
               "type": "text",
-              "text": "Gdy jedna firma upadnie albo cała branża wpadnie w kryzys, stratę **równoważą** pozostałe części portfela."
+              "text": "When one company goes bust or a whole industry hits a crisis, the loss is **balanced out** by the rest of the portfolio."
             }
           ]
         }
@@ -159,13 +159,13 @@
     {
       "id": "l7",
       "kind": "lesson",
-      "title": "Skuteczna dywersyfikacja",
+      "title": "Effective diversification",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Skuteczna dywersyfikacja"
+              "text": "Effective diversification"
             },
             {
               "type": "image",
@@ -176,19 +176,19 @@
             },
             {
               "type": "text",
-              "text": "Dywersyfikację buduje się **na kilku poziomach**:"
+              "text": "Diversification is built **on several levels**:"
             },
             {
               "type": "list",
               "items": [
-                "**Branże** – np. technologia, medycyna, energetyka",
-                "**Regiony** – np. USA, Europa, rynki wschodzące",
-                "**Klasy aktywów** – akcje, obligacje, gotówka"
+                "**Industries** – e.g. technology, healthcare, energy",
+                "**Regions** – e.g. the US, Europe, emerging markets",
+                "**Asset classes** – stocks, bonds, cash"
               ]
             },
             {
               "type": "text",
-              "text": "Taki portfel lepiej znosi załamanie jednego sektora i daje **stabilniejsze wyniki** w długim terminie."
+              "text": "Such a portfolio copes better when one sector collapses and gives **steadier results** over the long term."
             }
           ]
         }
@@ -202,7 +202,7 @@
     {
       "id": "l2",
       "kind": "minigame",
-      "title": "Bezpieczne czy ryzykowne?",
+      "title": "Safe or risky?",
       "minigame": {
         "game": "sortowanie",
         "settings": [
@@ -218,28 +218,28 @@
     {
       "id": "l3",
       "kind": "task",
-      "title": "Dywersyfikacja w praktyce",
+      "title": "Diversification in practice",
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Co to jest dywersyfikacja?",
+          "prompt": "What is diversification?",
           "multi": false,
           "options": [
             {
-              "text": "Rozłożenie pieniędzy na różne aktywa",
+              "text": "Spreading money across different assets",
               "correct": true
             },
             {
-              "text": "Kupno jednej, najlepszej spółki",
+              "text": "Buying one, best company",
               "correct": false
             },
             {
-              "text": "Trzymanie oszczędności w gotówce",
+              "text": "Keeping savings in cash",
               "correct": false
             }
           ],
-          "explain": "Dywersyfikacja to podział pieniędzy między różne aktywa,\nżeby jedna strata nie zjadła całego portfela.",
-          "fact": "Nawet fundusz indeksowy to już dywersyfikacja – kupujesz kilkaset spółek naraz.",
+          "explain": "Diversification means splitting money between different assets,\nso that one loss doesn't eat the whole portfolio.",
+          "fact": "Even an index fund is already diversification – you buy hundreds of companies at once.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -253,23 +253,23 @@
         },
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
-              "left": "Akcja",
-              "right": "Udział w firmie"
+              "left": "Share",
+              "right": "A stake in a company"
             },
             {
-              "left": "Obligacja",
-              "right": "Pożyczka dla firmy lub państwa"
+              "left": "Bond",
+              "right": "A loan to a company or a state"
             },
             {
-              "left": "Lokata",
-              "right": "Pieniądze w banku na stały procent"
+              "left": "Deposit",
+              "right": "Money in the bank at a fixed rate"
             }
           ],
-          "explain": "Akcja daje udział w firmie, obligacja to pożyczka, a lokata – depozyt w banku.",
-          "fact": "Obligacje skarbowe kupisz już od 100 zł.",
+          "explain": "A share gives you a stake in a company, a bond is a loan, and a deposit is money kept in a bank.",
+          "fact": "Polish government savings bonds start from just 100 PLN.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -284,16 +284,16 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Nie wkładaj wszystkich jajek do jednego ___.",
+          "prompt": "Complete the sentence",
+          "text": "Don't put all your eggs in one ___.",
           "mode": "type",
           "answers": [
-            "koszyka",
-            "koszyczka"
+            "basket",
+            "little basket"
           ],
           "wrong": [],
-          "explain": "To stare powiedzenie o dywersyfikacji: koszyk = jedna inwestycja.",
-          "fact": "To powiedzenie znane jest w wielu językach.",
+          "explain": "It's an old saying about diversification: basket = one investment.",
+          "fact": "This saying exists in many languages.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -313,17 +313,17 @@
     {
       "id": "l4",
       "kind": "lesson",
-      "title": "Twój profil ryzyka",
+      "title": "Your risk profile",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Twój profil ryzyka"
+              "text": "Your risk profile"
             },
             {
               "type": "text",
-              "text": "Profil ryzyka zależy od **celu**, **czasu** i tego, jak znosisz spadki."
+              "text": "Your risk profile depends on your **goal**, your **time** and how you cope with drops."
             },
             {
               "type": "space",
@@ -331,7 +331,7 @@
             },
             {
               "type": "callout",
-              "text": "Im dłuższy horyzont, tym więcej wahań możesz przeczekać."
+              "text": "The longer the horizon, the more swings you can ride out."
             }
           ]
         }
@@ -345,18 +345,18 @@
     {
       "id": "l5",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Wyższy zysk zwykle oznacza wyższe ryzyko",
+          "prompt": "Build the sentence",
+          "answer": "A higher profit usually means higher risk",
           "extra": [
-            "niższe",
-            "zawsze"
+            "lower",
+            "always"
           ],
-          "explain": "Zysk i ryzyko zwykle idą w parze.",
-          "fact": "Inwestorzy nazywają to premią za ryzyko.",
+          "explain": "Profit and risk usually go hand in hand.",
+          "fact": "Investors call this the risk premium.",
           "options": [],
           "pairs": [],
           "zones": [],
@@ -370,24 +370,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Które działania zmniejszają ryzyko portfela?",
+          "prompt": "Which actions reduce portfolio risk?",
           "multi": true,
           "options": [
             {
-              "text": "Różne klasy aktywów",
+              "text": "Different asset classes",
               "correct": true
             },
             {
-              "text": "Inwestowanie na dłuższy czas",
+              "text": "Investing for a longer time",
               "correct": true
             },
             {
-              "text": "Kredyt na zakup akcji",
+              "text": "A loan to buy shares",
               "correct": false
             }
           ],
-          "explain": "Kredyt na akcje zwiększa ryzyko – możesz stracić więcej, niż masz.",
-          "fact": "Długi horyzont pozwala przeczekać spadki.",
+          "explain": "A loan for shares increases risk – you can lose more than you have.",
+          "fact": "A long horizon lets you ride out drops.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -401,12 +401,12 @@
         },
         {
           "type": "zones",
-          "prompt": "Przeciągnij aktywa do właściwej strefy",
+          "prompt": "Drag the assets to the right zone",
           "image": "",
           "zones": [
             {
               "id": "low",
-              "label": "Niskie ryzyko",
+              "label": "Low risk",
               "x": 0.04,
               "y": 0.1,
               "w": 0.44,
@@ -414,7 +414,7 @@
             },
             {
               "id": "high",
-              "label": "Wysokie ryzyko",
+              "label": "High risk",
               "x": 0.52,
               "y": 0.1,
               "w": 0.44,
@@ -423,24 +423,24 @@
           ],
           "items": [
             {
-              "text": "Lokata",
+              "text": "Deposit",
               "zone": "low"
             },
             {
-              "text": "Obligacje skarbowe",
+              "text": "Government bonds",
               "zone": "low"
             },
             {
-              "text": "Kryptowaluty",
+              "text": "Cryptocurrencies",
               "zone": "high"
             },
             {
-              "text": "Akcje jednej spółki",
+              "text": "Shares of a single company",
               "zone": "high"
             }
           ],
-          "explain": "Lokaty i obligacje skarbowe mają małe wahania, kryptowaluty i pojedyncze akcje – duże.",
-          "fact": "Nawet bezpieczne aktywa mają ryzyko inflacji.",
+          "explain": "Deposits and government bonds swing little, cryptocurrencies and single shares – a lot.",
+          "fact": "Even safe assets carry inflation risk.",
           "options": [],
           "extra": [],
           "pairs": [],

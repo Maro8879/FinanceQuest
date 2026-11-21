@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "basics",
-  "title": "Inflacja i procent składany",
+  "title": "Inflation and compound interest",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Jan",
@@ -11,7 +11,7 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Dlaczego gotówka traci wartość w czasie",
+      "title": "Why cash loses value over time",
       "pages": [
         {
           "blocks": [
@@ -24,18 +24,18 @@
             },
             {
               "type": "heading",
-              "text": "Dlaczego gotówka traci wartość w czasie"
+              "text": "Why cash loses value over time"
             },
             {
               "type": "text",
-              "text": "**Inflacja** to stały wzrost cen: z nadmiaru pieniądza, droższej produkcji i wysokiego popytu."
+              "text": "**Inflation** is a steady rise in prices: from too much money, more expensive production and high demand."
             },
             {
               "type": "list",
               "items": [
-                "Nadmiaru pieniądza w gospodarce",
-                "Rosnących kosztów produkcji",
-                "Wysokiego popytu "
+                "Too much money in the economy",
+                "Rising production costs",
+                "High demand "
               ]
             },
             {
@@ -44,7 +44,7 @@
             },
             {
               "type": "text",
-              "text": "Za tę samą kwotę kupisz z czasem mniej. Przy 0% oprocentowanie na koncie i inflacji 3–5% tracisz tyle, ile wynosi inflacja."
+              "text": "Over time the same amount buys you less. With 0% interest in your account and 3–5% inflation, you lose as much as inflation is."
             }
           ]
         }
@@ -58,7 +58,7 @@
     {
       "id": "l6",
       "kind": "lesson",
-      "title": "filmik inflacja",
+      "title": "inflation video",
       "pages": [
         {
           "blocks": [
@@ -80,14 +80,14 @@
     {
       "id": "l3",
       "kind": "lesson",
-      "title": "Jak działa procent składany\n",
+      "title": "How compound interest works\n",
       "tasks": [],
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Jak działa procent składany"
+              "text": "How compound interest works"
             },
             {
               "type": "image",
@@ -98,14 +98,14 @@
             },
             {
               "type": "text",
-              "text": "Odsetki są doliczane do kapitału i **same zaczynają zarabiać**, więc kapitał rośnie wykładniczo jak kula śnieżna. Z czasem zysk z odsetek przewyższa wpłacony kapitał."
+              "text": "Interest is added to your capital and **starts earning on its own**, so the capital grows exponentially like a snowball. Over time the interest earned exceeds the capital you paid in."
             },
             {
               "type": "divider"
             },
             {
               "type": "text",
-              "text": "Na tym obrazku widać kumulacje zysku w porównaniu do wpłaconych pieniędzy."
+              "text": "This picture shows how the gains pile up compared with the money paid in."
             },
             {
               "type": "image",
@@ -125,14 +125,14 @@
     {
       "id": "l4",
       "kind": "lesson",
-      "title": "Czas jako przewaga",
+      "title": "Time as an advantage",
       "tasks": [],
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Czas jako przewaga"
+              "text": "Time as an advantage"
             },
             {
               "type": "image",
@@ -143,56 +143,56 @@
             },
             {
               "type": "text",
-              "text": "Im wcześniej zaczniesz, tym mniej musisz wpłacić na ten sam cel. Długi horyzont wygładza krachy, bo rynek w dekadach historycznie rośnie."
+              "text": "The earlier you start, the less you need to pay in for the same goal. A long horizon smooths out crashes, because over decades the market has historically grown."
             },
             {
               "type": "divider"
             },
             {
               "type": "text",
-              "text": "Dla przykłądu wpłacając 200 € co miesiąc, przy oprocentowaniu 7% rocznie, kiedy odsetki są naliczane miesięcznie i reinwestowane."
+              "text": "For example, paying in 200 € every month at 7% a year, with interest added monthly and reinvested."
             },
             {
               "type": "table",
               "rows": [
                 {
                   "cells": [
-                    "Czas (lata)",
-                    "Łączna wpłata",
-                    "Będziesz mieć",
-                    "Odsetki"
+                    "Time (years)",
+                    "Total paid in",
+                    "You'll have",
+                    "Interest"
                   ]
                 },
                 {
                   "cells": [
                     "5",
-                    "12 000 €",
-                    "14 300 €",
-                    "2 300 €"
+                    "12,000 €",
+                    "14,300 €",
+                    "2,300 €"
                   ]
                 },
                 {
                   "cells": [
                     "10",
-                    "24 000 €",
-                    "34 600 €",
-                    "10 600 €"
+                    "24,000 €",
+                    "34,600 €",
+                    "10,600 €"
                   ]
                 },
                 {
                   "cells": [
                     "15",
-                    "36 000 €",
-                    "63 400 €",
-                    "27 400 €"
+                    "36,000 €",
+                    "63,400 €",
+                    "27,400 €"
                   ]
                 },
                 {
                   "cells": [
                     "30",
-                    "72 000 €",
-                    "244 000 €",
-                    "172 000 €"
+                    "72,000 €",
+                    "244,000 €",
+                    "172,000 €"
                   ]
                 }
               ],
@@ -201,7 +201,7 @@
             },
             {
               "type": "callout",
-              "text": "Po 30 latach ponad dwie trzecie kwoty to odsetki, a nie Twoje wpłaty."
+              "text": "After 30 years more than two thirds of the amount is interest, not your payments."
             }
           ]
         }
@@ -214,24 +214,24 @@
     {
       "id": "l5",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Czym jest inflacja?",
-          "explain": "Systematycznym wzrostem cen, który obniża siłę nabywczą pieniądza",
-          "fact": "Dokładnie tak! z czasem ta sama kwota wystarczy na mniej.",
+          "prompt": "What is inflation?",
+          "explain": "A steady rise in prices that lowers the purchasing power of money",
+          "fact": "Exactly! Over time the same amount buys less.",
           "options": [
             {
-              "text": "Systematycznym wzrostem cen, który obniża siłę nabywczą pieniądza",
+              "text": "A steady rise in prices that lowers the purchasing power of money",
               "correct": true
             },
             {
-              "text": "Odsetkami naliczanymi od kapitału",
+              "text": "Interest charged on capital",
               "correct": false
             },
             {
-              "text": "Wzrostem kursu akcji na giełdzie",
+              "text": "A rise in share prices on the stock exchange",
               "correct": false
             }
           ],
@@ -249,18 +249,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Przy 0% na koncie i inflacji 4% Twoje pieniądze co roku ___ na wartości.",
+          "prompt": "Complete the sentence",
+          "text": "With 0% in your account and 4% inflation, your money ___ value every year.",
           "answers": [
-            "tracą"
+            "loses"
           ],
           "wrong": [
-            "zyskują",
-            "nie zmieniają się"
+            "gains",
+            "doesn't change"
           ],
           "mode": "choose",
-          "explain": "Ceny rosną szybciej niż Twoje oszczędności, więc za tę samą kwotę kupisz mniej.",
-          "fact": "Dlatego oszczędności warto trzymać tam, gdzie zarabiają co najmniej tyle, ile wynosi inflacja.",
+          "explain": "Prices rise faster than your savings, so the same amount buys you less.",
+          "fact": "That's why it pays to keep savings where they earn at least as much as inflation.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -272,24 +272,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Na czym polega procent składany?",
+          "prompt": "What is compound interest?",
           "options": [
             {
-              "text": "Bank co roku wypłaca stałą kwotę",
+              "text": "The bank pays out a fixed amount every year",
               "correct": false
             },
             {
-              "text": "Odsetki doliczają się do kapitału i same zarabiają",
+              "text": "Interest is added to the capital and earns on its own",
               "correct": true
             },
             {
-              "text": "Odsetki dostajesz tylko raz, na koniec",
+              "text": "You get interest only once, at the end",
               "correct": false
             }
           ],
           "multi": false,
-          "explain": "Odsetki od odsetek sprawiają, że kapitał rośnie jak kula śnieżna.",
-          "fact": "Z czasem zysk z odsetek potrafi przewyższyć wszystkie Twoje wpłaty.",
+          "explain": "Interest on interest makes capital grow like a snowball.",
+          "fact": "Over time the interest earned can exceed all your payments.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -303,14 +303,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Im wcześniej zaczniesz tym mniej musisz wpłacić",
+          "prompt": "Build the sentence",
+          "answer": "The earlier you start the less you have to pay in",
           "extra": [
-            "później",
-            "więcej"
+            "later",
+            "more"
           ],
-          "explain": "Czas daje procentowi składanemu więcej lat na pracę.",
-          "fact": "Długi horyzont pomaga też przeczekać krachy.",
+          "explain": "Time gives compound interest more years to work.",
+          "fact": "A long horizon also helps you ride out crashes.",
           "options": [],
           "pairs": [],
           "zones": [],

@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "zmiennosc-i-zlecenia-obronne",
-  "title": "Zmienność i zlecenia obronne",
+  "title": "Volatility and protective orders",
   "color": "#4A5D73",
   "meta": {
     "editedBy": "Claude",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Zmienność",
+      "title": "Volatility",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Zmienność"
+              "text": "Volatility"
             },
             {
               "type": "image",
@@ -28,18 +28,18 @@
             },
             {
               "type": "text",
-              "text": "**Zmienność** (volatility) mówi, jak mocno i jak szybko cena skacze w górę i w dół. Przy krótkim horyzoncie to ona decyduje o wyniku."
+              "text": "**Volatility** tells you how strongly and how fast the price jumps up and down. Over a short horizon, it decides the result."
             },
             {
               "type": "list",
               "items": [
-                "**Duża** – kryptowaluty, małe spółki",
-                "**Mała** – globalne ETF-y, obligacje"
+                "**High** – cryptocurrencies, small companies",
+                "**Low** – global ETFs, bonds"
               ]
             },
             {
               "type": "callout",
-              "text": "Duża zmienność to szansa na **szybki zysk**, ale też na **szybką stratę**."
+              "text": "High volatility is a chance for a **quick gain**, but also for a **quick loss**."
             }
           ]
         }
@@ -53,13 +53,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Dźwignia finansowa",
+      "title": "Financial leverage",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Dźwignia finansowa"
+              "text": "Financial leverage"
             },
             {
               "type": "image",
@@ -70,15 +70,15 @@
             },
             {
               "type": "text",
-              "text": "**Dźwignia** pozwala grać większą kwotą, niż masz. Przy dźwigni **1:10** za 100 € kontrolujesz pozycję wartą 1 000 €."
+              "text": "**Leverage** lets you trade with more money than you have. With **1:10** leverage, 100 € controls a position worth 1,000 €."
             },
             {
               "type": "text",
-              "text": "Mnoży zysk, ale **mnoży też stratę**: spadek ceny o 10% może wyzerować całą wpłatę."
+              "text": "It multiplies gains, but **it multiplies losses too**: a 10% price drop can wipe out your whole deposit."
             },
             {
               "type": "callout",
-              "text": "W UE dźwignia dla klientów detalicznych jest ograniczona, ale to i tak narzędzie dla doświadczonych – **nie na start**."
+              "text": "In the EU, leverage for retail clients is limited, but it's still a tool for experienced traders – **not for beginners**."
             }
           ]
         }
@@ -109,15 +109,15 @@
             },
             {
               "type": "text",
-              "text": "**Stop-Loss** to zlecenie, które samo sprzedaje pozycję, gdy cena spadnie do ustalonego poziomu."
+              "text": "A **Stop-Loss** is an order that sells your position automatically when the price falls to a set level."
             },
             {
               "type": "text",
-              "text": "Przykład: kupujesz po **100 €**, stop ustawiasz na **95 €** – maksymalna strata to 5%. Mała strata nie zamieni się w dużą, bo „może jeszcze odbije”."
+              "text": "Example: you buy at **100 €** and set the stop at **95 €** – the maximum loss is 5%. A small loss won't turn into a big one because “it might bounce back”."
             },
             {
               "type": "callout",
-              "text": "Przy gwałtownych ruchach może się wykonać po **gorszej cenie** niż ustawiona."
+              "text": "In sharp moves it can be executed at a **worse price** than the one you set."
             }
           ]
         }
@@ -148,15 +148,15 @@
             },
             {
               "type": "text",
-              "text": "**Take-Profit** to zlecenie, które samo sprzedaje pozycję, gdy cena dojdzie do Twojego celu."
+              "text": "A **Take-Profit** is an order that sells your position automatically when the price reaches your target."
             },
             {
               "type": "text",
-              "text": "Przykład: kupujesz po **100 €**, cel ustawiasz na **110 €** – zysk realizuje się sam, nawet gdy nie patrzysz na ekran."
+              "text": "Example: you buy at **100 €** and set the target at **110 €** – the profit is taken automatically, even when you're not watching the screen."
             },
             {
               "type": "callout",
-              "text": "Pomaga trzymać się planu, zamiast chciwie czekać na „**jeszcze trochę**”."
+              "text": "It helps you stick to the plan instead of greedily waiting for “**just a bit more**”."
             }
           ]
         }
@@ -170,28 +170,28 @@
     {
       "id": "l5",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "choice",
-          "prompt": "Dźwignia 1:10, cena spada o 10%. Co z Twoją wpłatą?",
+          "prompt": "1:10 leverage, the price falls 10%. What happens to your deposit?",
           "options": [
             {
-              "text": "Tracisz 1%",
+              "text": "You lose 1%",
               "correct": false
             },
             {
-              "text": "Tracisz 10%",
+              "text": "You lose 10%",
               "correct": false
             },
             {
-              "text": "Może zniknąć cała",
+              "text": "All of it can disappear",
               "correct": true
             }
           ],
           "multi": false,
-          "explain": "Przy dźwigni 1:10 spadek ceny o 10% to −100% Twojej wpłaty.",
-          "fact": "W UE dźwignia dla klientów detalicznych jest ograniczona.",
+          "explain": "With 1:10 leverage, a 10% price drop is −100% of your deposit.",
+          "fact": "In the EU, leverage for retail clients is limited.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -205,27 +205,27 @@
         },
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
               "left": "Stop-Loss",
-              "right": "Sprzedaje przy ustalonej stracie"
+              "right": "Sells at a set loss"
             },
             {
               "left": "Take-Profit",
-              "right": "Sprzedaje przy celu zysku"
+              "right": "Sells at a profit target"
             },
             {
-              "left": "Zmienność",
-              "right": "Jak mocno skacze cena"
+              "left": "Volatility",
+              "right": "How strongly the price jumps"
             },
             {
-              "left": "Dźwignia",
-              "right": "Gra większą kwotą, niż masz"
+              "left": "Leverage",
+              "right": "Trading with more money than you have"
             }
           ],
-          "explain": "Stop-Loss i Take-Profit to zlecenia obronne, zmienność i dźwignia decydują o ryzyku.",
-          "fact": "Take-Profit realizuje zysk, nawet gdy nie patrzysz na ekran.",
+          "explain": "Stop-Loss and Take-Profit are protective orders; volatility and leverage decide the risk.",
+          "fact": "Take-Profit takes the profit even when you're not watching the screen.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -240,16 +240,16 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Kupujesz po 100 €, Stop-Loss ustawiasz na 95 €. Maksymalna strata to ___ procent.",
+          "prompt": "Complete the sentence",
+          "text": "You buy at 100 € and set the Stop-Loss at 95 €. The maximum loss is ___ percent.",
           "answers": [
             "5",
-            "pięć"
+            "five"
           ],
           "wrong": [],
           "mode": "type",
-          "explain": "Od 100 € do 95 € to 5 € straty, czyli 5%.",
-          "fact": "Przy gwałtownych ruchach Stop-Loss może się wykonać po gorszej cenie.",
+          "explain": "From 100 € to 95 € is a 5 € loss, i.e. 5%.",
+          "fact": "In sharp moves a Stop-Loss can be executed at a worse price.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -261,11 +261,11 @@
         },
         {
           "type": "zones",
-          "prompt": "Duża czy mała zmienność?",
+          "prompt": "High or low volatility?",
           "zones": [
             {
               "id": "a",
-              "label": "Duża zmienność",
+              "label": "High volatility",
               "x": 0.04,
               "y": 0.1,
               "w": 0.44,
@@ -273,7 +273,7 @@
             },
             {
               "id": "b",
-              "label": "Mała zmienność",
+              "label": "Low volatility",
               "x": 0.52,
               "y": 0.1,
               "w": 0.44,
@@ -282,24 +282,24 @@
           ],
           "items": [
             {
-              "text": "Kryptowaluty",
+              "text": "Cryptocurrencies",
               "zone": "a"
             },
             {
-              "text": "Globalne ETF-y",
+              "text": "Global ETFs",
               "zone": "b"
             },
             {
-              "text": "Małe spółki",
+              "text": "Small companies",
               "zone": "a"
             },
             {
-              "text": "Obligacje",
+              "text": "Bonds",
               "zone": "b"
             }
           ],
-          "explain": "Kryptowaluty i małe spółki skaczą mocno, globalne ETF-y i obligacje – dużo spokojniej.",
-          "fact": "Duża zmienność to szansa na szybki zysk, ale też na szybką stratę.",
+          "explain": "Cryptocurrencies and small companies jump a lot; global ETFs and bonds are much calmer.",
+          "fact": "High volatility is a chance for a quick gain, but also for a quick loss.",
           "options": [],
           "extra": [],
           "pairs": [],

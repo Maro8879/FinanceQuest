@@ -7,8 +7,8 @@ namespace FinanceQuest
 {
     // Karta z cytatem nad trofeami: Wall Street w tle (dzień albo noc – według „Trybu ciemnego”),
     // cytat na półprzezroczystym panelu, pod nim autor.
-    // Kliknięcie w kartę (karta się nie wciska) pokazuje kolejny cytat w stylu tablicy notowań:
-    // stary odjeżdża w górę, nowy wjeżdża od dołu, autor chwilę po nim.
+    // Cytaty zmieniają się same co kilka sekund, w kółko (po ostatnim wraca pierwszy), w stylu tablicy notowań:
+    // stary odjeżdża w górę, nowy wjeżdża od dołu, autor chwilę po nim. Kliknięcie w kartę przełącza od razu.
     public static class DailyHero
     {
         const float Radius = 22f;
@@ -42,7 +42,7 @@ namespace FinanceQuest
             var panel = Ui.Rounded("Panel", root, night ? PanelNight : PanelDay, 14f);
             panel.gameObject.AddComponent<RectMask2D>();
             float tw = w - 2 * inset - 2 * pad;
-            var quote = Ui.Text("Quote", panel.transform, "„" + DailyThoughts.Today() + "”", 18f, night ? Color.white : Palette.Text,
+            var quote = Ui.Text("Quote", panel.transform, "\u201C" + DailyThoughts.Today() + "\u201D", 18f, night ? Color.white : Palette.Text,
                 FontWeight.ExtraBold, TextAlignmentOptions.TopLeft);
             var author = Ui.Text("Author", panel.transform, "— " + DailyThoughts.TodayAuthor(), 13f,
                 night ? new Color(1f, 1f, 1f, 0.7f) : Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.TopLeft);
@@ -52,7 +52,10 @@ namespace FinanceQuest
             // Przezroczyste tło łapie kliknięcie w całą kartę.
             var hit = root.gameObject.AddComponent<Image>();
             hit.color = Color.clear;
-            root.gameObject.AddComponent<DailyHeroTap>().OnTap = swap.Play;
+            var auto = root.gameObject.AddComponent<QuoteAuto>();
+            auto.Swap = swap;
+            // Kliknięcie: kolejny cytat od razu, a odliczanie do następnej zmiany zaczyna się od nowa.
+            root.gameObject.AddComponent<DailyHeroTap>().OnTap = () => { swap.Play(); auto.Restart(); };
             return h;
         }
     }
@@ -70,6 +73,25 @@ namespace FinanceQuest
         public void OnDrag(PointerEventData e) { if (Scroll != null) Scroll.OnDrag(e); }
         public void OnEndDrag(PointerEventData e) { if (Scroll != null) Scroll.OnEndDrag(e); }
         public void OnScroll(PointerEventData e) { if (Scroll != null) Scroll.OnScroll(e); }
+    }
+
+    // Sam przełącza cytat co Interval sekund. Liczy czas tylko, gdy karta jest na ekranie (menu jest otwarte).
+    public class QuoteAuto : MonoBehaviour
+    {
+        const float Interval = 4f;   // tyle czasu na przeczytanie jednego cytatu
+        public QuoteSwap Swap;
+        float timer;
+
+        public void Restart() { timer = 0f; }
+
+        void Update()
+        {
+            if (Swap == null) return;
+            timer += Time.unscaledDeltaTime;
+            if (timer < Interval) return;
+            timer = 0f;
+            Swap.Play();
+        }
     }
 
     // Zmiana cytatu w stylu tablicy notowań. Komponent działa tylko w trakcie animacji (potem się wyłącza).
@@ -117,7 +139,7 @@ namespace FinanceQuest
                 // Połowa animacji: stary tekst już zniknął – podmieniamy na nowy (wjedzie od dołu).
                 swapped = true;
                 DailyThoughts.Next();
-                quote.text = "„" + DailyThoughts.Today() + "”";
+                quote.text = "\u201C" + DailyThoughts.Today() + "\u201D";
                 author.text = "— " + DailyThoughts.TodayAuthor();
                 Layout();
             }

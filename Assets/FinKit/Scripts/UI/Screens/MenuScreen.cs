@@ -35,7 +35,7 @@ namespace FinanceQuest
                 y += RecommendNote(content, ScreenKit.Margin, y, cw, recommended.Count) + 16f;
             }
 
-            var label = Ui.Text("CoursesLabel", content, "KURSY", 12.5f, Palette.TextMuted, FontWeight.ExtraBold, TMPro.TextAlignmentOptions.CaplineLeft);
+            var label = Ui.Text("CoursesLabel", content, "COURSES", 12.5f, Palette.TextMuted, FontWeight.ExtraBold, TMPro.TextAlignmentOptions.CaplineLeft);
             label.characterSpacing = 4f;
             Ui.Place(label.rectTransform, ScreenKit.Margin + 4, y, cw, 16);
             y += 16f + 10f;
@@ -61,9 +61,9 @@ namespace FinanceQuest
             var ic = Ui.Icon("Spark", bg.transform, IconId.Spark, Palette.Accent, icon);
             Ui.Place(ic.rectTransform, pad, (h - icon) * 0.5f, icon, icon);
             float tx = pad + icon + 12f, tw = w - tx - pad;
-            var t1 = Ui.Text("Title", bg.transform, "Mamy dla Ciebie " + ContentText.Plural(count, "kurs", "kursy", "kursów"), 14.5f, Color.white);
+            var t1 = Ui.Text("Title", bg.transform, "We have " + ContentText.Plural(count, "course", "courses", "courses") + " for you", 14.5f, Color.white);
             Ui.Place(t1.rectTransform, tx, 12f, tw, 20f);
-            var t2 = Ui.Text("Sub", bg.transform, count == 1 ? "Oznaczyliśmy go jako „Polecany”" : "Oznaczyliśmy je jako „Polecany”", 12f,
+            var t2 = Ui.Text("Sub", bg.transform, count == 1 ? "We marked it as “Recommended”" : "We marked them as “Recommended”", 12f,
                 new Color(1f, 1f, 1f, 0.7f), FontWeight.SemiBold);
             Ui.Place(t2.rectTransform, tx, 33f, tw, 18f);
             return h;
@@ -73,9 +73,9 @@ namespace FinanceQuest
         static float RecommendedTag(Transform parent, float x, float y)
         {
             const float bh = 22f, star = 12f;
-            var tag = Ui.Text("Label", parent, "POLECANY DLA CIEBIE", 11f, Palette.OnAccent, FontWeight.ExtraBold, TMPro.TextAlignmentOptions.CaplineLeft);
+            var tag = Ui.Text("Label", parent, "RECOMMENDED FOR YOU", 11f, Palette.OnAccent, FontWeight.ExtraBold, TMPro.TextAlignmentOptions.CaplineLeft);
             tag.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
-            float bw = tag.GetPreferredValues("POLECANY DLA CIEBIE", 1000f, 0f).x + star + 22f;
+            float bw = tag.GetPreferredValues("RECOMMENDED FOR YOU", 1000f, 0f).x + star + 22f;
             var pill = Ui.Rounded("RecommendedTag", parent, Palette.Accent, 8f);
             Ui.Place(pill.rectTransform, x, y, bw, bh);
             var si = Ui.Icon("Star", pill.transform, IconId.Star, Palette.OnAccent, star);
@@ -122,8 +122,8 @@ namespace FinanceQuest
             t.maxVisibleLines = 2;
             float th = Mathf.Min(Ui.TextHeight(t, l.TextW), l.TwoLines);
             Ui.Place(t.rectTransform, pad, top, l.TextW, th);
-            string sub = ContentText.Plural(course.Chapters.Count, "rozdział", "rozdziały", "rozdziałów") + " · " +
-                         ContentText.Plural(course.LevelCount, "level", "levele", "leveli");
+            string sub = ContentText.Plural(course.Chapters.Count, "chapter", "chapters", "chapters") + " · " +
+                         ContentText.Plural(course.LevelCount, "level", "levels", "levels");
             var st = Ui.Text("Subtitle", card.Content, sub, 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
             Ui.Place(st.rectTransform, pad, top + th + 1f, l.TextW, 18f);
             // Gwiazdki całego kursu za podpisem.

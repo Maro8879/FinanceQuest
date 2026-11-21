@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "psychologia-krachu",
-  "title": "Psychologia podczas krachu",
+  "title": "Psychology during a crash",
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Krachy w historii (2000, 2008, 2020)",
+      "title": "Crashes in history (2000, 2008, 2020)",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Krachy w historii (2000, 2008, 2020)"
+              "text": "Crashes in history (2000, 2008, 2020)"
             },
             {
               "type": "image",
@@ -29,14 +29,14 @@
             {
               "type": "list",
               "items": [
-                "**2000** – pęka bańka internetowa, spółki technologiczne tracą większość wartości",
-                "**2008** – kryzys z rynku nieruchomości w USA ciągnie w dół cały świat",
-                "**2020** – pandemia: jeden z najszybszych spadków w historii i jedno z najszybszych odbić"
+                "**2000** – the dot-com bubble bursts, tech companies lose most of their value",
+                "**2008** – a crisis in the US housing market drags the whole world down",
+                "**2020** – the pandemic: one of the fastest falls in history and one of the fastest rebounds"
               ]
             },
             {
               "type": "callout",
-              "text": "Krachy się zdarzają, ale szeroki rynek historycznie **wracał wyżej**. To nie gwarancja na przyszłość."
+              "text": "Crashes happen, but the broad market has historically **come back higher**. That's no guarantee for the future."
             }
           ]
         }
@@ -50,13 +50,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Emocje vs plan",
+      "title": "Emotions vs plan",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Emocje vs plan"
+              "text": "Emotions vs plan"
             },
             {
               "type": "image",
@@ -67,15 +67,15 @@
             },
             {
               "type": "text",
-              "text": "Gdy rynek spada, mózg krzyczy „**uciekaj**”, gdy rośnie – „**kupuj więcej**”. Dlatego większość ludzi kupuje drogo i sprzedaje tanio."
+              "text": "When the market falls, your brain screams “**run**”, when it rises – “**buy more**”. That's why most people buy high and sell low."
             },
             {
               "type": "text",
-              "text": "Chroni Cię **plan spisany przed krachem**: ile wpłacasz, w co i kiedy rebalansujesz."
+              "text": "What protects you is **a plan written before the crash**: how much you pay in, into what, and when you rebalance."
             },
             {
               "type": "callout",
-              "text": "Decyzje podejmuj na spokojnie. W czasie burzy **tylko realizuj plan**."
+              "text": "Make decisions calmly. During the storm, **just follow the plan**."
             }
           ]
         }
@@ -89,13 +89,13 @@
     {
       "id": "l3",
       "kind": "lesson",
-      "title": "Koszt pominięcia najlepszych dni",
+      "title": "The cost of missing the best days",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Koszt pominięcia najlepszych dni"
+              "text": "The cost of missing the best days"
             },
             {
               "type": "image",
@@ -106,15 +106,15 @@
             },
             {
               "type": "text",
-              "text": "Najlepsze dni na giełdzie często przychodzą **tuż po najgorszych** – w środku paniki."
+              "text": "The best days on the stock market often come **right after the worst ones** – in the middle of the panic."
             },
             {
               "type": "text",
-              "text": "Kto sprzedał ze strachu i czeka, „aż się uspokoi”, zwykle **przegapia odbicie**."
+              "text": "Whoever sold in fear and waits “until things calm down” usually **misses the rebound**."
             },
             {
               "type": "callout",
-              "text": "Ominięcie zaledwie **kilku najlepszych dni** w ciągu wielu lat potrafi mocno obniżyć końcowy wynik."
+              "text": "Missing just **a few of the best days** over many years can seriously lower the final result."
             }
           ]
         }
@@ -128,13 +128,13 @@
     {
       "id": "l4",
       "kind": "lesson",
-      "title": "Co robić podczas krachów",
+      "title": "What to do during crashes",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Co robić podczas krachów"
+              "text": "What to do during crashes"
             },
             {
               "type": "image",
@@ -146,15 +146,15 @@
             {
               "type": "list",
               "items": [
-                "**Nie sprzedawaj w panice** – strata staje się realna dopiero przy sprzedaży",
-                "**Wpłacaj dalej** – kupujesz taniej",
-                "**Zrób rebalancing**, jeśli proporcje mocno się rozjechały",
-                "**Nie sprawdzaj portfela** co godzinę"
+                "**Don't sell in a panic** – a loss only becomes real when you sell",
+                "**Keep paying in** – you're buying cheaper",
+                "**Rebalance** if your proportions have drifted a lot",
+                "**Don't check your portfolio** every hour"
               ]
             },
             {
               "type": "callout",
-              "text": "Przy horyzoncie 20 lat to, co dzieje się dziś, **nie ma większego znaczenia**."
+              "text": "With a 20-year horizon, what happens today **doesn't matter much**."
             }
           ]
         }
@@ -168,27 +168,27 @@
     {
       "id": "l5",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
               "left": "2000",
-              "right": "Pęknięcie bańki internetowej"
+              "right": "The dot-com bubble bursts"
             },
             {
               "left": "2008",
-              "right": "Kryzys z rynku nieruchomości w USA"
+              "right": "A crisis in the US housing market"
             },
             {
               "left": "2020",
-              "right": "Pandemia i szybkie odbicie"
+              "right": "Pandemic and a quick rebound"
             }
           ],
-          "explain": "Każdy krach miał inną przyczynę, ale wszystkie mocno przestraszyły inwestorów.",
-          "fact": "Szeroki rynek historycznie wracał po krachach wyżej – to jednak nie gwarancja.",
+          "explain": "Each crash had a different cause, but all of them scared investors badly.",
+          "fact": "The broad market has historically come back higher after crashes – but that's not a guarantee.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -203,24 +203,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Co robisz podczas krachu, mając horyzont 20 lat?",
+          "prompt": "What do you do during a crash if your horizon is 20 years?",
           "options": [
             {
-              "text": "Wpłacam dalej według planu",
+              "text": "I keep paying in according to plan",
               "correct": true
             },
             {
-              "text": "Sprzedaję wszystko, zanim spadnie bardziej",
+              "text": "I sell everything before it falls further",
               "correct": false
             },
             {
-              "text": "Robię rebalancing, jeśli proporcje się rozjechały",
+              "text": "I rebalance if the proportions have drifted",
               "correct": true
             }
           ],
           "multi": true,
-          "explain": "Sprzedaż w panice zamienia stratę na papierze w prawdziwą.",
-          "fact": "Najlepsze dni na giełdzie często przychodzą tuż po najgorszych.",
+          "explain": "Selling in a panic turns a paper loss into a real one.",
+          "fact": "The best days on the stock market often come right after the worst ones.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -234,18 +234,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Strata staje się realna dopiero, gdy ___.",
+          "prompt": "Complete the sentence",
+          "text": "A loss only becomes real when you ___.",
           "answers": [
-            "sprzedasz"
+            "sell"
           ],
           "wrong": [
-            "sprawdzisz portfel",
-            "kupisz więcej"
+            "check your portfolio",
+            "buy more"
           ],
           "mode": "choose",
-          "explain": "Dopóki trzymasz, spadek jest tylko na papierze i rynek ma czas się odbić.",
-          "fact": "Kto sprzedał w panice, zwykle przegapia odbicie.",
+          "explain": "As long as you hold, the drop is only on paper and the market has time to bounce back.",
+          "fact": "Whoever sold in a panic usually misses the rebound.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -257,14 +257,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "W czasie burzy tylko realizuj plan",
+          "prompt": "Build the sentence",
+          "answer": "During the storm just follow the plan",
           "extra": [
-            "sprzedawaj",
-            "zmieniaj"
+            "sell",
+            "change"
           ],
-          "explain": "Plan spisany przed krachem chroni przed decyzjami w panice.",
-          "fact": "Przez emocje większość ludzi kupuje drogo i sprzedaje tanio.",
+          "explain": "A plan written before the crash protects you from panic decisions.",
+          "fact": "Because of emotions, most people buy high and sell low.",
           "options": [],
           "pairs": [],
           "zones": [],

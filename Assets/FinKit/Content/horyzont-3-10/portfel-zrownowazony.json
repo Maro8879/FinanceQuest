@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "portfel-zrownowazony",
-  "title": "Portfel zrównoważony",
+  "title": "Balanced portfolio",
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
@@ -11,13 +11,13 @@
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "Akcje i obligacje razem",
+      "title": "Stocks and bonds together",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Akcje i obligacje razem"
+              "text": "Stocks and bonds together"
             },
             {
               "type": "image",
@@ -28,18 +28,18 @@
             },
             {
               "type": "text",
-              "text": "**Portfel zrównoważony** łączy dwa elementy. Klasyczny przykład to **60% akcji i 40% obligacji**."
+              "text": "A **balanced portfolio** combines two parts. The classic example is **60% stocks and 40% bonds**."
             },
             {
               "type": "list",
               "items": [
-                "**Akcje** – silnik wzrostu",
-                "**Obligacje** – amortyzator"
+                "**Stocks** – the growth engine",
+                "**Bonds** – the shock absorber"
               ]
             },
             {
               "type": "callout",
-              "text": "Rośnie wolniej niż same akcje, ale w krachu traci **wyraźnie mniej** – to kompromis między zyskiem a spokojem."
+              "text": "It grows more slowly than stocks alone, but in a crash it loses **noticeably less** – a compromise between return and peace of mind."
             }
           ]
         }
@@ -53,13 +53,13 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "Jak dobrać proporcje",
+      "title": "How to choose the proportions",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": "Jak dobrać proporcje"
+              "text": "How to choose the proportions"
             },
             {
               "type": "image",
@@ -70,18 +70,18 @@
             },
             {
               "type": "text",
-              "text": "Proporcje zależą od **horyzontu** i od tego, **ile spadku zniesiesz** bez paniki:"
+              "text": "The proportions depend on your **horizon** and on **how big a drop you can stand** without panicking:"
             },
             {
               "type": "list",
               "items": [
-                "**Krótszy horyzont** lub niska tolerancja ryzyka → więcej obligacji",
-                "**Dłuższy horyzont** → więcej akcji"
+                "**Shorter horizon** or low risk tolerance → more bonds",
+                "**Longer horizon** → more stocks"
               ]
             },
             {
               "type": "callout",
-              "text": "Test: portfel 10 000 € spada do 7 000 €. Jeśli wtedy byś sprzedał – masz **za dużo akcji**."
+              "text": "Test: a 10,000 € portfolio drops to 7,000 €. If you'd sell at that point – you have **too many stocks**."
             }
           ]
         }
@@ -112,15 +112,15 @@
             },
             {
               "type": "text",
-              "text": "Z czasem proporcje się **rozjeżdżają**. Gdy akcje mocno rosną, z 60/40 robi się np. 70/30 – i ryzyko rośnie bez Twojej decyzji."
+              "text": "Over time the proportions **drift**. When stocks rise a lot, 60/40 becomes e.g. 70/30 – and the risk grows without you deciding it."
             },
             {
               "type": "text",
-              "text": "**Rebalancing** to powrót do planu, np. raz w roku: sprzedajesz trochę tego, co urosło, i dokupujesz to, co zostało w tyle."
+              "text": "**Rebalancing** means going back to the plan, e.g. once a year: you sell a bit of what has grown and buy more of what has fallen behind."
             },
             {
               "type": "callout",
-              "text": "„**Sprzedawaj drogo, kupuj tanio**” – według prostej zasady, bez zgadywania rynku."
+              "text": "“**Sell high, buy low**” – by a simple rule, without guessing the market."
             }
           ]
         }
@@ -134,27 +134,27 @@
     {
       "id": "l4",
       "kind": "test",
-      "title": "Test rozdziału",
+      "title": "Chapter test",
       "tasks": [
         {
           "type": "pairs",
-          "prompt": "Połącz pojęcie z opisem",
+          "prompt": "Match the term with its description",
           "pairs": [
             {
-              "left": "Akcje",
-              "right": "Silnik wzrostu"
+              "left": "Stocks",
+              "right": "Growth engine"
             },
             {
-              "left": "Obligacje",
-              "right": "Amortyzator"
+              "left": "Bonds",
+              "right": "Shock absorber"
             },
             {
               "left": "Rebalancing",
-              "right": "Powrót do zaplanowanych proporcji"
+              "right": "Going back to the planned proportions"
             }
           ],
-          "explain": "Akcje dają wzrost, obligacje łagodzą spadki, a rebalancing pilnuje planu.",
-          "fact": "Klasyczny portfel zrównoważony to 60% akcji i 40% obligacji.",
+          "explain": "Stocks bring growth, bonds soften drops, and rebalancing keeps you on plan.",
+          "fact": "The classic balanced portfolio is 60% stocks and 40% bonds.",
           "options": [],
           "extra": [],
           "zones": [],
@@ -169,24 +169,24 @@
         },
         {
           "type": "choice",
-          "prompt": "Masz 10 lat do celu i spokojnie znosisz spadki. Co wybierasz?",
+          "prompt": "You have 10 years to your goal and handle drops calmly. What do you choose?",
           "options": [
             {
-              "text": "Więcej obligacji",
+              "text": "More bonds",
               "correct": false
             },
             {
-              "text": "Same lokaty",
+              "text": "Only deposits",
               "correct": false
             },
             {
-              "text": "Więcej akcji",
+              "text": "More stocks",
               "correct": true
             }
           ],
           "multi": false,
-          "explain": "Długi horyzont i wysoka tolerancja ryzyka pozwalają trzymać więcej akcji.",
-          "fact": "Test: jeśli przy spadku portfela o 30% sprzedałbyś wszystko, masz za dużo akcji.",
+          "explain": "A long horizon and high risk tolerance let you hold more stocks.",
+          "fact": "Test: if you'd sell everything when the portfolio drops 30%, you have too many stocks.",
           "extra": [],
           "pairs": [],
           "zones": [],
@@ -200,18 +200,18 @@
         },
         {
           "type": "gap",
-          "prompt": "Uzupełnij zdanie",
-          "text": "Akcje mocno urosły i z 60/40 zrobiło się 70/30. Czas na ___.",
+          "prompt": "Complete the sentence",
+          "text": "Stocks have risen a lot and 60/40 has become 70/30. Time for ___.",
           "answers": [
             "rebalancing"
           ],
           "wrong": [
-            "panikę",
-            "kredyt"
+            "panic",
+            "a loan"
           ],
           "mode": "choose",
-          "explain": "Rebalancing przywraca plan: sprzedajesz trochę tego, co urosło, i dokupujesz to, co zostało w tyle.",
-          "fact": "Wystarczy robić to np. raz w roku.",
+          "explain": "Rebalancing restores the plan: you sell a bit of what has grown and buy more of what has fallen behind.",
+          "fact": "Doing it e.g. once a year is enough.",
           "options": [],
           "extra": [],
           "pairs": [],
@@ -223,14 +223,14 @@
         },
         {
           "type": "tiles",
-          "prompt": "Ułóż zdanie",
-          "answer": "Sprzedawaj drogo i kupuj tanio",
+          "prompt": "Build the sentence",
+          "answer": "Sell high and buy low",
           "extra": [
-            "szybko",
-            "zawsze"
+            "fast",
+            "always"
           ],
-          "explain": "Rebalancing sam sprzedaje to, co podrożało, i dokupuje to, co jest tanie.",
-          "fact": "Działa według prostej zasady, bez zgadywania rynku.",
+          "explain": "Rebalancing itself sells what has got expensive and buys what is cheap.",
+          "fact": "It works by a simple rule, without guessing the market.",
           "options": [],
           "pairs": [],
           "zones": [],
