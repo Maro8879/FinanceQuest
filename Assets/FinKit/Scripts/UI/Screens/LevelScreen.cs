@@ -4,7 +4,8 @@ using UnityEngine;
 namespace FinanceQuest
 {
     // Ekran levelu. Lekcja ze stronami pokazuje strony z blokami (LessonPages), a po nich – jeśli są – zadania.
-    // Test rozdziału i level „Zadania” to ekran zadań (QuizScreen). Mini gry mają na razie tymczasowy ekran z przyciskiem „Ukończ (test)”.
+    // Test rozdziału i level „Zadania” to ekran zadań (QuizScreen). Mini gra „12 miesięcy” to InvestGame;
+    // pozostałe mini gry mają na razie tymczasowy ekran z przyciskiem „Ukończ (test)”.
     public static class LevelScreen
     {
         // Czy level ma już treść do przejścia (strony lekcji albo zadania). Pusty level zalicza się samym kliknięciem.
@@ -13,7 +14,13 @@ namespace FinanceQuest
             var def = level.Def;
             if (def == null) return false;
             bool pages = level.Kind == LevelKind.Lesson && def.pages != null && def.pages.Count > 0;
-            return pages || (def.tasks != null && def.tasks.Count > 0);
+            return pages || (def.tasks != null && def.tasks.Count > 0) || IsReadyGame(level);
+        }
+
+        // Mini gra, która jest już zrobiona (wybrana w edytorze: Mini gra → „12-miesiecy”).
+        static bool IsReadyGame(LevelData level)
+        {
+            return level.Kind == LevelKind.MiniGame && level.Def != null && level.Def.minigame != null && level.Def.minigame.game == InvestGame.Id;
         }
 
         public static void Build(RectTransform screen, FinanceQuestApp app, CourseData course, int chapterIndex, int levelIndex)
@@ -68,6 +75,12 @@ namespace FinanceQuest
             if (hasTasks && level.Kind != LevelKind.MiniGame)
             {
                 QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, best, finish, save);
+                return;
+            }
+            if (IsReadyGame(level))
+            {
+                // Podsumowanie gry zalicza level od razu; „Zastosuj w praktyce” prowadzi dalej, jak po lekcji.
+                InvestGame.Build(screen, app, () => save(-1), () => finish(-1));
                 return;
             }
             Placeholder(screen, app, course, ch, level, "Tu pojawi się mini gra.");

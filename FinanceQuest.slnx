@@ -1,5 +1,7 @@
 ﻿<Solution>
   <Project Path="Assembly-CSharp.csproj" />
+  <Project Path="FinanceQuest.Sim.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
+  <Project Path="FinanceQuest.Sim.Tests.csproj" />
   <Project Path="Unity.2D.Welcome.csproj" />
 </Solution>

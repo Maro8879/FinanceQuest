@@ -198,7 +198,8 @@ const ARTS = {Portfolio:"Wykres kołowy", Magnifier:"Lupa nad świecami", Laptop
 const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
-const GAMES = ["sortowanie","budzet","wydatki","inna"];
+// Mini gry: id w treści → nazwa w edytorze. Gotowa (zrobiona w aplikacji) jest na razie tylko „12-miesiecy”.
+const GAMES = {"12-miesiecy":"Pierwsze 12 miesięcy po zakupie (symulacja inwestowania)", sortowanie:"sortowanie (jeszcze nie ma)", budzet:"budzet (jeszcze nie ma)", wydatki:"wydatki (jeszcze nie ma)", inna:"inna (jeszcze nie ma)"};
 const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", video:"Filmik", callout:"Ważne", list:"Lista", table:"Tabelka", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
@@ -1079,7 +1080,7 @@ function levelForm(){
       + `<label>Zadania na koniec lekcji <span class="hint">opcjonalnie – po stronach; trzeba odpowiedzieć poprawnie, żeby przejść dalej</span></label>`
       + taskList(l);
   } else if (l.kind === "minigame"){
-    body = `<label>Mini gra</label>${sel(`${b}.minigame.game`, l.minigame.game, Object.fromEntries([["","— wybierz —"], ...GAMES.map(g=>[g,g])]))}
+    body = `<label>Mini gra</label>${sel(`${b}.minigame.game`, l.minigame.game, Object.fromEntries([["","— wybierz —"], ...Object.entries(GAMES)]))}
       <label>Ustawienia <span class="hint">klucz → wartość</span></label>` + l.minigame.settings.map((s,i) => `<div class="line"><div class="f">${one(`${b}.minigame.settings.${i}.key`, s.key, "klucz")}</div><div class="f">${one(`${b}.minigame.settings.${i}.value`, s.value, "wartość")}</div><button class="mini x" data-act="setting" data-i="${i}" data-dir="0">✕</button></div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-setting">+ ustawienie</button></div>`;
   } else {
@@ -1219,7 +1220,7 @@ function previewBody(){
       <div class="pbtn y" data-act="ppage" data-i="${last ? pi : pi+1}">${!last ? "DALEJ" : l.tasks.length ? "DO ZADAŃ" : "UKOŃCZ"}</div>`;
   }
   if (s.part === "level" && l.kind === "minigame")
-    return `<div class="pk">MINI GRA</div><div class="pq">${esc(l.title || "Mini gra")}</div><div class="pa">Gra: <b>${esc(l.minigame.game || "—")}</b>${l.minigame.settings.map(x=>`<br>${esc(x.key)}: ${esc(x.value)}`).join("")}</div>
+    return `<div class="pk">MINI GRA</div><div class="pq">${esc(l.title || "Mini gra")}</div><div class="pa">Gra: <b>${esc(GAMES[l.minigame.game] || l.minigame.game || "—")}</b>${l.minigame.settings.map(x=>`<br>${esc(x.key)}: ${esc(x.value)}`).join("")}</div>
       <div class="sub" style="color:var(--pmut)">Podgląd samej gry pojawi się, gdy powstanie w aplikacji.</div><div class="pbtn y">GRAJ</div>`;
   return taskPreview(l.tasks[s.idx]);
 }
