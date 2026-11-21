@@ -2,19 +2,18 @@
   "format": 1,
   "id": "credit",
   "title": "INWESTOWANIE KRÓTKOTERMINOWE (obarczone dużym ryzykiem)",
-  "shortName": "Kredyty",
-  "color": "#8E4A36",
+  "shortName": "Trading",
+  "color": "#4A5D73",
   "art": "Candles",
-  "icon": "Card",
+  "icon": "Chart",
   "order": 6,
   "chapters": [
-    "cards",
-    "rrso",
-    "bik",
-    "debt"
+    "inwestowanie-a-spekulacja",
+    "zmiennosc-i-zlecenia-obronne",
+    "zarzadzanie-kapitalem"
   ],
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T06:54:22Z"
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T07:52:17Z"
   }
 }

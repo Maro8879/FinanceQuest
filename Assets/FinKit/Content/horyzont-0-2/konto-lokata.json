@@ -4,24 +4,35 @@
   "title": "Konto oszczędnościowe i lokata",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T06:32:13Z"
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Dlaczego giełda nie lubi pośpiechu",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Dlaczego giełda nie lubi pośpiechu"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-dlaczego-gielda-nie-lubi-pos.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Akcje nie nadają się na krótki termin (np. poniżej 2–3 lat) ze względu na ich wysoką zmienność i nieprzewidywalność rynkową. W krótkim okresie ceny akcji reagują na nagłe wiadomości, kryzysy czy nastroje inwestorów, przez co ich wartość potrafi spaść o kilkadziesiąt procent w ciągu zaledwie kilku miesięcy."
+            },
+            {
+              "type": "text",
+              "text": "Jeśli potrzebujesz pieniędzy w konkretnym, bliskim terminie (np. na zakup auta, wkład własny czy wakacje), inwestowanie w akcje naraża Cię na ryzyko, że w momencie wypłaty rynek będzie akurat w dołku i zrealizujesz realną stratę. Dlatego na krótki horyzont bezpieczniejszym wyborem są konta oszczędnościowe lub lokaty, które chronią kapitał i gwarantują stały, przewidywalny zysk."
             }
           ]
         }
@@ -35,17 +46,63 @@
     {
       "id": "l2",
       "kind": "lesson",
-      "title": "",
+      "title": "Konto bieżące vs oszczędnościowe",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Konto bieżące vs oszczędnościowe"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-konto-biezace-vs-oszczednosc.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Konto bieżące (ROR) służy do codziennych operacji finansowych — wpływa na nie Twoje wynagrodzenie, płacisz z niego kartą, robisz przelewy i opłacasz rachunki. Jest zaprojektowane z myślą o wygodzie i natychmiastowym dostępie do gotówki, dlatego zazwyczaj jest nieoprocentowane (0%), co sprawia, że trzymane na nim nadwyżki tracą na wartości przez inflację."
+            },
+            {
+              "type": "text",
+              "text": "Konto oszczędnościowe (Tagesgeld) służy do bezpiecznego odkładania pieniędzy, których nie wydajesz na co dzień (np. poduszki bezpieczeństwa lub środków na bliskie cele). Zapewnia oprocentowanie, które chroni kapitał przed spadkiem wartości, przy jednoczesnym zachowaniu pełnej płynności — środki możesz w każdej chwili przelać z powrotem na konto bieżące bez utraty wypracowanych dotychczas odsetek (często tylko z limitem darmowych przelewów w miesiącu)."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Lokata terminowa",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Lokata terminowa"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-lokata-terminowa.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Lokata terminowa (Festgeld) to umowa z bankiem, w ramach której powierzasz mu określoną kwotę pieniędzy na z góry ustalony czas (np. 3, 6 lub 12 miesięcy) w zamian za gwarancję wypłaty stałego, znanego od samego początku oprocentowania."
+            },
+            {
+              "type": "text",
+              "text": "W przeciwieństwie do konta oszczędnościowego, na lokacie środki są zamrożone — nie możesz ich swobodnie dopłacać ani wypłacać w trakcie trwania umowy. Jeśli zerwiesz lokatę przed terminem, bank zwróci Ci wpłacony kapitał, ale zazwyczaj stracisz wszystkie lub większość wypracowanych odsetek, dlatego lokata najlepiej sprawdza się przy nadwyżkach, których na pewno nie będziesz potrzebować do końca jej trwania."
             }
           ]
         }

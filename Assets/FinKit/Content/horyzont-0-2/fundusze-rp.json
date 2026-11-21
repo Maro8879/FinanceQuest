@@ -5,23 +5,104 @@
   "color": "#3F6B5C",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:05Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Czym jest fundusz rynku pieniężnego",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Czym jest fundusz rynku pieniężnego"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-czym-jest-fundusz-rynku-pien.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Fundusz rynku pieniężnego (money market fund) inwestuje w bardzo krótkie i bezpieczne instrumenty, np. bony skarbowe i krótkoterminowe depozyty bankowe. Jego wartość rośnie powoli, ale stabilnie, a oprocentowanie jest zbliżone do stóp procentowych banku centralnego."
+            },
+            {
+              "type": "text",
+              "text": "To nie lokata – nie ma gwarancji depozytów, ale ryzyko spadku wartości jest bardzo małe."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Lokata vs fundusz rynku pieniężnego",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Lokata vs fundusz rynku pieniężnego"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-lokata-vs-fundusz.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Lokata daje gwarantowane oprocentowanie i ochronę do 100 000 € na bank, ale zamraża pieniądze na ustalony czas. Fundusz rynku pieniężnego nie ma gwarancji, za to możesz go sprzedać praktycznie w każdej chwili i nie tracisz zarobionych odsetek."
+            },
+            {
+              "type": "text",
+              "text": "Fundusz pobiera małą opłatę roczną (TER). Lokata to pewność, fundusz to elastyczność."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Kiedy to ma sens",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Kiedy to ma sens"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-kiedy-to-ma-sens.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Fundusz rynku pieniężnego sprawdza się, gdy trzymasz pieniądze, które mogą być potrzebne w każdej chwili, ale nie chcesz, żeby leżały na 0% – np. poduszka bezpieczeństwa, gotówka czekająca na inwestycję albo kwota odkładana na zakup za kilka miesięcy."
+            },
+            {
+              "type": "text",
+              "text": "Dostajesz oprocentowanie bliskie stopom rynkowym i nie blokujesz środków jak na lokacie."
             }
           ]
         }

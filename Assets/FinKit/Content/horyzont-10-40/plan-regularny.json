@@ -5,23 +5,104 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:11Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Indeksy i globalne ETF-y",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Indeksy i globalne ETF-y"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-indeksy-i-globalne-etf.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Indeks to „koszyk” spółek mierzący cały rynek, np. 500 największych firm w USA albo kilka tysięcy firm z całego świata. ETF na indeks pozwala kupić cały ten koszyk jednym zleceniem, przy bardzo niskich kosztach."
+            },
+            {
+              "type": "text",
+              "text": "Globalny ETF to najprostszy sposób na pełną dywersyfikację na dekady – nie musisz wybierać zwycięzców, masz ich wszystkich."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Uśrednianie ceny zakupu (DCA)",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Uśrednianie ceny zakupu (DCA)"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-usrednianie-ceny-dca.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "DCA (Dollar Cost Averaging) to inwestowanie stałej kwoty co miesiąc, niezależnie od tego, co dzieje się na rynku. Gdy ceny spadają, za te same 100 € kupujesz więcej jednostek, gdy rosną – mniej."
+            },
+            {
+              "type": "text",
+              "text": "Nie musisz zgadywać dobrego momentu, a regularność robi robotę za Ciebie."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "ETF akumulujący vs dystrybuujący",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "ETF akumulujący vs dystrybuujący"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-etf-akumulujacy-vs-dystrybuu.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "ETF dystrybuujący wypłaca dywidendy na Twoje konto (np. co kwartał), a akumulujący automatycznie reinwestuje je w fundusz – procent składany działa bez Twojego udziału."
+            },
+            {
+              "type": "text",
+              "text": "Na długi horyzont zwykle lepszy jest akumulujący (w wielu krajach odkładasz też podatek do sprzedaży). Dystrybuujący pasuje, gdy chcesz regularnego dochodu, np. na emeryturze."
             }
           ]
         }

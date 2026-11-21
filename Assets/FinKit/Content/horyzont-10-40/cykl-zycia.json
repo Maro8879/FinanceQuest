@@ -5,23 +5,69 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:13Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Alokacja a wiek (25-latek vs 60-latek)",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Alokacja a wiek (25-latek vs 60-latek)"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-alokacja-a-wiek.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "25-latek ma przed sobą dekady, więc może trzymać większość portfela w akcjach i spokojnie przeczekać krachy. 60-latek za kilka lat będzie potrzebował pieniędzy, więc przesuwa część kapitału do obligacji i gotówki, żeby jeden zły rok nie zrujnował emerytury."
+            },
+            {
+              "type": "text",
+              "text": "Ryzyko powinno spadać razem z czasem, który został do wypłaty."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Ile potrzebuję na emeryturę",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Ile potrzebuję na emeryturę"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-ile-potrzebuje-na-emeryture.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Zacznij od pytania, ile miesięcznie będziesz wydawać na emeryturze, i odejmij emeryturę z systemu państwowego – brakującą kwotę pokrywasz z własnych oszczędności. Punkt startu: zasada 4% – jeśli rocznie wypłacasz ok. 4% portfela, powinien wystarczyć na wiele lat."
+            },
+            {
+              "type": "text",
+              "text": "Przykład: 400 € miesięcznie dodatkowo ≈ 120 000 € kapitału. To reguła orientacyjna, nie gwarancja."
             }
           ]
         }

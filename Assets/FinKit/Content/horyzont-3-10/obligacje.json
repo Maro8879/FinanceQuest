@@ -5,23 +5,139 @@
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:08Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Jak działa obligacja",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Jak działa obligacja"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-jak-dziala-obligacja.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Kupując obligację, pożyczasz pieniądze emitentowi. W zamian dostajesz regularne odsetki (kupon), a na koniec (data wykupu) zwrot pożyczonej kwoty. Obligacjami można też handlować przed wykupem, więc ich cena się zmienia: gdy stopy procentowe rosną, ceny starych obligacji spadają, a gdy stopy spadają – rosną."
+            },
+            {
+              "type": "text",
+              "text": "Jeśli trzymasz obligację do wykupu, a emitent nie zbankrutuje, dostajesz z powrotem pełną kwotę."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Rządowe vs korporacyjne",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Rządowe vs korporacyjne"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-rzadowe-vs-korporacyjne.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Obligacje rządowe wydaje państwo – są zwykle najbezpieczniejsze, ale płacą niższe odsetki. Obligacje korporacyjne wydają firmy i płacą więcej, bo ryzyko, że firma nie odda pieniędzy, jest większe."
+            },
+            {
+              "type": "text",
+              "text": "Wiarygodność emitenta ocenia rating (np. AAA = bardzo bezpieczny). Im niższy rating, tym wyższe odsetki i wyższe ryzyko."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Stałe vs zmienne oprocentowanie",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Stałe vs zmienne oprocentowanie"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-stale-vs-zmienne-oprocentowa.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Obligacja ze stałym kuponem płaci te same odsetki przez cały czas – gdy stopy rosną, jest mniej atrakcyjna i jej cena spada. Obligacja o zmiennym oprocentowaniu dostosowuje odsetki do stóp procentowych lub inflacji, więc jej cena jest stabilniejsza."
+            },
+            {
+              "type": "text",
+              "text": "Przy rosnących stopach lepiej sprawdzają się zmienne, przy spadających – stałe."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Jak obligacje stabilizują portfel",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Jak obligacje stabilizują portfel"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-jak-obligacje-stabilizuja-po.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Obligacje, zwłaszcza rządowe, wahają się dużo mniej niż akcje i często trzymają wartość, gdy na giełdzie jest panika. Ich dodatek zmniejsza głębokość spadków portfela i ułatwia trzymanie się planu."
+            },
+            {
+              "type": "text",
+              "text": "Nie zawsze działa to idealnie – w 2022 roku akcje i obligacje spadały jednocześnie, bo gwałtownie rosły stopy procentowe."
             }
           ]
         }

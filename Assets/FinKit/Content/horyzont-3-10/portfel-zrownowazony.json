@@ -5,23 +5,104 @@
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:09Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Akcje i obligacje razem",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Akcje i obligacje razem"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-akcje-i-obligacje-razem.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Portfel zrównoważony łączy akcje (silnik wzrostu) i obligacje (amortyzator). Klasyczny przykład to 60% akcji i 40% obligacji."
+            },
+            {
+              "type": "text",
+              "text": "Taki miks rośnie wolniej niż same akcje, ale w czasie krachu traci wyraźnie mniej – to kompromis między zyskiem a spokojem."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Jak dobrać proporcje",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Jak dobrać proporcje"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-jak-dobrac-proporcje.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Proporcje zależą od horyzontu i od tego, ile spadku zniesiesz bez paniki: krótszy horyzont lub niższa tolerancja ryzyka = więcej obligacji, dłuższy horyzont = więcej akcji."
+            },
+            {
+              "type": "text",
+              "text": "Prosty test: wyobraź sobie, że portfel 10 000 € spada do 7 000 €. Jeśli wtedy byś sprzedał – masz za dużo akcji."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Rebalancing",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Rebalancing"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-rebalancing.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Z czasem proporcje się rozjeżdżają – gdy akcje mocno rosną, z 60/40 robi się np. 70/30 i ryzyko rośnie bez Twojej decyzji. Rebalancing to przywracanie planu, np. raz w roku: sprzedajesz trochę tego, co urosło, i dokupujesz to, co zostało w tyle."
+            },
+            {
+              "type": "text",
+              "text": "W praktyce: „sprzedawaj drogo, kupuj tanio” według prostej zasady, bez zgadywania rynku."
             }
           ]
         }

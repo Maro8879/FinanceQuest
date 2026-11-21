@@ -1,0 +1,117 @@
+{
+  "format": 1,
+  "id": "zarzadzanie-kapitalem",
+  "title": "Zarządzanie kapitałem",
+  "color": "#4A5D73",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T07:52:17Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Zasada 1–2%",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Zasada 1–2%"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-zasada-1-2-procent.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "W jednej transakcji ryzykujesz maksymalnie 1–2% wartości całego portfela. Przy portfelu 5 000 € to najwyżej 50–100 € straty na jednym pomyśle – nawet seria 10 nieudanych transakcji z rzędu nie wyrzuca Cię z gry."
+            },
+            {
+              "type": "text",
+              "text": "Profesjonaliści przetrwają nie dlatego, że zawsze mają rację, tylko dlatego, że ich straty są małe."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Wielkość pozycji",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Wielkość pozycji"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-wielkosc-pozycji.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Wielkość pozycji wynika z tego, ile chcesz ryzykować i gdzie stoi Twój Stop-Loss. Przykład: portfel 5 000 €, ryzyko 1% = 50 €, stop 5% poniżej ceny wejścia – pozycja może mieć 1 000 € (5% z 1 000 € = 50 €)."
+            },
+            {
+              "type": "text",
+              "text": "Najpierw ustalasz ryzyko, dopiero potem kwotę zakupu – nigdy odwrotnie."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Bezpieczny poligon",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Bezpieczny poligon"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-bezpieczny-poligon.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Zanim zaryzykujesz własne pieniądze, przetestuj strategię na rachunku demo albo w symulatorze z wirtualną gotówką. Zobaczysz, jak działają zlecenia, Stop-Loss i Twoje emocje przy stracie – i nic to nie kosztuje."
+            },
+            {
+              "type": "text",
+              "text": "Jeśli strategia nie zarabia na demo przez kilka miesięcy, na prawdziwych pieniądzach też nie zacznie."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}

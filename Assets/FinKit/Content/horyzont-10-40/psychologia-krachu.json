@@ -5,23 +5,139 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:12Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Krachy w historii (2000, 2008, 2020)",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Krachy w historii (2000, 2008, 2020)"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-krachy-w-historii.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "2000: pękła bańka internetowa i spółki technologiczne straciły większość wartości. 2008: kryzys finansowy zaczął się od rynku nieruchomości w USA i pociągnął w dół cały świat. 2020: pandemia wywołała jeden z najszybszych spadków w historii – i jedno z najszybszych odbić."
+            },
+            {
+              "type": "text",
+              "text": "Wniosek: krachy się zdarzają, ale szeroki rynek historycznie w końcu wracał wyżej. To nie jest gwarancja na przyszłość."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Emocje vs plan",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Emocje vs plan"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-emocje-vs-plan.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Gdy rynek spada, mózg krzyczy „uciekaj”, gdy rośnie – „kupuj więcej”. Dlatego większość ludzi kupuje drogo i sprzedaje tanio."
+            },
+            {
+              "type": "text",
+              "text": "Plan spisany zanim przyjdzie krach (ile wpłacasz, w co, kiedy rebalansujesz) chroni przed decyzjami w panice. Zasada: decyzje podejmuj na spokojnie, a w czasie burzy tylko realizuj plan."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Koszt pominięcia najlepszych dni",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Koszt pominięcia najlepszych dni"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-koszt-pominiecia-najlepszych.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Najlepsze dni na giełdzie często przychodzą tuż po najgorszych – w środku paniki. Kto sprzedał w strachu i czeka, „aż się uspokoi”, zwykle przegapia odbicie."
+            },
+            {
+              "type": "text",
+              "text": "Ominięcie zaledwie kilku najlepszych dni w ciągu wielu lat potrafi mocno obniżyć końcowy wynik."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Co robić podczas krachów",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Co robić podczas krachów"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-co-robic-podczas-krachu.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Nie sprzedawaj w panice – strata na papierze staje się realna dopiero, gdy sprzedasz. Kontynuuj regularne wpłaty, bo kupujesz wtedy taniej, i rozważ rebalancing, jeśli proporcje mocno się rozjechały."
+            },
+            {
+              "type": "text",
+              "text": "I nie sprawdzaj portfela co godzinę – przy horyzoncie 20 lat to, co dzieje się dziś, nie ma większego znaczenia."
             }
           ]
         }

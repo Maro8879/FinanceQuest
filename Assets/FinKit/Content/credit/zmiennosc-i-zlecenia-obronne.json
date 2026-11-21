@@ -1,0 +1,152 @@
+{
+  "format": 1,
+  "id": "zmiennosc-i-zlecenia-obronne",
+  "title": "Zmienność i zlecenia obronne",
+  "color": "#4A5D73",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T07:52:17Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Zmienność",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Zmienność"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-zmiennosc.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Zmienność (volatility) mówi, jak mocno i jak szybko cena skacze w górę i w dół. Przy krótkim horyzoncie to ona decyduje o wyniku: daje szansę na szybki zysk, ale też na szybką i dużą stratę."
+            },
+            {
+              "type": "text",
+              "text": "Kryptowaluty i małe spółki są dużo bardziej zmienne niż globalne ETF-y czy obligacje."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Dźwignia finansowa",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Dźwignia finansowa"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-dzwignia-finansowa.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Dźwignia pozwala grać większą kwotą, niż masz: przy dźwigni 1:10 za 100 € kontrolujesz pozycję wartą 1 000 €. Zysk jest mnożony, ale strata też – spadek ceny o 10% może wyzerować całą Twoją wpłatę."
+            },
+            {
+              "type": "text",
+              "text": "W UE regulator ogranicza dźwignię dla klientów detalicznych, ale nawet wtedy to narzędzie dla doświadczonych, nie na start."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Stop-Loss",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Stop-Loss"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-stop-loss.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Stop-Loss to zlecenie, które automatycznie sprzedaje pozycję, gdy cena spadnie do ustalonego poziomu. Przykład: kupujesz po 100 €, ustawiasz stop na 95 € – maksymalna strata to 5%."
+            },
+            {
+              "type": "text",
+              "text": "Chroni przed sytuacją, w której mała strata zamienia się w dużą, bo „może jeszcze odbije”. Przy gwałtownych ruchach może się wykonać po gorszej cenie niż ustawiona."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Take-Profit",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Take-Profit"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-take-profit.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Take-Profit to zlecenie, które automatycznie sprzedaje pozycję, gdy cena dojdzie do Twojego celu zysku. Przykład: kupujesz po 100 €, ustawiasz cel 110 € – zysk realizuje się sam, nawet jeśli nie patrzysz na ekran."
+            },
+            {
+              "type": "text",
+              "text": "Pomaga trzymać się planu zamiast chciwie czekać na „jeszcze trochę”."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}

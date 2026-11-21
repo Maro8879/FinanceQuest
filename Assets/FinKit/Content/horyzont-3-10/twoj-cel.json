@@ -5,23 +5,104 @@
   "color": "#9C7A2E",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:07Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Dlaczego 3–10 lat to inna gra",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Dlaczego 3–10 lat to inna gra"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-dlaczego-3-10-lat-to-inna-gr.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Przy takim horyzoncie masz już czas, żeby przeczekać część spadków, ale nie aż tyle, żeby ignorować każdy krach. Dlatego zamiast samej gotówki albo samych akcji łączy się różne aktywa: akcje dają wzrost, obligacje stabilność."
+            },
+            {
+              "type": "text",
+              "text": "Cel: pobić inflację bez ryzyka, że tuż przed wypłatą stracisz połowę."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Wyznaczanie celu i kwoty",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Wyznaczanie celu i kwoty"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-wyznaczanie-celu-i-kwoty.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Dobry cel ma kwotę i datę: zamiast „chcę oszczędzać” – „chcę mieć 20 000 € na wkład własny za 6 lat”. Wtedy łatwo policzysz, ile odkładać miesięcznie i jakie ryzyko możesz przyjąć."
+            },
+            {
+              "type": "text",
+              "text": "Im bliżej daty celu, tym więcej pieniędzy warto przenosić do bezpieczniejszych aktywów."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Dlaczego nie wszystko na jedną kartę",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Dlaczego nie wszystko na jedną kartę"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-nie-wszystko-na-jedna-karte.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Jeśli cały kapitał siedzi w jednym aktywie, jeden zły rok może zniszczyć plan. Podział na akcje, obligacje i gotówkę sprawia, że gdy jedna część spada, inne zwykle trzymają wartość albo rosną."
+            },
+            {
+              "type": "text",
+              "text": "Portfel rośnie wolniej niż w najlepszym scenariuszu, ale dużo mniej boli w najgorszym."
             }
           ]
         }

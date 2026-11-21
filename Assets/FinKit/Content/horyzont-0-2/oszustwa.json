@@ -5,23 +5,139 @@
   "color": "#3F6B5C",
   "meta": {
     "editedBy": "Claude",
-    "editedAt": "2026-11-20T22:36:04Z"
+    "editedAt": "2026-11-21T07:52:17Z"
   },
   "levels": [
     {
       "id": "l1",
       "kind": "lesson",
-      "title": "",
+      "title": "Obietnice a gwarancje zysku",
       "pages": [
         {
           "blocks": [
             {
               "type": "heading",
-              "text": ""
+              "text": "Obietnice a gwarancje zysku"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-obietnice-a-gwarancje-zysku.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             },
             {
               "type": "text",
-              "text": ""
+              "text": "Gwarancja zysku to prawnie wiążące zobowiązanie (np. banku lub państwa w przypadku lokat i obligacji skarbowych), które daje pewność, że w określonym terminie odzyskasz wpłacony kapitał wraz z dokładnie ustalonymi odsetkami. Chroni je również ustawowy system gwarantowania depozytów (do 100 000 euro w UE)."
+            },
+            {
+              "type": "text",
+              "text": "Obietnica (prognoza) zysku to jedynie szacunek oparty na historycznych wynikach lub założeniach rynkowych — np. informacja, że dany ETF rósł średnio o 8% rocznie. Na giełdzie żaden zysk nie jest gwarantowany, a wyniki z przeszłości nie dają pewności na przyszłość; dlatego jeśli ktoś oferuje „gwarantowany wysoki zysk bez ryzyka”, jest to niemal na pewno próba oszustwa."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Sygnały ostrzegawcze",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Sygnały ostrzegawcze"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-sygnaly-ostrzegawcze.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Sygnały ostrzegawcze (tzw. czerwone flagi) to cechy ofert finansowych wskazujące na próbę oszustwa. Największą z nich jest obietnica wysokiego, gwarantowanego zysku bez ryzyka — na legalnym rynku wyższy potencjalny zwrot zawsze oznacza większe ryzyko."
+            },
+            {
+              "type": "text",
+              "text": "Uważaj również na presję czasu („oferta tylko dziś”), brak nadzoru finansowego (np. KNF lub BaFin), „tajne algorytmy” oraz prośby o przelewy na prywatne konta czy instalację zdalnego pulpitu. Jeśli oferta brzmi zbyt pięknie, by była prawdziwa — to niemal na pewno pułapka."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Popularne oszustwa",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Popularne oszustwa"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-popularne-oszustwa.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Najpopularniejsze oszustwa finansowe na całym świecie działają według podobnych schematów. Do najczęstszych należą: phishing i spoofing (fałszywe e-maile, SMS-y i telefony podszywające się pod banki, aby wyłudzić dane logowania) oraz fałszywe platformy inwestycyjne, które na ekranie pokazują fikcyjne, szybko rosnące zyski, by zachęcić do kolejnych wpłat."
+            },
+            {
+              "type": "text",
+              "text": "Powszechne są też piramidy finansowe i schematy Ponziego (gdzie zyski starych uczestników pochodzą wyłącznie z wpłat nowych osób) oraz oszustwa z wykorzystaniem wizerunku celebrytów (deepfake’i i fałszywe reklamy w mediach społecznościowych). Pamiętaj: żaden legalny bank nie poprosi Cię o podanie hasła, instalację aplikacji do zdalnego dostępu ani przelew na „bezpieczne konto techniczne”."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "Jak się chronić",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Jak się chronić"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-jak-sie-chronic.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Zanim wpłacisz pieniądze, sprawdź firmę w rejestrze nadzoru finansowego (np. KNF, BaFin) i na liście ostrzeżeń publicznych. Nigdy nie podawaj nikomu haseł ani kodów SMS i nie instaluj aplikacji do zdalnego dostępu na prośbę „doradcy”."
+            },
+            {
+              "type": "text",
+              "text": "Inwestuj tylko przez licencjonowanego brokera, na konto zapisane na Ciebie. Daj sobie zasadę 24 godzin – żadnej decyzji pod presją."
             }
           ]
         }

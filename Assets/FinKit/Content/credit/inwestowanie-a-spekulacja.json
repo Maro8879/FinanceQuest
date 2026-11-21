@@ -1,0 +1,152 @@
+{
+  "format": 1,
+  "id": "inwestowanie-a-spekulacja",
+  "title": "Inwestowanie a spekulacja",
+  "color": "#4A5D73",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T07:52:17Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Czas, ryzyko, stres",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Czas, ryzyko, stres"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-czas-ryzyko-stres.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Inwestowanie to kupowanie z myślą o latach, a spekulacja (trading) to próba zarobienia na ruchach ceny w ciągu dni, godzin, a nawet minut. Im krótszy czas, tym większą rolę gra przypadek, a mniejszą wartość firmy."
+            },
+            {
+              "type": "text",
+              "text": "Trading wymaga ciągłej uwagi, szybkich decyzji i odporności na stres – pojedynczy błąd może kosztować dużo."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Analiza fundamentalna vs techniczna",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Analiza fundamentalna vs techniczna"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-analiza-fundamentalna-vs-tec.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Analiza fundamentalna sprawdza, ile firma jest naprawdę warta: zyski, długi, wzrost, pozycję na rynku – odpowiada na pytanie „co kupić”. Analiza techniczna patrzy na wykres ceny i wolumen, szukając wzorców i trendów – odpowiada na pytanie „kiedy kupić”."
+            },
+            {
+              "type": "text",
+              "text": "Inwestorzy długoterminowi opierają się głównie na fundamentach, traderzy częściej na wykresach."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l3",
+      "kind": "lesson",
+      "title": "Dlaczego większość traderów traci?",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Dlaczego większość traderów traci?"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/3-dlaczego-traderzy-traca.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Prowizje, spread i podatki zjadają zysk przy każdej transakcji. Do tego emocje: trzymanie strat w nadziei na odbicie i za szybkie zamykanie zysków. Konkurujesz z profesjonalistami i algorytmami, które mają lepsze dane i szybsze systemy."
+            },
+            {
+              "type": "text",
+              "text": "Regulatorzy w UE wymagają, by brokerzy CFD pokazywali, jaki % kont detalicznych traci pieniądze – zwykle to większość klientów."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l4",
+      "kind": "lesson",
+      "title": "FOMO",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "FOMO"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/4-fomo.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "FOMO (fear of missing out) to strach, że ominie Cię okazja, bo „wszyscy zarabiają”. Prowadzi do kupowania po dużym wzroście – często na samym szczycie, tuż przed spadkiem."
+            },
+            {
+              "type": "text",
+              "text": "Jeśli o czymś mówią wszyscy w social mediach, najlepszy moment zwykle już minął. Lekarstwo: własny plan i zasada, że nie kupujesz niczego w pośpiechu."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}
