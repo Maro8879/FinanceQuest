@@ -4,8 +4,8 @@
   "title": "Inflacja i procent składany",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Mikołaj",
-    "editedAt": "2026-11-21T13:25:08Z"
+    "editedBy": "marek",
+    "editedAt": "2026-11-21T13:52:14Z"
   },
   "levels": [
     {
@@ -54,6 +54,28 @@
         "game": "",
         "settings": []
       }
+    },
+    {
+      "id": "l6",
+      "kind": "lesson",
+      "title": "filmik inflacja",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "video",
+              "video": "filmy/inflacja-bez-napisow.mp4",
+              "videoSub": "filmy/inflacja-z-napisami.mp4",
+              "caption": ""
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
     },
     {
       "id": "l3",
@@ -175,7 +197,7 @@
                 }
               ],
               "header": true,
-              "style": "a"
+              "style": "b"
             },
             {
               "type": "callout",
