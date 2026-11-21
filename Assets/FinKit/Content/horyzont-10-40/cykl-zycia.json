@@ -4,8 +4,8 @@
   "title": "Cykl życia portfela i emerytura",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:59:11Z"
+    "editedBy": "Jan",
+    "editedAt": "2026-11-21T12:46:40Z"
   },
   "levels": [
     {
@@ -21,7 +21,7 @@
             },
             {
               "type": "image",
-              "image": "obrazki/1-alokacja-a-wiek.png",
+              "image": "obrazki/1-alokacja-a-wiek-2.png",
               "width": 1,
               "maxHeight": 240,
               "caption": ""
