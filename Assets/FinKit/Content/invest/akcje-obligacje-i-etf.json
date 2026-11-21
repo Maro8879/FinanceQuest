@@ -5,7 +5,7 @@
   "color": "#0E4A55",
   "meta": {
     "editedBy": "marek",
-    "editedAt": "2026-11-21T13:30:44Z"
+    "editedAt": "2026-11-21T13:43:30Z"
   },
   "levels": [
     {
@@ -323,6 +323,12 @@
             {
               "type": "text",
               "text": ""
+            },
+            {
+              "type": "video",
+              "video": "filmy/etf-bez-napisow.mp4",
+              "videoSub": "filmy/etf-z-napisami.mp4",
+              "caption": ""
             }
           ]
         }
