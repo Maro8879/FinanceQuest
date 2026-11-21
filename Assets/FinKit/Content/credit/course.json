@@ -2,7 +2,7 @@
   "format": 1,
   "id": "credit",
   "title": "INWESTOWANIE KRÓTKOTERMINOWE (obarczone dużym ryzykiem)",
-  "shortName": "Kredyty",
+  "shortName": "IK",
   "color": "#8E4A36",
   "art": "Candles",
   "icon": "Card",
@@ -14,7 +14,7 @@
     "debt"
   ],
   "meta": {
-    "editedBy": "marek",
-    "editedAt": "2026-11-21T06:54:22Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T07:40:11Z"
   }
 }
