@@ -31,6 +31,8 @@ namespace FinanceQuest
         public Action SwipeForward;
         // Ekran może sam obsłużyć „wstecz” (np. filmik na pełnym ekranie najpierw się zamyka). true = obsłużone.
         [System.NonSerialized] public Func<bool> BackOverride;
+        // Lekcja ustawia, co zrobić po „pomiń filmik”: koniec lekcji i przejście dalej (następny level albo zadania).
+        [System.NonSerialized] public Action SkipLesson;
         // Ostatnio oglądany kurs – cel swipe'a w lewo w menu.
         [System.NonSerialized] public CourseData LastCourse;   // tylko w pamięci – Unity nie ma tego zapisywać
         // Co właśnie się odblokowało – ekran rozdziału / kursu pokaże to animacją (raz) i wyczyści.
@@ -203,6 +205,7 @@ namespace FinanceQuest
             SwipeForward = null;   // nowy ekran sam ustawi, dokąd prowadzi swipe w lewo
             BlockSwipeBack = false;
             BackOverride = null;
+            SkipLesson = null;
             Header.SetDev(null);   // przycisk DEV pokazuje tylko ekran, który go ustawi (level)
             currentScreen = Ui.Rect("Screen", body);
             Ui.Stretch(currentScreen);

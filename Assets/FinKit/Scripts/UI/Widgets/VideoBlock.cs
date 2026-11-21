@@ -13,7 +13,8 @@ namespace FinanceQuest
     // Gdy filmik ma drugą wersję z napisami, w pasku jest przycisk „CC” – przełącza wersję w tym samym momencie filmu.
     // Przy przełączaniu przenosimy ten sam obiekt (nie tworzymy drugiego odtwarzacza),
     // więc filmik gra dalej bez przerwy i bez ponownego wczytywania.
-    public class VideoBlock : MonoBehaviour, IPointerClickHandler
+    public class VideoBlock : MonoBehaviour, IPointerClickHandler,
+        IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IScrollHandler
     {
         const float BarH = 36f, Lip = 4f, Border = 2f, Radius = 16f;
         const float MaxInlineH = 260f;     // poziomy / kwadratowy filmik
@@ -277,6 +278,48 @@ namespace FinanceQuest
             player.Play();
         }
 
+        // ---------- swipe ----------
+        // Na pełnym ekranie szybki ruch palcem w lewo = pomiń filmik (jak przycisk ⏭).
+        // W lekcji przeciąganie oddajemy liście, żeby dało się przewijać stronę, zaczynając palcem na filmiku.
+        const float SwipeMin = 70f, SwipeTime = 0.6f, SwipeRatio = 1.6f;
+        Vector2 dragStart;
+        float dragStartTime;
+
+        ScrollRect scrollParent;
+        ScrollRect ScrollParent { get { if (scrollParent == null) scrollParent = GetComponentInParent<ScrollRect>(); return scrollParent; } }
+
+        public void OnInitializePotentialDrag(PointerEventData e) { if (!full && ScrollParent != null) ScrollParent.OnInitializePotentialDrag(e); }
+
+        public void OnBeginDrag(PointerEventData e)
+        {
+            if (!full) { if (ScrollParent != null) ScrollParent.OnBeginDrag(e); return; }
+            dragStart = LocalPoint(e);
+            dragStartTime = Time.unscaledTime;
+        }
+
+        public void OnDrag(PointerEventData e) { if (!full && ScrollParent != null) ScrollParent.OnDrag(e); }
+
+        public void OnEndDrag(PointerEventData e)
+        {
+            if (!full) { if (ScrollParent != null) ScrollParent.OnEndDrag(e); return; }
+            // Kierunek liczymy w układzie filmu – na obróconym (poziomym) filmiku „w lewo” to w lewo względem obrazu.
+            Vector2 d = LocalPoint(e) - dragStart;
+            if (Time.unscaledTime - dragStartTime <= SwipeTime && d.x <= -SwipeMin && Mathf.Abs(d.x) >= Mathf.Abs(d.y) * SwipeRatio)
+            {
+                Haptics.Tap();
+                Skip();
+            }
+        }
+
+        public void OnScroll(PointerEventData e) { if (!full && ScrollParent != null) ScrollParent.OnScroll(e); }
+
+        Vector2 LocalPoint(PointerEventData e)
+        {
+            Vector2 p;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(stage, e.position, e.pressEventCamera, out p);
+            return p;
+        }
+
         public void OnPointerClick(PointerEventData e)
         {
             if (full) TogglePlay();
@@ -416,12 +459,14 @@ namespace FinanceQuest
 
         bool OnBack() { Minimize(); return true; }
 
-        // Pomiń: zamyka filmik i od razu przechodzi dalej w lekcji (jak DALEJ – lekcja ustawia to jako SwipeForward).
+        // Pomiń: zamyka filmik i kończy lekcję – przejście do kolejnego levelu (albo do zadań, jeśli lekcja je ma).
         void Skip()
         {
             Minimize();
             var app = FinanceQuestApp.Instance;
-            if (app != null && app.SwipeForward != null) app.SwipeForward();
+            if (app == null) return;
+            if (app.SkipLesson != null) app.SkipLesson();
+            else if (app.SwipeForward != null) app.SwipeForward();
         }
 
         void ReleaseBack()

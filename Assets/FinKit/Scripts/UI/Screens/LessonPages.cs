@@ -62,13 +62,15 @@ namespace FinanceQuest
 
             // Swipe w lewo = następna strona (jak przycisk).
             app.SwipeForward = Next;
+            // Pominięcie filmiku kończy całą lekcję od razu (bez przeklikiwania reszty stron) – dalej jak po ostatniej stronie.
+            app.SkipLesson = () => { app.SkipLesson = null; onFinish(); };
             ShowPage(0);
         }
 
         void Next()
         {
             if (page < pages.Count - 1) ShowPage(page + 1);
-            else onFinish();
+            else { if (FinanceQuestApp.Instance != null) FinanceQuestApp.Instance.SkipLesson = null; onFinish(); }
         }
 
         void ShowPage(int index)
