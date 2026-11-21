@@ -4,8 +4,8 @@
   "title": "Konto oszczędnościowe i lokata",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:59:11Z"
+    "editedBy": "Jan",
+    "editedAt": "2026-11-21T12:43:36Z"
   },
   "levels": [
     {
@@ -102,7 +102,7 @@
             },
             {
               "type": "image",
-              "image": "obrazki/3-lokata-terminowa.png",
+              "image": "obrazki/3i90sj.png",
               "width": 1,
               "maxHeight": 240,
               "caption": ""
