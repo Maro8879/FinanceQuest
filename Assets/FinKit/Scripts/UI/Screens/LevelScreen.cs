@@ -20,7 +20,9 @@ namespace FinanceQuest
         // Mini gra, która jest już zrobiona (wybrana w edytorze: Mini gra → „12-miesiecy”).
         static bool IsReadyGame(LevelData level)
         {
-            return level.Kind == LevelKind.MiniGame && level.Def != null && level.Def.minigame != null && level.Def.minigame.game == InvestGame.Id;
+            if (level.Kind != LevelKind.MiniGame || level.Def == null || level.Def.minigame == null) return false;
+            string g = level.Def.minigame.game;
+            return g == InvestGame.Id || g == ScamGame.Id;
         }
 
         public static void Build(RectTransform screen, FinanceQuestApp app, CourseData course, int chapterIndex, int levelIndex)
@@ -77,6 +79,12 @@ namespace FinanceQuest
             if (hasTasks && level.Kind != LevelKind.MiniGame)
             {
                 QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, best, finish, save);
+                return;
+            }
+            if (IsReadyGame(level) && def.minigame.game == ScamGame.Id)
+            {
+                // „Prawda czy Pułapka?” – karty z edytora (albo domyślne); podsumowanie zalicza level od razu.
+                ScamGame.Build(screen, app, def.minigame, save, () => finish(-1));
                 return;
             }
             if (IsReadyGame(level))

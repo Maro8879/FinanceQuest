@@ -47,7 +47,7 @@ namespace FinanceQuest
         public static bool GivesStars(LevelData l)
         {
             if (l.Kind == LevelKind.MiniGame)
-                return l.Def != null && l.Def.minigame != null && l.Def.minigame.game == InvestGame.Id;
+                return l.Def != null && l.Def.minigame != null && (l.Def.minigame.game == InvestGame.Id || l.Def.minigame.game == ScamGame.Id);
             return l.Def != null && l.Def.tasks != null && l.Def.tasks.Count > 0;
         }
 
