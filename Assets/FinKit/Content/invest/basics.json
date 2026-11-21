@@ -250,7 +250,7 @@
         {
           "type": "gap",
           "prompt": "Complete the sentence",
-          "text": "With 0% in your account and 4% inflation, your money ___ value every year.",
+          "text": "Your savings account pays 0% interest and inflation is 4%. Your money ___ value every year.",
           "answers": [
             "loses"
           ],
