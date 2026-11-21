@@ -4,8 +4,8 @@
   "title": "Ryzyko i dywersyfikacja",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Claude",
-    "editedAt": "2026-11-21T08:47:06Z"
+    "editedBy": "Jan",
+    "editedAt": "2026-11-21T09:50:53Z"
   },
   "levels": [
     {
@@ -25,7 +25,7 @@
             },
             {
               "type": "image",
-              "image": "obrazki/wahania.png",
+              "image": "obrazki/wahania-2.png",
               "width": 1,
               "maxHeight": 200,
               "caption": "Cena akcji w ciągu roku – w górę i w dół"
