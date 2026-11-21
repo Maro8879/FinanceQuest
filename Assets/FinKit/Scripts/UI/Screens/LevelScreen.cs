@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace FinanceQuest
 {
-    // Ekran levelu. Lekcja ze stronami pokazuje już prawdziwe strony z blokami (LessonPages).
-    // Zadania i mini gry mają na razie tymczasowy ekran z przyciskiem „Ukończ (test)”, żeby dało się sprawdzić postęp.
+    // Ekran levelu. Lekcja ze stronami pokazuje strony z blokami (LessonPages), a po nich – jeśli są – zadania.
+    // Test rozdziału i level „Zadania” to ekran zadań (QuizScreen). Mini gry mają na razie tymczasowy ekran z przyciskiem „Ukończ (test)”.
     public static class LevelScreen
     {
         // Czy level ma już treść do przejścia (strony lekcji albo zadania). Pusty level zalicza się samym kliknięciem.
@@ -24,27 +24,28 @@ namespace FinanceQuest
 
             var def = level.Def;
             bool hasTasks = def != null && def.tasks != null && def.tasks.Count > 0;
+            System.Action finish = () => { app.CompleteLevel(course, level); app.Back(); };
             if (level.Kind == LevelKind.Lesson && def != null && def.pages != null && def.pages.Count > 0)
             {
                 LessonPages.Build(screen, app, level, () =>
                 {
                     if (hasTasks)
                     {
-                        // Zadania na końcu lekcji – ich ekran powstanie w następnym kroku; na razie zaślepka.
-                        // Podmieniamy treść tego samego ekranu, więc „wstecz” wraca od razu do rozdziału.
+                        // Zadania na końcu lekcji – podmieniamy treść tego samego ekranu, więc „wstecz” wraca od razu do rozdziału.
                         for (int i = screen.childCount - 1; i >= 0; i--) Object.Destroy(screen.GetChild(i).gameObject);
                         app.SwipeForward = null;
-                        Placeholder(screen, app, course, ch, level, "Zadania na koniec lekcji: " + def.tasks.Count + ".\nEkran zadań jest w przygotowaniu.");
+                        QuizScreen.Build(screen, app, def.tasks, false, finish);
                     }
-                    else
-                    {
-                        app.CompleteLevel(course, level);
-                        app.Back();
-                    }
+                    else finish();
                 });
                 return;
             }
-            Placeholder(screen, app, course, ch, level, "Tu pojawi się treść levelu (mini gra lub zadania).");
+            if (hasTasks && level.Kind != LevelKind.MiniGame)
+            {
+                QuizScreen.Build(screen, app, def.tasks, level.Kind == LevelKind.Test, finish);
+                return;
+            }
+            Placeholder(screen, app, course, ch, level, "Tu pojawi się mini gra.");
         }
 
         // Tymczasowy ekran: pozwala oznaczyć level jako ukończony, zanim powstaną zadania i mini gry.
