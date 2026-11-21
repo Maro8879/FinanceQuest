@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,7 +18,9 @@ namespace FinanceQuest
         const float BarH = 36f, Lip = 4f, Border = 2f, Radius = 16f;
         const float MaxInlineH = 260f;     // poziomy / kwadratowy filmik
         const float MaxReelH = 400f;       // pionowy (reels 9:16) – wyższy, ale zostaje miejsce na tekst lekcji
-        const float PlayW = 42f, TimeW = 84f, TimeWShort = 42f, Big = 54f, CcW = 40f;
+        const float PlayW = 42f, TimeW = 84f, TimeWShort = 42f, Big = 54f;
+        const float Corner = 36f, CornerGap = 10f;   // okrągłe przyciski w rogach (✕ i CC)
+        static readonly Color CornerBg = new Color(0f, 0f, 0f, 0.45f);
         const string SubsKey = "fq_video_subs";   // wybór napisów pamiętamy dla wszystkich filmików
 
         VideoPlayer player;
@@ -31,6 +32,7 @@ namespace FinanceQuest
         VideoClip mainClip, subClip;
         RenderTexture hold;         // ostatnia klatka na czas przełączania wersji – bez mignięcia czernią
         bool subsOn, switching, swapReady, resumePlay;
+        bool starting;              // play już kliknięty / auto-start, ale film jeszcze się wczytuje
         double resumeTime;
         Vector2 inlineSize;
         float aspect, trackW, timeW = TimeW, shownK = -1f, dragK;
@@ -72,7 +74,7 @@ namespace FinanceQuest
                 mask.gameObject.AddComponent<Mask>().showMaskGraphic = false;
                 var vb = Ui.Rect("Stage", mask.transform).gameObject.AddComponent<VideoBlock>();
                 vb.Init(clip, sub, aspect, mask.rectTransform, new Vector2(w - 2 * Border, vh + BarH));
-                if (autoOpen) vb.StartCoroutine(vb.AutoOpen());
+                if (autoOpen) vb.AutoOpen();
             }
 
             float used = h + Lip;
@@ -114,7 +116,7 @@ namespace FinanceQuest
             Ui.Center(bi.rectTransform, 26f, 26f, 2f, 0f);   // trójkąt optycznie w środku koła
 
             // ✕ tylko na pełnym ekranie – tap w obraz pauzuje, więc wyjście musi mieć własny przycisk.
-            var closeBg = Ui.Rounded("Close", stage, new Color(0f, 0f, 0f, 0.45f), 18f);
+            var closeBg = Ui.Rounded("Close", stage, CornerBg, Corner * 0.5f);
             closeBg.raycastTarget = true;
             closeBg.gameObject.AddComponent<TapCatcher>().OnTap = Minimize;
             close = closeBg.rectTransform;
@@ -144,12 +146,13 @@ namespace FinanceQuest
 
             if (sub != null)
             {
-                cc = Ui.Rect("Subs", bar);
-                cc.gameObject.AddComponent<Image>().color = Color.clear;   // większe pole dotyku niż sama plakietka
+                // CC w prawym górnym rogu, wygląda jak ✕ – widać go także, gdy film gra (pasek wtedy znika).
+                cc = Ui.Rect("Subs", stage);
+                cc.gameObject.AddComponent<Image>().color = Color.clear;   // pole dotyku trochę większe niż kółko
                 cc.gameObject.AddComponent<TapCatcher>().OnTap = ToggleSubs;
-                ccBg = Ui.Rounded("Pill", cc, Color.white, 5f);
-                Ui.Center(ccBg.rectTransform, 30f, 20f);
-                ccLabel = Ui.Text("Label", ccBg.transform, "CC", 11f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+                ccBg = Ui.Rounded("Circle", cc, CornerBg, Corner * 0.5f);
+                Ui.Center(ccBg.rectTransform, Corner, Corner);
+                ccLabel = Ui.Text("Label", ccBg.transform, "CC", 14f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
                 Ui.Stretch(ccLabel.rectTransform);
                 ShowSubsState();
             }
@@ -178,7 +181,8 @@ namespace FinanceQuest
         // Rozkład wewnątrz „sceny” o rozmiarze w×h: obraz (z zachowaniem proporcji) i pasek na dole.
         void Layout(float w, float h)
         {
-            float vh = h - BarH;
+            // Na pełnym ekranie film zajmuje całą wysokość, a pasek (tylko na pauzie) leży na nim.
+            float vh = full ? h : h - BarH;
             float pw = w, ph = w / aspect;
             if (ph > vh) { ph = vh; pw = vh * aspect; }
             // Na pełnym ekranie reels wypełnia ekran jak w Instagramie: zamiast pasów ucinamy odrobinę z boków
@@ -188,17 +192,16 @@ namespace FinanceQuest
             Ui.Place(picture.rectTransform, (w - pw) * 0.5f, (vh - ph) * 0.5f, pw, ph);
             Ui.Place(bigPlay, (w - Big) * 0.5f, (vh - Big) * 0.5f, Big, Big);
 
-            Ui.Place(bar, 0, vh, w, BarH);
-            Ui.Place(close, 10f, 10f, 36f, 36f);
+            Ui.Place(bar, 0, h - BarH, w, BarH);
+            Ui.Place(close, CornerGap, CornerGap, Corner, Corner);
             close.gameObject.SetActive(full);
-            float ccw = cc != null ? CcW : 0f;
+            if (cc != null) Ui.Place(cc, w - CornerGap - Corner - 4f, CornerGap - 4f, Corner + 8f, Corner + 8f);
             // Wąska karta (reels w treści): sam bieżący czas zamiast „0:12 / 0:45”, żeby suwak był wygodny.
             timeW = w < 300f ? TimeWShort : TimeW;
             shownSec = -1;
-            trackW = Mathf.Max(20f, w - PlayW - timeW - 14f - ccw);
+            trackW = Mathf.Max(20f, w - PlayW - timeW - 14f);
             Ui.Place(track, PlayW, 0, trackW, BarH);
             Ui.Place((RectTransform)track.Find("Line"), 0, BarH * 0.5f - 2f, trackW, 4f);
-            if (cc != null) Ui.Place(cc, PlayW + trackW + 4f, 0, CcW, BarH);
             Ui.Place(timeLabel.rectTransform, w - timeW - 12f, 0, timeW, BarH);
             shownK = -1f;
             shownPlaying = !player.isPlaying;   // wymusza odświeżenie ikon przy najbliższym Update
@@ -217,12 +220,15 @@ namespace FinanceQuest
                 picture.color = tex != null ? Color.white : Color.clear;
             }
 
-            bool playing = switching ? resumePlay : player.isPlaying;
+            if (starting && player.isPlaying) starting = false;
+            // Do pierwszej klatki udajemy „gra” – inaczej na moment mignąłby duży przycisk play.
+            bool playing = switching ? resumePlay : player.isPlaying || starting;
             if (playing != shownPlaying)
             {
                 shownPlaying = playing;
                 playIcon.sprite = ProceduralSprites.Icon(playing ? IconId.Pause : IconId.Play);
                 bigPlay.gameObject.SetActive(!playing);
+                bar.gameObject.SetActive(!full || !playing);   // na pełnym ekranie pasek tylko na pauzie – nic nie zasłania filmu
             }
 
             // Pozycja suwaka: przy przeciąganiu palec, inaczej czas filmu. Przesuwamy tylko, gdy coś się zmieniło.
@@ -251,12 +257,12 @@ namespace FinanceQuest
             return (t / 60) + ":" + (t % 60).ToString("00");
         }
 
-        // Czekamy, aż skończy się przejście na stronę – inaczej pełny ekran wskoczyłby w trakcie animacji.
-        IEnumerator AutoOpen()
+        // Pełny ekran od razu przy budowaniu strony – bez mignięcia małej karty w lekcji.
+        // Nakładka leży nad całym ekranem aplikacji, więc animacja przejścia strony jej nie rusza.
+        void AutoOpen()
         {
-            yield return new WaitForSecondsRealtime(0.35f);
-            if (full || player == null) yield break;
             Maximize();
+            starting = true;
             player.Play();
         }
 
@@ -275,6 +281,7 @@ namespace FinanceQuest
         {
             Haptics.Tap();
             if (switching) { resumePlay = !resumePlay; return; }   // zadziała, gdy druga wersja będzie gotowa
+            if (starting) { starting = false; player.Pause(); return; }
             if (player.isPlaying) player.Pause();
             else player.Play();
         }
@@ -346,8 +353,8 @@ namespace FinanceQuest
         void ShowSubsState()
         {
             if (ccBg == null) return;
-            ccBg.color = subsOn ? Palette.Accent : new Color(1f, 1f, 1f, 0.22f);
-            ccLabel.color = subsOn ? Palette.OnAccent : Color.white;
+            // Tło jak przy ✕; włączone napisy = żółte litery, wyłączone = przygaszone białe.
+            ccLabel.color = subsOn ? Palette.Accent : new Color(1f, 1f, 1f, 0.6f);
         }
 
         void Maximize()
@@ -385,6 +392,7 @@ namespace FinanceQuest
             Haptics.Tap();
             full = false;
             // Zamknięcie = koniec oglądania: film staje (w lekcji nie gra „w tle” pod tekstem).
+            starting = false;
             if (switching) resumePlay = false; else player.Pause();
             stage.SetParent(home, false);
             stage.localRotation = Quaternion.identity;
