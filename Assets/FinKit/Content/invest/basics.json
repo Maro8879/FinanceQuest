@@ -4,8 +4,8 @@
   "title": "Inflacja i procent składany",
   "color": "#0E4A55",
   "meta": {
-    "editedBy": "Jan",
-    "editedAt": "2026-11-21T12:43:35Z"
+    "editedBy": "marek",
+    "editedAt": "2026-11-21T13:05:41Z"
   },
   "levels": [
     {
@@ -128,8 +128,11 @@
               "size": 16
             },
             {
-              "type": "text",
-              "text": "dodac przyklad"
+              "type": "image",
+              "image": "obrazki/growing-investments-from-small.png",
+              "width": 1,
+              "maxHeight": 220,
+              "caption": ""
             }
           ]
         }
