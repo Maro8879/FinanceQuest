@@ -23,7 +23,7 @@
               "type": "image",
               "image": "obrazki/1-czas-ryzyko-stres.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -58,7 +58,7 @@
               "type": "image",
               "image": "obrazki/2-analiza-fundamentalna-vs-tec.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -93,7 +93,7 @@
               "type": "image",
               "image": "obrazki/3-dlaczego-traderzy-traca.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -128,7 +128,7 @@
               "type": "image",
               "image": "obrazki/4-fomo.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {

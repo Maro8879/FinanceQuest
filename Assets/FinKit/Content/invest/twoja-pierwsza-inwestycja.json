@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "id": "twoja-pierwsza-inwestycja",
+  "title": "Twoja pierwsza inwestycja",
+  "color": "#0E4A55",
+  "meta": {
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T08:21:41Z"
+  },
+  "levels": [
+    {
+      "id": "l1",
+      "kind": "lesson",
+      "title": "Wybierz brokera",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Wybierz brokera"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/1-wybierz-brokera.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Broker to firma, przez którą kupujesz akcje, ETF-y i obligacje – bez niego nie masz dostępu do giełdy. Przy wyborze sprawdź: czy ma licencję nadzoru finansowego w UE, ile wynoszą prowizje i opłaty za prowadzenie konta oraz czy oferuje instrumenty, które Cię interesują (np. plan regularnego inwestowania w ETF)."
+            },
+            {
+              "type": "text",
+              "text": "Twoje akcje i ETF-y są zapisane na Ciebie i oddzielone od majątku brokera, więc jego upadłość nie oznacza utraty papierów."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    },
+    {
+      "id": "l2",
+      "kind": "lesson",
+      "title": "Pierwsze zlecenia",
+      "pages": [
+        {
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "Pierwsze zlecenia"
+            },
+            {
+              "type": "image",
+              "image": "obrazki/2-pierwsze-zlecenia.png",
+              "width": 1,
+              "maxHeight": 240,
+              "caption": ""
+            },
+            {
+              "type": "text",
+              "text": "Zlecenie to polecenie kupna lub sprzedaży, które wysyłasz do brokera. Zlecenie rynkowe (market) wykonuje się od razu po bieżącej cenie, a zlecenie z limitem (limit) wykona się tylko po cenie, którą sam ustalisz, albo lepszej."
+            },
+            {
+              "type": "text",
+              "text": "Na start najprościej kupować małą kwotę (np. 25–50 €) i używać zleceń z limitem – wtedy nie zapłacisz więcej, niż planowałeś."
+            }
+          ]
+        }
+      ],
+      "minigame": {
+        "game": "",
+        "settings": []
+      },
+      "tasks": []
+    }
+  ]
+}

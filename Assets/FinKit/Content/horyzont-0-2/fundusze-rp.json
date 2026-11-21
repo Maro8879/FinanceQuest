@@ -23,7 +23,7 @@
               "type": "image",
               "image": "obrazki/1-czym-jest-fundusz-rynku-pien.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -58,7 +58,7 @@
               "type": "image",
               "image": "obrazki/2-lokata-vs-fundusz.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -93,7 +93,7 @@
               "type": "image",
               "image": "obrazki/3-kiedy-to-ma-sens.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {

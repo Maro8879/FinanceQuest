@@ -23,7 +23,7 @@
               "type": "image",
               "image": "obrazki/1-zasada-1-2-procent.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -58,7 +58,7 @@
               "type": "image",
               "image": "obrazki/2-wielkosc-pozycji.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -93,7 +93,7 @@
               "type": "image",
               "image": "obrazki/3-bezpieczny-poligon.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {

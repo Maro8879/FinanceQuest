@@ -9,12 +9,13 @@
   "order": 1,
   "chapters": [
     "basics",
+    "akcje-obligacje-i-etf",
     "risk",
-    "divers",
-    "compound"
+    "koszty-i-podatki",
+    "twoja-pierwsza-inwestycja"
   ],
   "meta": {
-    "editedBy": "Mikołaj",
-    "editedAt": "2026-11-20T21:11:18Z"
+    "editedBy": "Claude",
+    "editedAt": "2026-11-21T08:21:41Z"
   }
 }

@@ -19,7 +19,7 @@
               "type": "image",
               "image": "obrazki/1-dlaczego-gotowka-traci-warto.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -71,7 +71,7 @@
               "type": "image",
               "image": "obrazki/2-jak-dziala-procent-skladany.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -116,7 +116,7 @@
               "type": "image",
               "image": "obrazki/3-czas-jako-przewaga.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {

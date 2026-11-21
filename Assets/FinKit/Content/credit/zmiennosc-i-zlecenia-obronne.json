@@ -23,7 +23,7 @@
               "type": "image",
               "image": "obrazki/1-zmiennosc.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -58,7 +58,7 @@
               "type": "image",
               "image": "obrazki/2-dzwignia-finansowa.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -93,7 +93,7 @@
               "type": "image",
               "image": "obrazki/3-stop-loss.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
@@ -128,7 +128,7 @@
               "type": "image",
               "image": "obrazki/4-take-profit.png",
               "width": 1,
-              "maxHeight": 220,
+              "maxHeight": 240,
               "caption": ""
             },
             {
