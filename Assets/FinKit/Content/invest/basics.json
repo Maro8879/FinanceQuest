@@ -302,13 +302,10 @@
           "mode": ""
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "The earlier you start the less you have to pay in",
-          "extra": [
-            "later",
-            "more"
-          ],
+          "type": "truefalse",
+          "prompt": "The later you start investing, the less you have to pay in.",
+          "answer": "",
+          "extra": [],
           "explain": "Time gives compound interest more years to work.",
           "fact": "A long horizon also helps you ride out crashes.",
           "options": [],
@@ -320,7 +317,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": false
         }
       ],
       "pages": [],

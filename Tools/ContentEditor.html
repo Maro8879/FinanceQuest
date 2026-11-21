@@ -197,8 +197,9 @@ const ARTS = {Portfolio:"Wykres kołowy", Magnifier:"Lupa nad świecami", Laptop
   Candles:"Wykres świecowy", Platform:"Telefon przed monitorem", Sprout:"Kiełek (krótki horyzont)", Sapling:"Drzewko (średni horyzont)", Tree:"Drzewo (długi horyzont)"};
 const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
-const TYPES = {choice:"Wybór odpowiedzi", truefalse:"Prawda / fałsz", tiles:"Kafelki – ułóż zdanie", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
+const TYPES = {choice:"Wybór odpowiedzi", truefalse:"Prawda / fałsz", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
 // „Prawda czy Pułapka?”: rodzaje kart (tylko wygląd w aplikacji) i odpowiedzi.
+const OLD_TYPES = {tiles:"Kafelki (wycofane)"};
 const SCAM_TYPES = {sms:"SMS", social:"Reklama w social mediach", bank:"Aplikacja bankowa", article:"Artykuł sponsorowany", product:"Karta produktu", call:"Telefon"};
 const SCAM_ANS = {trap:"✕ PUŁAPKA", safe:"✓ BEZPIECZNE"};
 // Te same 6 kart, które aplikacja bierze, gdy level nie ma własnych (ScamDeck.Default) – tu do wstawienia i edycji.
@@ -1131,7 +1132,7 @@ function levelForm(){
 
 function taskList(l){
   return l.tasks.map((t,i) => `<div class="line"><div class="f card" style="margin:0;padding:8px 12px;cursor:pointer" data-act="sel-task" data-i="${i}">
-        <b>${i+1}. ${esc(TYPES[t.type])}</b> <span class="sub">· ${esc((t.prompt || "").slice(0,50)) || "bez polecenia"}${taskWarnings(t).length ? " · ⚠" : ""}</span></div>${ctrl("task-list", i)}</div>`).join("")
+        <b>${i+1}. ${esc(TYPES[t.type] || OLD_TYPES[t.type] || t.type)}</b> <span class="sub">· ${esc((t.prompt || "").slice(0,50)) || "bez polecenia"}${taskWarnings(t).length ? " · ⚠" : ""}</span></div>${ctrl("task-list", i)}</div>`).join("")
       + `<div class="btns">${Object.entries(TYPES).map(([k,v]) => `<button class="btn small" data-act="add-task" data-type="${k}">+ ${v}</button>`).join("")}</div>`;
 }
 
@@ -1218,7 +1219,7 @@ function taskForm(){
       <label>Poprawne odpowiedzi <span class="hint">po przecinku; pierwsza = główna, reszta = akceptowane alternatywy</span></label>${listIn(`${b}.answers`, t.answers, "np. koszyka, koszyczka")}
       ${t.mode === "choose" ? `<label>Błędne propozycje <span class="hint">po przecinku</span></label>${listIn(`${b}.wrong`, t.wrong, "np. portfela, banku")}` : ""}`;
   }
-  return `<div class="h">Zadanie ${S.sel.idx+1} <span class="pill">${esc(TYPES[t.type])}</span></div><div class="crumb">${esc(curChapter().title)} › ${esc(curLevel().title || "Level " + (S.sel.lv+1))} › zadanie ${S.sel.idx+1}</div>
+  return `<div class="h">Zadanie ${S.sel.idx+1} <span class="pill">${esc(TYPES[t.type] || OLD_TYPES[t.type] || t.type)}</span></div><div class="crumb">${esc(curChapter().title)} › ${esc(curLevel().title || "Level " + (S.sel.lv+1))} › zadanie ${S.sel.idx+1}</div>
     <div class="grid2"><div><label>Typ zadania</label>${sel(`${b}.type`, t.type, TYPES)}</div><div></div></div>
     <label>Polecenie / pytanie <span class="hint">Shift+Enter = nowa linia</span></label>${one(`${b}.prompt`, t.prompt)}
     ${body}

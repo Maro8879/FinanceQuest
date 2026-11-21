@@ -248,13 +248,10 @@
           "mode": ""
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "You can sell a fund at any time",
-          "extra": [
-            "never",
-            "a deposit"
-          ],
+          "type": "truefalse",
+          "prompt": "You can sell a fund at any time.",
+          "answer": "",
+          "extra": [],
           "explain": "Unlike a deposit, a fund doesn't lock your money.",
           "fact": "When you sell, you don't lose the interest you've earned.",
           "options": [],
@@ -266,7 +263,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": true
         }
       ],
       "pages": [],

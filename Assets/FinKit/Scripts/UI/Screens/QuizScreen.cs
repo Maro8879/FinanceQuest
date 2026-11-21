@@ -153,6 +153,7 @@ namespace FinanceQuest
             if (lastCorrect) score++;
             answered = true;
             Haptics.Tap();
+            Sfx.Play(lastCorrect ? Sfx.Id.Correct : Sfx.Id.Wrong);
             fx = Fx.Answer;
             Show(false);
         }
@@ -160,7 +161,7 @@ namespace FinanceQuest
         void Next()
         {
             fx = Fx.Slide;
-            if (index < tasks.Count - 1) StartTask(index + 1);
+            if (index < tasks.Count - 1) { Sfx.Play(Sfx.Id.Whoosh); StartTask(index + 1); }
             else { finished = true; Show(true); }
         }
 
@@ -481,6 +482,8 @@ namespace FinanceQuest
             float ratio = (float)score / total;
             int stars = Stars();
             float y = 30f;
+            // Melodyjka tylko przy pierwszym pokazaniu wyniku – razem z pierwszą wskakującą gwiazdką.
+            if (!resultSaved) Sfx.Result(stars, isTest, 0.4f);
 
             const float star = 54f, sgap = 14f;
             float sx = (W - 3 * star - 2 * sgap) * 0.5f;

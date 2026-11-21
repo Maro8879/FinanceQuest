@@ -222,13 +222,10 @@
           "multi": false
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "Sell high and buy low",
-          "extra": [
-            "fast",
-            "always"
-          ],
+          "type": "truefalse",
+          "prompt": "Rebalancing means selling what got expensive and buying what got cheap.",
+          "answer": "",
+          "extra": [],
           "explain": "Rebalancing itself sells what has got expensive and buys what is cheap.",
           "fact": "It works by a simple rule, without guessing the market.",
           "options": [],
@@ -240,7 +237,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": true
         }
       ],
       "pages": [],

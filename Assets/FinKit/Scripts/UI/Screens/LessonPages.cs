@@ -69,8 +69,8 @@ namespace FinanceQuest
 
         void Next()
         {
-            if (page < pages.Count - 1) ShowPage(page + 1);
-            else { if (FinanceQuestApp.Instance != null) FinanceQuestApp.Instance.SkipLesson = null; onFinish(); }
+            if (page < pages.Count - 1) { Sfx.Play(Sfx.Id.Whoosh); ShowPage(page + 1); }
+            else { if (FinanceQuestApp.Instance != null) FinanceQuestApp.Instance.SkipLesson = null; Sfx.Jingle(Sfx.Id.Level); onFinish(); }
         }
 
         void ShowPage(int index)

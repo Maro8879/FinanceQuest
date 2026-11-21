@@ -80,6 +80,7 @@ namespace FinanceQuest
         void Awake()
         {
             Instance = this;
+            Sfx.Init(gameObject);
             // Telefony domyślnie trzymają 30 FPS – animacje sprężynek wyglądają wtedy szarpanie.
             Application.targetFrameRate = 60;
 

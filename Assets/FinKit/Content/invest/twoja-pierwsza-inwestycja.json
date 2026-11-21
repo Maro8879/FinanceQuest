@@ -184,13 +184,10 @@
           "multi": false
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "A broker going bankrupt doesn't mean losing your shares",
-          "extra": [
-            "always",
-            "money"
-          ],
+          "type": "truefalse",
+          "prompt": "If your broker goes bankrupt, you always lose your shares.",
+          "answer": "",
+          "extra": [],
           "explain": "Your securities are registered in your name and kept separate from the broker's assets.",
           "fact": "That's why an EU regulator's licence matters so much when choosing a broker.",
           "options": [],
@@ -202,7 +199,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": false
         }
       ],
       "pages": [],

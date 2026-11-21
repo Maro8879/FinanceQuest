@@ -197,13 +197,10 @@
           "multi": false
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "Risk goes down along with the time until withdrawal",
-          "extra": [
-            "goes up",
-            "always"
-          ],
+          "type": "truefalse",
+          "prompt": "Risk should go up as the time until withdrawal gets shorter.",
+          "answer": "",
+          "extra": [],
           "explain": "As withdrawal gets close, one bad year could ruin the plan.",
           "fact": "That's why a 60-year-old's portfolio looks different from a 25-year-old's.",
           "options": [],
@@ -215,7 +212,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": false
         }
       ],
       "pages": [],

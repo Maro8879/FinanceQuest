@@ -515,7 +515,7 @@ namespace FinanceQuest
         {
             int stars = Stars();
             bool first = !completed;
-            if (first) { completed = true; if (onComplete != null) onComplete(stars); }
+            if (first) { completed = true; if (onComplete != null) onComplete(stars); Sfx.Result(stars, false, 0.4f); }
 
             // Gwiazdki jak po teście: środkowa wyżej, zdobyte wskakują po kolei (tylko przy pierwszym pokazaniu).
             const float star = 54f, sgap = 14f;

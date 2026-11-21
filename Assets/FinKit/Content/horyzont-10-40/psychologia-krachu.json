@@ -256,13 +256,10 @@
           "multi": false
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "During the storm just follow the plan",
-          "extra": [
-            "sell",
-            "change"
-          ],
+          "type": "truefalse",
+          "prompt": "During a market storm, the best move is to follow your plan.",
+          "answer": "",
+          "extra": [],
           "explain": "A plan written before the crash protects you from panic decisions.",
           "fact": "Because of emotions, most people buy high and sell low.",
           "options": [],
@@ -274,7 +271,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": true
         }
       ],
       "pages": [],

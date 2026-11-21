@@ -348,13 +348,10 @@
       "title": "Chapter test",
       "tasks": [
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "A higher profit usually means higher risk",
-          "extra": [
-            "lower",
-            "always"
-          ],
+          "type": "truefalse",
+          "prompt": "A higher profit usually means higher risk.",
+          "answer": "",
+          "extra": [],
           "explain": "Profit and risk usually go hand in hand.",
           "fact": "Investors call this the risk premium.",
           "options": [],
@@ -366,7 +363,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": true
         },
         {
           "type": "choice",

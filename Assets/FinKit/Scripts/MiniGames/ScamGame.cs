@@ -393,6 +393,7 @@ namespace FinanceQuest
             bool ok = round.Answer(a);
             decidedDir = a == ScamAnswer.Trap ? -1 : 1;
             Haptics.Tap();
+            Sfx.Play(ok ? Sfx.Id.Correct : Sfx.Id.Wrong);
             Rebuild(false);
             Flash(ok ? Safe : Oops);
             // Karta wyjaśnienia wysuwa się od dołu.
@@ -472,7 +473,8 @@ namespace FinanceQuest
         {
             int stars = round.Stars();
             bool first = !completed;
-            if (first) { completed = true; if (onComplete != null) onComplete(stars); }
+            // Na końcu gry jest odznaka – dlatego zawsze dźwięk „osiągnięcia”, nie zwykły koniec levelu.
+            if (first) { completed = true; if (onComplete != null) onComplete(stars); Sfx.Jingle(Sfx.Id.Achievement, 0.4f); }
 
             // Gwiazdki jak po teście – zdobyte wskakują po kolei (tylko przy pierwszym pokazaniu).
             const float star = 54f, sgap = 14f;

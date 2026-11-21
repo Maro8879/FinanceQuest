@@ -221,13 +221,10 @@
           "mode": ""
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "First test the strategy on demo",
-          "extra": [
-            "credit",
-            "real"
-          ],
+          "type": "truefalse",
+          "prompt": "You should test a new strategy with real money straight away.",
+          "answer": "",
+          "extra": [],
           "explain": "On demo you learn orders and your own emotions without risk.",
           "fact": "A strategy that doesn't make money on demo won't start making it with real money either.",
           "options": [],
@@ -239,7 +236,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": false
         }
       ],
       "pages": [],

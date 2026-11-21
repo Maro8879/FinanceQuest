@@ -219,13 +219,10 @@
           "multi": false
         },
         {
-          "type": "tiles",
-          "prompt": "Build the sentence",
-          "answer": "One bad year won't destroy the plan",
-          "extra": [
-            "good",
-            "always"
-          ],
+          "type": "truefalse",
+          "prompt": "With a diversified portfolio, one bad year will always destroy the plan.",
+          "answer": "",
+          "extra": [],
           "explain": "When your money is split across different assets, a drop in one doesn't wipe out the goal.",
           "fact": "The portfolio then grows more slowly in the best case, but hurts much less in the worst.",
           "options": [],
@@ -237,7 +234,8 @@
           "image": "",
           "text": "",
           "mode": "",
-          "multi": false
+          "multi": false,
+          "truth": false
         }
       ],
       "pages": [],
