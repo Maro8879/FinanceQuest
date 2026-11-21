@@ -1,7 +1,7 @@
 {
   "format": 1,
   "id": "credit",
-  "title": "SHORT-TERM INVESTING (high risk)",
+  "title": "Short-Term Investing",
   "shortName": "Short-term",
   "color": "#4A5D73",
   "art": "Candles",
@@ -14,6 +14,6 @@
   ],
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-21T12:50:42Z"
+    "editedAt": "2026-11-21T23:30:07Z"
   }
 }
