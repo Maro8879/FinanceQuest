@@ -29,6 +29,8 @@ namespace FinanceQuest
 
         // Dokąd prowadzi swipe w lewo z bieżącego ekranu (ustawia ekran przy budowaniu; null = nigdzie).
         public Action SwipeForward;
+        // Ekran może sam obsłużyć „wstecz” (np. filmik na pełnym ekranie najpierw się zamyka). true = obsłużone.
+        [System.NonSerialized] public Func<bool> BackOverride;
         // Ostatnio oglądany kurs – cel swipe'a w lewo w menu.
         [System.NonSerialized] public CourseData LastCourse;   // tylko w pamięci – Unity nie ma tego zapisywać
         // Co właśnie się odblokowało – ekran rozdziału / kursu pokaże to animacją (raz) i wyczyści.
@@ -104,7 +106,7 @@ namespace FinanceQuest
                 Rebuild(Nav.None);
             }
             if (transition != null && transition.Step(Time.unscaledDeltaTime, Header)) EndTransition();
-            if (BackPressed()) Back();
+            if (BackPressed() && (BackOverride == null || !BackOverride())) Back();
 
             if (transition == null)
             {
@@ -200,6 +202,7 @@ namespace FinanceQuest
             if (animate && old != null) Header.BeginSwap();
             SwipeForward = null;   // nowy ekran sam ustawi, dokąd prowadzi swipe w lewo
             BlockSwipeBack = false;
+            BackOverride = null;
             currentScreen = Ui.Rect("Screen", body);
             Ui.Stretch(currentScreen);
             currentScreen.gameObject.AddComponent<CanvasGroup>();

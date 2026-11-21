@@ -49,12 +49,13 @@ namespace FinanceQuest
     [Serializable]
     public class BlockDef
     {
-        public string type;                                   // heading | text | image | callout | list | divider | space | table
+        public string type;                                   // heading | text | image | video | callout | list | divider | space | table
         public string text;                                   // heading, text, callout
         public string image;                                  // image: ścieżka względem folderu kursu, np. obrazki/ryzyko.png
         public float width = 1f;                              // image: szerokość jako ułamek szerokości strony (0.3–1)
         public float maxHeight = 220f;                        // image: obrazek nie będzie wyższy niż tyle
-        public string caption;                                // image: podpis pod obrazkiem
+        public string caption;                                // image, video: podpis pod obrazkiem / filmikiem
+        public string video;                                  // video: ścieżka względem folderu kursu, np. filmy/ryzyko.mp4
         public List<string> items = new List<string>();       // list: punkty listy
         public float size = 16f;                              // space: wysokość odstępu
         public List<TableRowDef> rows = new List<TableRowDef>();   // table: wiersze (pierwszy = nagłówek, gdy header)
@@ -63,6 +64,8 @@ namespace FinanceQuest
         // Obrazek podpięty przez importer (nie ma go w JSON). Dzięki temu obrazki leżą obok treści,
         // a do gry trafiają razem z bazą treści – bez kopiowania do Resources.
         public Sprite sprite;
+        // Filmik podpięty przez importer – tak samo jak obrazek (MP4 leży obok treści, nie w Resources).
+        public UnityEngine.Video.VideoClip clip;
     }
 
     [Serializable]
