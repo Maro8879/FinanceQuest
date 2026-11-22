@@ -91,6 +91,12 @@ namespace FinanceQuest.EditorTools
         static int AttachImages(ChapterDef ch, string courseDir, string courseId, string file)
         {
             int w = 0;
+            // Obrazki w tle stref (zadanie „przeciągnij do strefy”).
+            foreach (var l in ch.levels)
+                if (l.tasks != null)
+                    foreach (var t in l.tasks)
+                        if (t != null && t.zones != null)
+                            foreach (var z in t.zones) w += AttachZoneImage(z, courseDir, courseId, file);
             foreach (var l in ch.levels)
                 foreach (var page in l.pages)
                     foreach (var b in ContentBlocks.Of(page))
@@ -111,6 +117,18 @@ namespace FinanceQuest.EditorTools
                         b.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
                     }
             return w;
+        }
+
+        static int AttachZoneImage(ZoneDef z, string courseDir, string courseId, string file)
+        {
+            z.sprite = null;
+            z.image = ContentBlocks.NormalizeImagePath(z.image, courseId);
+            if (string.IsNullOrEmpty(z.image)) return 0;
+            string assetPath = courseDir + "/" + z.image;
+            if (!File.Exists(assetPath)) { Debug.LogWarning("Finance Quest: " + file + ": nie ma obrazka strefy " + assetPath + "."); return 1; }
+            EnsureSprite(assetPath);
+            z.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
+            return 0;
         }
 
         // Filmik z folderu kursu (np. Content/invest/filmy/x.mp4) jako VideoClip – działa jak obrazek, bez Resources.
