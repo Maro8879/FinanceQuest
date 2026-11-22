@@ -18,7 +18,7 @@ namespace FinanceQuest
 
         public static void Build(RectTransform screen, FinanceQuestApp app)
         {
-            new SurveyScreen(screen, app, Survey.Test(app.Courses));
+            new SurveyScreen(screen, app, Survey.Questions(app.Courses));
         }
 
         SurveyScreen(RectTransform screen, FinanceQuestApp app, List<SurveyQuestion> questions)
@@ -46,7 +46,7 @@ namespace FinanceQuest
             ProgressBar.Create(content, m, y, cw, 12f, Palette.Track, (index + (chosen[index] != null ? 1f : 0.5f)) / questions.Count);
             y += 12f + 22f;
 
-            var kick = Ui.Text("Kicker", content, "QUESTION " + (index + 1) + " Z " + questions.Count, 11.5f, Palette.TextMuted);
+            var kick = Ui.Text("Kicker", content, "QUESTION " + (index + 1) + " OF " + questions.Count, 11.5f, Palette.TextMuted);
             kick.characterSpacing = 6f;
             Ui.Place(kick.rectTransform, m, y, cw, 16f);
             y += 22f;
