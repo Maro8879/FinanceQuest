@@ -2,7 +2,7 @@
   "format": 1,
   "id": "credit",
   "title": "Short-Term Investing",
-  "shortName": "Short-term",
+  "shortName": "Risk Taker",
   "color": "#8E4A36",
   "art": "Candles",
   "icon": "Chart",
@@ -14,6 +14,6 @@
   ],
   "meta": {
     "editedBy": "Mikołaj",
-    "editedAt": "2026-11-21T23:31:20Z"
+    "editedAt": "2026-11-22T00:45:14Z"
   }
 }
