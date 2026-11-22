@@ -4,8 +4,8 @@
   "title": "Financial scams",
   "color": "#3F6B5C",
   "meta": {
-    "editedBy": "Maro",
-    "editedAt": "2026-11-21T21:35:06Z"
+    "editedBy": "Mikołaj",
+    "editedAt": "2026-11-21T22:45:42Z"
   },
   "levels": [
     {
@@ -78,7 +78,7 @@
               "type": "list",
               "items": [
                 "**Time pressure** – “offer valid today only”",
-                "**No financial supervision** (KNF, BaFin)",
+                "**No financial supervision** ",
                 "**“Secret algorithms”** instead of facts",
                 "A transfer to a **private account** or installing **remote desktop** software"
               ]
