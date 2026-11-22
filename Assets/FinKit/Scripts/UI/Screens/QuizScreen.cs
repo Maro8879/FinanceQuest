@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace FinanceQuest
@@ -750,61 +751,111 @@ namespace FinanceQuest
             return y;
         }
 
-        // Strefy: stuknij element, potem strefę. Stuknięcie elementu w strefie oddaje go na dół.
+        // Strefy jedna pod drugą (pełna szerokość), w tle każdej – blady obrazek (jeśli jest w treści).
+        // Element przeciągasz palcem do strefy; element ze strefy można znowu podnieść i przenieść.
+        // Puszczony poza strefą wraca na dół do wyboru. Stary sposób (stuknij element, potem strefę) dalej działa.
+        const float ZoneMinH = 130f, ZoneArtAlpha = 0.13f;
+
         float Zones(RectTransform c, TaskDef t, float y)
         {
-            if (!answered) y += Hint(c, y, zoneSel >= 0 ? "Now tap a zone." : "Tap an item, then the zone it belongs to.");
-            const float gap = 10f, pad = 10f, head = 34f;
+            if (!answered) y += Hint(c, y, "Drag each item to the right zone.");
+            const float gap = 12f, pad = 12f, head = 34f;
             int nz = t.zones.Count;
             if (nz == 0) return y;
-            int cols = nz <= 3 ? nz : 2;
-            float zw = (cw - gap * (cols - 1)) / cols;
-            float iw = zw - 2 * pad;
+            float iw = cw - 2 * pad;
+            var zoneRects = new List<RectTransform>();
+            var glows = new List<Image>();
 
-            for (int start = 0; start < nz; start += cols)
+            for (int z = 0; z < nz; z++)
             {
-                int end = Mathf.Min(nz, start + cols);
-                float rowH = 0f;
-                for (int z = start; z < end; z++)
-                {
-                    float hz = head;
-                    foreach (int k in order) if (zoneOf[k] == z) hz += ChipSize(t.items[k].text, iw).y + ChipGap;
-                    rowH = Mathf.Max(rowH, Mathf.Max(120f, hz + pad));
-                }
-                for (int z = start; z < end; z++)
-                {
-                    float x = m + (z - start) * (zw + gap);
-                    bool target = !answered && zoneSel >= 0;
-                    int zi = z;
-                    var box = LipCard.Create(c, "Zone", x, y, zw, rowH + 4f, ZoneFill,
-                        target ? Palette.Accent : Palette.CardEdge, target ? Palette.AccentLip : Palette.CardLip, 16f, 4f, 2f);
-                    if (target) box.SetClickable(() => { zoneOf[zoneSel] = zi; zoneSel = -1; Show(false); });
+                float hz = head;
+                foreach (int k in order) if (zoneOf[k] == z) hz += ChipSize(t.items[k].text, iw).y + ChipGap;
+                float zh = Mathf.Max(ZoneMinH, hz + pad);
+                bool target = !answered && zoneSel >= 0;
+                int zi = z;
+                var box = LipCard.Create(c, "Zone", m, y, cw, zh + 4f, ZoneFill,
+                    target ? Palette.Accent : Palette.CardEdge, target ? Palette.AccentLip : Palette.CardLip, 16f, 4f, 2f);
+                if (target) box.SetClickable(() => { zoneOf[zoneSel] = zi; zoneSel = -1; Show(false); });
 
-                    var label = Ui.Text("Label", box.Content, t.zones[z].label, 13f, Palette.TextMuted, FontWeight.ExtraBold,
-                        TextAlignmentOptions.Center);
-                    Ui.Place(label.rectTransform, pad, 8f, iw, head - 12f);
-
-                    float iy = head;
-                    foreach (int k in order)
-                    {
-                        if (zoneOf[k] != z) continue;
-                        int item = k;
-                        Look look = !answered ? Look.Normal : ZoneIndex(t, t.items[k].zone) == z ? Look.Good : Look.Bad;
-                        Vector2 s = ChipSize(t.items[k].text, iw);
-                        Chip(box.Content, pad, iy, new Vector2(iw, s.y), t.items[k].text, look,
-                            answered ? null : (Action)(() => { zoneOf[item] = -1; zoneSel = -1; Show(false); }));
-                        iy += s.y + ChipGap;
-                    }
+                // Blady obrazek na środku strefy – podpowiada, czym jest strefa, ale nie przeszkadza w czytaniu.
+                var art = t.zones[z].sprite;
+                if (art != null)
+                {
+                    var img = Ui.Rect("Art", box.Content).gameObject.AddComponent<Image>();
+                    img.sprite = art;
+                    img.preserveAspect = true;
+                    img.raycastTarget = false;
+                    img.color = new Color(1f, 1f, 1f, ZoneArtAlpha);
+                    float ah = Mathf.Min(zh - head - 6f, 120f), aw = Mathf.Min(iw * 0.6f, ah * 1.6f);
+                    Ui.Place(img.rectTransform, (cw - aw) * 0.5f, head + (zh - head - ah) * 0.5f - 2f, aw, ah);
                 }
-                y += rowH + 4f + gap;
+
+                // Podświetlenie strefy, nad którą trzymasz element.
+                var glow = Ui.Rounded("Glow", box.Content, new Color(Palette.Accent.r, Palette.Accent.g, Palette.Accent.b, 0.16f), 14f);
+                Ui.Stretch(glow.rectTransform);
+                glow.enabled = false;
+                glows.Add(glow);
+                zoneRects.Add((RectTransform)box.transform);
+
+                var label = Ui.Text("Label", box.Content, t.zones[z].label.ToUpperInvariant(), 12f, Palette.TextMuted, FontWeight.ExtraBold);
+                label.characterSpacing = 4f;
+                Ui.Place(label.rectTransform, pad + 4f, 10f, iw, head - 14f);
+
+                float iy = head;
+                foreach (int k in order)
+                {
+                    if (zoneOf[k] != z) continue;
+                    int item = k;
+                    Look look = !answered ? Look.Normal : ZoneIndex(t, t.items[k].zone) == z ? Look.Good : Look.Bad;
+                    Vector2 s = ChipSize(t.items[k].text, iw);
+                    var chip = Chip(box.Content, pad, iy, new Vector2(iw, s.y), t.items[k].text, look,
+                        answered ? null : (Action)(() => { zoneOf[item] = -1; zoneSel = -1; Show(false); }));
+                    if (!answered) MakeDraggable(chip, item, zoneRects, glows);
+                    iy += s.y + ChipGap;
+                }
+                y += zh + 4f + gap;
             }
 
             var rest = new List<int>();
             foreach (int k in order) if (zoneOf[k] < 0) rest.Add(k);
             if (answered || rest.Count == 0) return y;
             y += 8f;
-            return y + 12f + Flow(c, m, y, cw, rest, k => t.items[k].text, k => k == zoneSel ? Look.Selected : Look.Normal,
-                k => (Action)(() => { zoneSel = zoneSel == k ? -1 : k; Show(false); }));
+            // Elementy do rozłożenia – w wierszach z zawijaniem, każdy do przeciągnięcia.
+            float x = m, rowH = 0f;
+            foreach (int k in rest)
+            {
+                int item = k;
+                Vector2 s = ChipSize(t.items[k].text, cw);
+                if (x > m && x + s.x > m + cw) { x = m; y += rowH + ChipGap; rowH = 0f; }
+                var chip = Chip(c, x, y, s, t.items[k].text, k == zoneSel ? Look.Selected : Look.Normal,
+                    () => { zoneSel = zoneSel == item ? -1 : item; Show(false); });
+                MakeDraggable(chip, item, zoneRects, glows);
+                x += s.x + ChipGap;
+                rowH = Mathf.Max(rowH, s.y);
+            }
+            return y + rowH + 12f;
+        }
+
+        // Podpina przeciąganie: element jedzie za palcem nad wszystkim, strefa pod palcem się podświetla,
+        // po puszczeniu trafia do tej strefy albo – poza strefami – wraca na dół.
+        void MakeDraggable(LipCard chip, int item, List<RectTransform> zones, List<Image> glows)
+        {
+            var d = chip.gameObject.AddComponent<ZoneDragChip>();
+            d.Layer = screen;
+            d.HitZone = (pos, cam) =>
+            {
+                for (int i = 0; i < zones.Count; i++)
+                    if (zones[i] != null && RectTransformUtility.RectangleContainsScreenPoint(zones[i], pos, cam)) return i;
+                return -1;
+            };
+            d.OnHover = z => { for (int i = 0; i < glows.Count; i++) if (glows[i] != null) glows[i].enabled = i == z; };
+            d.OnDrop = z =>
+            {
+                zoneOf[item] = z;
+                zoneSel = -1;
+                Haptics.Tap();
+                Show(false);
+            };
         }
 
         // ---------------- ocena ----------------
@@ -1084,7 +1135,7 @@ namespace FinanceQuest
             return new Vector2(w, Mathf.Max(42f, th + 2 * ChipPadY) + 4f);
         }
 
-        static void Chip(RectTransform parent, float x, float y, Vector2 size, string text, Look look, Action onClick)
+        static LipCard Chip(RectTransform parent, float x, float y, Vector2 size, string text, Look look, Action onClick)
         {
             Color fill, edge, lip, tc;
             Colors(look, out fill, out edge, out lip, out tc);
@@ -1092,6 +1143,7 @@ namespace FinanceQuest
             var t = Ui.Text("Text", card.Content, text, ChipText, tc, FontWeight.SemiBold, TextAlignmentOptions.Center);
             Ui.Stretch(t.rectTransform, ChipPadX - 4f, 0f, ChipPadX - 4f, 0f);
             if (onClick != null) card.SetClickable(onClick);
+            return card;
         }
 
         // Kafelki w wierszach z zawijaniem. parent == null → tylko liczy wysokość.
@@ -1200,6 +1252,56 @@ namespace FinanceQuest
         {
             t -= 1f;
             return t * t * ((s + 1f) * t + s) + 1f;
+        }
+    }
+
+    // Przeciąganie elementu w zadaniu ze strefami. Na czas przeciągania element przenosimy na warstwę ekranu
+    // (nad przewijaną treścią), żeby nie chował się pod innymi strefami; po puszczeniu ekran i tak się przebudowuje.
+    public class ZoneDragChip : MonoBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
+    {
+        public RectTransform Layer;
+        public Func<Vector2, Camera, int> HitZone;
+        public Action<int> OnHover, OnDrop;
+        RectTransform rt;
+        Vector2 grab;
+        Camera cam;
+        bool dragging;
+
+        public void OnInitializePotentialDrag(PointerEventData e) { e.useDragThreshold = true; }
+
+        public void OnBeginDrag(PointerEventData e)
+        {
+            SwipeInput.Suppress = true;
+            rt = (RectTransform)transform;
+            cam = e.pressEventCamera;
+            rt.SetParent(Layer, true);
+            rt.SetAsLastSibling();
+            rt.localScale = new Vector3(1.04f, 1.04f, 1f);
+            rt.localRotation = Quaternion.Euler(0f, 0f, 3f);
+            var g = gameObject.GetComponent<CanvasGroup>();
+            if (g == null) g = gameObject.AddComponent<CanvasGroup>();
+            g.blocksRaycasts = false;
+            Vector2 lp;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(Layer, e.position, cam, out lp);
+            grab = (Vector2)rt.localPosition - lp;
+            dragging = true;
+        }
+
+        public void OnDrag(PointerEventData e)
+        {
+            if (!dragging) return;
+            Vector2 lp;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(Layer, e.position, cam, out lp);
+            rt.localPosition = lp + grab;
+            if (OnHover != null) OnHover(HitZone != null ? HitZone(e.position, cam) : -1);
+        }
+
+        public void OnEndDrag(PointerEventData e)
+        {
+            if (!dragging) return;
+            dragging = false;
+            int z = HitZone != null ? HitZone(e.position, cam) : -1;
+            if (OnDrop != null) OnDrop(z);
         }
     }
 }

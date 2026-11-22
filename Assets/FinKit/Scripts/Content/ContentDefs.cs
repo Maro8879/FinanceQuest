@@ -10,7 +10,12 @@ namespace FinanceQuest
 
     [Serializable] public class OptionDef { public string text; public bool correct; }
     [Serializable] public class PairDef { public string left; public string right; }
-    [Serializable] public class ZoneDef { public string id; public string label; public float x, y, w, h; }   // x,y,w,h: 0..1 względem obrazka
+    [Serializable] public class ZoneDef
+    {
+        public string id; public string label; public float x, y, w, h;   // x,y,w,h: 0..1 względem obrazka (stary układ)
+        public string image;                                              // opcjonalny obrazek w tle strefy (blady)
+        public Sprite sprite;                                             // podpinane przez importer, jak obrazki w lekcjach
+    }
     [Serializable] public class ZoneItemDef { public string text; public string zone; }
     [Serializable] public class SettingDef { public string key; public string value; }
 

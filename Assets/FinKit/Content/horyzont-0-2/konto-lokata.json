@@ -174,7 +174,8 @@
               "x": 0.04,
               "y": 0.1,
               "w": 0.44,
-              "h": 0.8
+              "h": 0.8,
+              "image": "obrazki/strefa-rachunek-biezacy.png"
             },
             {
               "id": "b",
@@ -182,7 +183,8 @@
               "x": 0.52,
               "y": 0.1,
               "w": 0.44,
-              "h": 0.8
+              "h": 0.8,
+              "image": "obrazki/strefa-konto-oszczednosciowe.png"
             }
           ],
           "items": [

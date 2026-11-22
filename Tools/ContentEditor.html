@@ -1244,7 +1244,8 @@ function taskForm(){
     body = `<label>Obrazek <span class="hint">ścieżka (opcjonalnie)</span></label>${one(`${b}.image`, t.image)}
       <label>Strefy <span class="hint">id · nazwa · x, y, szer., wys. (0–1 względem obrazka)</span></label>`
       + t.zones.map((z,i) => `<div class="grid6">${one(`${b}.zones.${i}.id`, z.id, "id")}${one(`${b}.zones.${i}.label`, z.label, "Nazwa strefy")}
-        ${["x","y","w","h"].map(k => `<input type="number" step="0.05" min="0" max="1" data-bind="${b}.zones.${i}.${k}" data-num="1" value="${esc(z[k])}">`).join("")}<button class="mini x" data-act="zone" data-i="${i}" data-dir="0">✕</button></div>`).join("")
+        ${["x","y","w","h"].map(k => `<input type="number" step="0.05" min="0" max="1" data-bind="${b}.zones.${i}.${k}" data-num="1" value="${esc(z[k])}">`).join("")}<button class="mini x" data-act="zone" data-i="${i}" data-dir="0">✕</button></div>
+        <div style="margin:-2px 0 10px">${one(`${b}.zones.${i}.image`, z.image || "", "obrazek w tle strefy, np. obrazki/skarbonka.png (opcjonalnie, w aplikacji blady)")}</div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-zone">+ strefa</button></div>
       <label>Elementy do przeciągnięcia</label>` + t.items.map((it,i) => `<div class="line"><div class="f">${one(`${b}.items.${i}.text`, it.text, "Element")}</div><div style="width:160px">${sel(`${b}.items.${i}.zone`, it.zone, zopts)}</div><button class="mini x" data-act="item" data-i="${i}" data-dir="0">✕</button></div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-item">+ element</button></div>`;
