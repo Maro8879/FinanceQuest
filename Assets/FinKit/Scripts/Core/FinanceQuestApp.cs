@@ -90,6 +90,10 @@ namespace FinanceQuest
             Progress = ProgressStore.Load();
             BuildCanvas();
             EnsureEventSystem();
+            // Próg przeciągania ok. 3 mm (domyślne 10 px to na gęstym ekranie telefonu ułamek milimetra):
+            // lekkie drgnięcie palca przy tapnięciu to dalej kliknięcie, a wyraźny ruch to już przewijanie.
+            var es = EventSystem.current != null ? EventSystem.current : FindAnyObjectByType<EventSystem>();
+            if (es != null) es.pixelDragThreshold = Mathf.Max(10, Mathf.RoundToInt((Screen.dpi > 0f ? Screen.dpi : 160f) * 0.12f));
         }
 
         void Start()

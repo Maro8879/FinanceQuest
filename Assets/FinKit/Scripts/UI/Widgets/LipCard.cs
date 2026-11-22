@@ -222,6 +222,9 @@ namespace FinanceQuest
         public void OnPointerClick(PointerEventData e)
         {
             if (OnClick == null) return;
+            // Palec się przesunął (przewijanie, swipe) – to nie było kliknięcie. Zabezpieczenie na wypadek,
+            // gdyby przeciąganie się nie zaczęło (np. ruch tuż poniżej progu, a potem szybkie puszczenie).
+            if (e.dragging || (e.position - e.pressPosition).sqrMagnitude > DragThreshold() * DragThreshold()) return;
             Haptics.Tap();   // tyknięcie od razu – opóźnienie poniżej dotyczy tylko zmiany ekranu
             // Chwilę czekamy, żeby było widać odbicie, zanim ekran się zmieni.
             FinanceQuestApp.RunLater(0.09f, OnClick);
@@ -281,7 +284,17 @@ namespace FinanceQuest
         }
 
         public void OnInitializePotentialDrag(PointerEventData e) { if (Scroll != null) Scroll.OnInitializePotentialDrag(e); }
-        public void OnBeginDrag(PointerEventData e) { Release(); if (Scroll != null) Scroll.OnBeginDrag(e); }
+        // Karta sama obsługuje przeciąganie (przekazuje je liście), więc Unity nie anuluje jej kliknięcia,
+        // gdy palec zaczyna przewijać – robimy to tu: po rozpoczęciu przewijania / swipe'a puszczenie palca
+        // nie otworzy karty, a karta od razu odbija w górę.
+        public void OnBeginDrag(PointerEventData e) { e.eligibleForClick = false; Release(); if (Scroll != null) Scroll.OnBeginDrag(e); }
+
+        // Próg „to już jest przesunięcie” – ten sam co w EventSystem (ustawiany w FinanceQuestApp na ok. 3 mm).
+        static float DragThreshold()
+        {
+            var es = EventSystem.current;
+            return es != null ? es.pixelDragThreshold : 10f;
+        }
         public void OnDrag(PointerEventData e) { if (Scroll != null) Scroll.OnDrag(e); }
         public void OnEndDrag(PointerEventData e) { if (Scroll != null) Scroll.OnEndDrag(e); }
         public void OnScroll(PointerEventData e) { if (Scroll != null) Scroll.OnScroll(e); }
