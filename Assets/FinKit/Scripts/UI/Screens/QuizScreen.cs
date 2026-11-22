@@ -754,7 +754,7 @@ namespace FinanceQuest
         // Strefy jedna pod drugą (pełna szerokość), w tle każdej – blady obrazek (jeśli jest w treści).
         // Element przeciągasz palcem do strefy; element ze strefy można znowu podnieść i przenieść.
         // Puszczony poza strefą wraca na dół do wyboru. Stary sposób (stuknij element, potem strefę) dalej działa.
-        const float ZoneMinH = 130f, ZoneArtAlpha = 0.13f;
+        const float ZoneMinH = 160f, ZoneArtAlpha = 0.13f;
 
         float Zones(RectTransform c, TaskDef t, float y)
         {
@@ -786,8 +786,13 @@ namespace FinanceQuest
                     img.preserveAspect = true;
                     img.raycastTarget = false;
                     img.color = new Color(1f, 1f, 1f, ZoneArtAlpha);
-                    float ah = Mathf.Min(zh - head - 6f, 120f), aw = Mathf.Min(iw * 0.6f, ah * 1.6f);
-                    Ui.Place(img.rectTransform, (cw - aw) * 0.5f, head + (zh - head - ah) * 0.5f - 2f, aw, ah);
+                    // Na środku całej strefy (nie pod napisem), duży – zajmuje większość wysokości strefy.
+                    float ah = Mathf.Min(ZoneMinH - 30f, 140f), aw = Mathf.Min(iw * 0.7f, ah * 1.8f);
+                    // Zaczepione w środku strefy – idealnie na środku niezależnie od szerokości ekranu.
+                    var art_rt = img.rectTransform;
+                    art_rt.anchorMin = art_rt.anchorMax = art_rt.pivot = new Vector2(0.5f, 0.5f);
+                    art_rt.anchoredPosition = Vector2.zero;
+                    art_rt.sizeDelta = new Vector2(aw, ah);
                 }
 
                 // Podświetlenie strefy, nad którą trzymasz element.
@@ -840,7 +845,15 @@ namespace FinanceQuest
         // po puszczeniu trafia do tej strefy albo – poza strefami – wraca na dół.
         void MakeDraggable(LipCard chip, int item, List<RectTransform> zones, List<Image> glows)
         {
-            var d = chip.gameObject.AddComponent<ZoneDragChip>();
+            // Osobna, przezroczysta warstwa na wierzchu kafelka łapie przeciąganie. Gdyby komponent siedział na samym
+            // kafelku, karta przekazałaby ten sam ruch do przewijania listy – i zamiast przenosić, ekran by się przewijał.
+            // Stuknięcie przechodzi dalej do kafelka (warstwa nie obsługuje kliknięć).
+            var hit = Ui.Rect("DragHit", chip.transform).gameObject.AddComponent<Image>();
+            hit.color = new Color(1f, 1f, 1f, 0f);
+            hit.raycastTarget = true;
+            Ui.Stretch(hit.rectTransform);
+            var d = hit.gameObject.AddComponent<ZoneDragChip>();
+            d.Target = (RectTransform)chip.transform;
             d.Layer = screen;
             d.HitZone = (pos, cam) =>
             {
@@ -1259,7 +1272,7 @@ namespace FinanceQuest
     // (nad przewijaną treścią), żeby nie chował się pod innymi strefami; po puszczeniu ekran i tak się przebudowuje.
     public class ZoneDragChip : MonoBehaviour, IInitializePotentialDragHandler, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
-        public RectTransform Layer;
+        public RectTransform Layer, Target;          // Target – cały kafelek, który jedzie za palcem
         public Func<Vector2, Camera, int> HitZone;
         public Action<int> OnHover, OnDrop;
         RectTransform rt;
@@ -1272,14 +1285,14 @@ namespace FinanceQuest
         public void OnBeginDrag(PointerEventData e)
         {
             SwipeInput.Suppress = true;
-            rt = (RectTransform)transform;
+            rt = Target != null ? Target : (RectTransform)transform;
             cam = e.pressEventCamera;
             rt.SetParent(Layer, true);
             rt.SetAsLastSibling();
             rt.localScale = new Vector3(1.04f, 1.04f, 1f);
             rt.localRotation = Quaternion.Euler(0f, 0f, 3f);
-            var g = gameObject.GetComponent<CanvasGroup>();
-            if (g == null) g = gameObject.AddComponent<CanvasGroup>();
+            var g = rt.gameObject.GetComponent<CanvasGroup>();
+            if (g == null) g = rt.gameObject.AddComponent<CanvasGroup>();
             g.blocksRaycasts = false;
             Vector2 lp;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(Layer, e.position, cam, out lp);

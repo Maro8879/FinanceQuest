@@ -167,7 +167,9 @@ namespace FinanceQuest.EditorTools
         static void EnsureSprite(string assetPath)
         {
             var ti = AssetImporter.GetAtPath(assetPath) as TextureImporter;
-            if (ti == null || (ti.textureType == TextureImporterType.Sprite && !ti.mipmapEnabled && ti.maxTextureSize <= 2048)) return;
+            // Tryb „Multiple” (bez pociętych kawałków) też poprawiamy – wtedy plik nie ma ani jednego sprite'a i obrazek znika.
+            if (ti == null || (ti.textureType == TextureImporterType.Sprite && ti.spriteImportMode == SpriteImportMode.Single
+                && !ti.mipmapEnabled && ti.maxTextureSize <= 2048)) return;
             ti.textureType = TextureImporterType.Sprite;
             ti.spriteImportMode = SpriteImportMode.Single;
             ti.mipmapEnabled = false;

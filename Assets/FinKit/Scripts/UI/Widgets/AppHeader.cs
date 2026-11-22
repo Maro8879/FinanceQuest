@@ -133,9 +133,13 @@ namespace FinanceQuest
         }
 
         // DEV: tylko w Unity Editorze i w buildzie deweloperskim – w zwykłym buildzie dla użytkowników go nie ma.
+        // Przycisk DEV (pomijanie leveli) wyłączony na stałe – do pokazu / buildu nie może go być.
+        // Żeby wrócił przy testach: ustaw DevEnabled = true.
+        const bool DevEnabled = false;
+
         public void SetDev(Action onClick)
         {
-            onDev = Debug.isDebugBuild ? onClick : null;
+            onDev = DevEnabled && Debug.isDebugBuild ? onClick : null;
             bool on = onDev != null;
             devButton.gameObject.SetActive(on);
             // Tytuł stoi pod przyciskami, więc DEV na niego nie wchodzi – szerokość bez zmian.
