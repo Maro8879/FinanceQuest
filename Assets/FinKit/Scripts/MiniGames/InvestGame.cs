@@ -392,7 +392,7 @@ namespace FinanceQuest
             float xh = Ui.TextHeight(probeX, tw);
             UnityEngine.Object.Destroy(probeX.gameObject);
 
-            string[] options = feedback != null ? new[] { "NEXT" } : Options();
+            string[] options = feedback != null ? new[] { "UNDERSTAND" } : Options();
             float buttonsH = options.Length * (ButtonH + 10f);
             float h = pad + 18f + th + 10f + xh + 18f + buttonsH + pad - 10f;
 

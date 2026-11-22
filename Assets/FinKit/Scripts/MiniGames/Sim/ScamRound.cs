@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FinanceQuest
 {
-    // Mini gra „Prawda czy Pułapka?” – sama logika, bez UI (w assembly Sim, żeby dało się ją testować).
+    // Mini gra „Swipe the Scam” – sama logika, bez UI (w assembly Sim, żeby dało się ją testować).
     // Gracz ocenia każdą kartę jako BEZPIECZNE albo PUŁAPKA. Bez żyć i bez przegranej – zawsze przechodzi wszystkie karty.
 
     public enum ScamAnswer { Safe, Trap }
@@ -11,24 +11,25 @@ namespace FinanceQuest
     public class ScamCard
     {
         public string Type;      // sms | social | bank | article | product | call – decyduje tylko o wyglądzie karty
-        public string From;      // nadawca / nagłówek („BANK-INFO”, „Nieznany numer”…)
+        public string From;      // nadawca / nagłówek („BANK-INFO”, „InvestAI · Sponsored”…)
         public string Text;
         public ScamAnswer Answer;
         public string Explain;
-        public List<string> Flags = new List<string>();
+        public List<string> Flags = new List<string>();   // nazwy czerwonych flag – metki pod kartą po decyzji
+        public List<string> Marks = new List<string>();   // dokładne fragmenty treści do podświetlenia po decyzji
     }
 
     public static class ScamDeck
     {
-        public const string BadgeName = "Łowca Scamu";
+        public const string BadgeName = "Scam Hunter";
 
         // Ściągawka na podsumowaniu – najważniejsze czerwone flagi.
         public static readonly string[] CheatSheet =
         {
-            "Gwarantowany wysoki zysk bez ryzyka",
-            "Presja czasu („tylko 15 minut!”)",
-            "Skrócone linki i prośby o logowanie z SMS-a",
-            "Prośba o zdalny dostęp lub przelew na „konto techniczne”",
+            "Guaranteed high profit with no risk",
+            "Time pressure (“only 15 minutes!”)",
+            "Short links and login requests by SMS",
+            "Requests for remote access or a transfer to a “safe account”",
         };
 
         // Domyślne karty – gdy w edytorze treści nie dodano własnych.
@@ -36,40 +37,43 @@ namespace FinanceQuest
         {
             return new List<ScamCard>
             {
-                Card("social", "InvestAI · Sponsorowane",
-                    "Odkryj sekretny algorytm AI! Zainwestuj 250 € i odbierz gwarantowane 1 500 € zysku w 7 dni. Bez ryzyka!",
+                Card("social", "InvestAI · Sponsored",
+                    "Discover the secret AI algorithm! Invest €250 and get a guaranteed €1,500 profit in 7 days. Zero risk!",
                     ScamAnswer.Trap,
-                    "Red flag! Na legalnym rynku wysoki zysk zawsze oznacza ryzyko. Nikt nie może zagwarantować 500% zwrotu w tydzień.",
-                    "gwarantowany zysk", "bez ryzyka"),
-                Card("bank", "Twój bank · oferta",
-                    "Lokata terminowa na 6 miesięcy: stałe oprocentowanie 4,0% w skali roku. Depozyt chroniony do 100 000 €.",
+                    "Red flag! On a real market, high returns always come with risk. Nobody can guarantee 500% in a week.",
+                    new[] { "guaranteed profit", "no risk" }, "guaranteed €1,500 profit", "Zero risk!"),
+                Card("bank", "Your bank · Offer",
+                    "6-month term deposit: fixed interest of 4.0% a year. Deposits protected up to €100,000.",
                     ScamAnswer.Safe,
-                    "Dobry wybór! To standardowa, legalna oferta bankowa ze znanym z góry oprocentowaniem i ustawową gwarancją kapitału."),
+                    "Good call! A standard, legal bank offer with a rate known in advance and a legal deposit guarantee.",
+                    new string[0]),
                 Card("sms", "BANK-INFO",
-                    "Twoje konto zostało zablokowane ze względów bezpieczeństwa. Kliknij link bit.ly/bank-verify-99 w ciągu 15 minut, aby odblokować dostęp.",
+                    "Your account has been blocked for security reasons. Tap bit.ly/bank-verify-99 within 15 minutes to unlock access.",
                     ScamAnswer.Trap,
-                    "Phishing i presja czasu! Prawdziwy bank nigdy nie wysyła skróconych linków do logowania SMS-em i nie straszy blokadą w 15 minut.",
-                    "skrócony link", "presja czasu"),
-                Card("article", "Portal Newsy24 · Artykuł sponsorowany",
-                    "Znany prezenter telewizyjny ujawnia w wywiadzie: „Rząd chce ukryć tę platformę, dzięki której każdy obywatel zarabia 500 € dziennie”.",
+                    "Phishing and time pressure! A real bank never sends short login links by SMS or threatens to block you in 15 minutes.",
+                    new[] { "shortened link", "time pressure" }, "bit.ly/bank-verify-99", "within 15 minutes"),
+                Card("article", "News24 · Sponsored article",
+                    "A famous TV presenter reveals in an interview: “The government wants to hide this platform that lets every citizen earn €500 a day.”",
                     ScamAnswer.Trap,
-                    "Fałszywy wizerunek (deepfake)! Oszuści bezprawnie wykorzystują zdjęcia znanych osób, aby wzbudzić Twoje zaufanie.",
-                    "wizerunek celebryty"),
-                Card("product", "Karta produktu · ETF",
-                    "Globalny ETF na 1 500 największych firm świata. Opłata roczna (TER): 0,20%. Historyczny średni zwrot: ok. 7–8% rocznie (brak gwarancji zysku).",
+                    "Fake celebrity endorsement (deepfake)! Scammers misuse famous faces to win your trust.",
+                    new[] { "celebrity face", "too good to be true" }, "A famous TV presenter", "earn €500 a day"),
+                Card("product", "Product sheet · ETF",
+                    "Global ETF covering the 1,500 largest companies in the world. Annual fee (TER): 0.20%. Historical average return: about 7–8% a year (no guaranteed profit).",
                     ScamAnswer.Safe,
-                    "Uczciwa oferta! Niska opłata za zarządzanie, szeroka dywersyfikacja i uczciwa informacja o braku gwarancji zysku to cechy dobrego produktu."),
-                Card("call", "Nieznany numer · „Dział bezpieczeństwa”",
-                    "Dzwonię z działu bezpieczeństwa. Ktoś próbuje ukraść Twoje środki – zainstaluj aplikację AnyDesk, abym mógł przelać je na konto techniczne.",
+                    "Fair offer! A low fee, broad diversification and honest info that profit isn't guaranteed are signs of a good product.",
+                    new string[0]),
+                Card("call", "Unknown number · “Security team”",
+                    "I'm calling from the security team. Someone is trying to steal your money – install AnyDesk so I can move it to a safe account.",
                     ScamAnswer.Trap,
-                    "Spoofing telefoniczny! Żaden pracownik banku nigdy nie prosi o instalację programu do zdalnego pulpitu ani o przelew na „konto techniczne”.",
-                    "zdalny dostęp", "konto techniczne"),
+                    "Phone spoofing! No bank employee will ever ask you to install remote-desktop software or move money to a “safe account”.",
+                    new[] { "remote access", "“safe account”" }, "install AnyDesk", "safe account"),
             };
         }
 
-        static ScamCard Card(string type, string from, string text, ScamAnswer answer, string explain, params string[] flags)
+        static ScamCard Card(string type, string from, string text, ScamAnswer answer, string explain, string[] flags, params string[] marks)
         {
-            return new ScamCard { Type = type, From = from, Text = text, Answer = answer, Explain = explain, Flags = new List<string>(flags) };
+            return new ScamCard { Type = type, From = from, Text = text, Answer = answer, Explain = explain,
+                Flags = new List<string>(flags), Marks = new List<string>(marks) };
         }
     }
 
@@ -148,9 +152,9 @@ namespace FinanceQuest
         // Komunikat na podsumowaniu – zachęcający, bez oceniania.
         public static string Verdict(int score, int count)
         {
-            if (score >= count) return "Bezbłędnie! Żadna pułapka Cię nie zaskoczy.";
-            if (score * 3 >= count * 2) return "Świetny refleks! Znasz już główne zasady bezpieczeństwa.";
-            return "Dobry początek! Oszuści są pomysłowi – przejrzyj ściągawkę i spróbuj jeszcze raz.";
+            if (score >= count) return "Flawless! No scam will catch you out.";
+            if (score * 3 >= count * 2) return "Sharp eye! You already know the main safety rules.";
+            return "Good start! Scammers are creative – check the cheat sheet and try again.";
         }
     }
 }

@@ -206,22 +206,22 @@ const ARTS = {Portfolio:"Wykres kołowy", Magnifier:"Lupa nad świecami", Laptop
 const ICONS = ["Chart","Phone","Wallet","Card","Book","Star"];
 const KINDS = {lesson:"Lekcja", minigame:"Mini gra", task:"Zadania", test:"Test"};
 const TYPES = {choice:"Wybór odpowiedzi", truefalse:"Prawda / fałsz", pairs:"Pary do połączenia", zones:"Przeciąganie do stref", gap:"Luka / wpisz odpowiedź"};
-// „Prawda czy Pułapka?”: rodzaje kart (tylko wygląd w aplikacji) i odpowiedzi.
+// „Swipe the Scam”: rodzaje kart (tylko wygląd w aplikacji) i odpowiedzi.
 const OLD_TYPES = {tiles:"Kafelki (wycofane)"};
 const SCAM_TYPES = {sms:"SMS", social:"Reklama w social mediach", bank:"Aplikacja bankowa", article:"Artykuł sponsorowany", product:"Karta produktu", call:"Telefon"};
-const SCAM_ANS = {trap:"✕ PUŁAPKA", safe:"✓ BEZPIECZNE"};
+const SCAM_ANS = {trap:"✕ SCAM (oszustwo)", safe:"✓ SAFE (bezpieczne)"};
 // Te same 6 kart, które aplikacja bierze, gdy level nie ma własnych (ScamDeck.Default) – tu do wstawienia i edycji.
 const SCAM_DEFAULT = [
-  {type:"social", from:"InvestAI · Sponsorowane", text:"Odkryj sekretny algorytm AI! Zainwestuj 250 € i odbierz gwarantowane 1 500 € zysku w 7 dni. Bez ryzyka!", answer:"trap", explain:"Red flag! Na legalnym rynku wysoki zysk zawsze oznacza ryzyko. Nikt nie może zagwarantować 500% zwrotu w tydzień.", flags:["gwarantowany zysk","bez ryzyka"]},
-  {type:"bank", from:"Twój bank · oferta", text:"Lokata terminowa na 6 miesięcy: stałe oprocentowanie 4,0% w skali roku. Depozyt chroniony do 100 000 €.", answer:"safe", explain:"Dobry wybór! To standardowa, legalna oferta bankowa ze znanym z góry oprocentowaniem i ustawową gwarancją kapitału.", flags:[]},
-  {type:"sms", from:"BANK-INFO", text:"Twoje konto zostało zablokowane ze względów bezpieczeństwa. Kliknij link bit.ly/bank-verify-99 w ciągu 15 minut, aby odblokować dostęp.", answer:"trap", explain:"Phishing i presja czasu! Prawdziwy bank nigdy nie wysyła skróconych linków do logowania SMS-em i nie straszy blokadą w 15 minut.", flags:["skrócony link","presja czasu"]},
-  {type:"article", from:"Portal Newsy24 · Artykuł sponsorowany", text:"Znany prezenter telewizyjny ujawnia w wywiadzie: „Rząd chce ukryć tę platformę, dzięki której każdy obywatel zarabia 500 € dziennie”.", answer:"trap", explain:"Fałszywy wizerunek (deepfake)! Oszuści bezprawnie wykorzystują zdjęcia znanych osób, aby wzbudzić Twoje zaufanie.", flags:["wizerunek celebryty"]},
-  {type:"product", from:"Karta produktu · ETF", text:"Globalny ETF na 1 500 największych firm świata. Opłata roczna (TER): 0,20%. Historyczny średni zwrot: ok. 7–8% rocznie (brak gwarancji zysku).", answer:"safe", explain:"Uczciwa oferta! Niska opłata za zarządzanie, szeroka dywersyfikacja i uczciwa informacja o braku gwarancji zysku to cechy dobrego produktu.", flags:[]},
-  {type:"call", from:"Nieznany numer · „Dział bezpieczeństwa”", text:"Dzwonię z działu bezpieczeństwa. Ktoś próbuje ukraść Twoje środki – zainstaluj aplikację AnyDesk, abym mógł przelać je na konto techniczne.", answer:"trap", explain:"Spoofing telefoniczny! Żaden pracownik banku nigdy nie prosi o instalację programu do zdalnego pulpitu ani o przelew na „konto techniczne”.", flags:["zdalny dostęp","konto techniczne"]},
+  {type:"social", from:"InvestAI · Sponsored", text:"Discover the secret AI algorithm! Invest €250 and get a guaranteed €1,500 profit in 7 days. Zero risk!", answer:"trap", explain:"Red flag! On a real market, high returns always come with risk. Nobody can guarantee 500% in a week.", flags:["guaranteed profit", "no risk"]},
+  {type:"bank", from:"Your bank · Offer", text:"6-month term deposit: fixed interest of 4.0% a year. Deposits protected up to €100,000.", answer:"safe", explain:"Good call! A standard, legal bank offer with a rate known in advance and a legal deposit guarantee.", flags:[]},
+  {type:"sms", from:"BANK-INFO", text:"Your account has been blocked for security reasons. Tap bit.ly/bank-verify-99 within 15 minutes to unlock access.", answer:"trap", explain:"Phishing and time pressure! A real bank never sends short login links by SMS or threatens to block you in 15 minutes.", flags:["shortened link", "time pressure"]},
+  {type:"article", from:"News24 · Sponsored article", text:"A famous TV presenter reveals in an interview: “The government wants to hide this platform that lets every citizen earn €500 a day.”", answer:"trap", explain:"Fake celebrity endorsement (deepfake)! Scammers misuse famous faces to win your trust.", flags:["celebrity face", "too good to be true"]},
+  {type:"product", from:"Product sheet · ETF", text:"Global ETF covering the 1,500 largest companies in the world. Annual fee (TER): 0.20%. Historical average return: about 7–8% a year (no guaranteed profit).", answer:"safe", explain:"Fair offer! A low fee, broad diversification and honest info that profit isn't guaranteed are signs of a good product.", flags:[]},
+  {type:"call", from:"Unknown number · “Security team”", text:"I'm calling from the security team. Someone is trying to steal your money – install AnyDesk so I can move it to a safe account.", answer:"trap", explain:"Phone spoofing! No bank employee will ever ask you to install remote-desktop software or move money to a “safe account”.", flags:["remote access", "safe account"]},
 ];
 
 // Mini gry: id w treści → nazwa w edytorze. Gotowa (zrobiona w aplikacji) jest na razie tylko „12-miesiecy”.
-const GAMES = {"12-miesiecy":"Pierwsze 12 miesięcy po zakupie (symulacja inwestowania)", "prawda-czy-pulapka":"Prawda czy Pułapka? (oszustwa – przesuń kartę)", sortowanie:"sortowanie (jeszcze nie ma)", budzet:"budzet (jeszcze nie ma)", wydatki:"wydatki (jeszcze nie ma)", inna:"inna (jeszcze nie ma)"};
+const GAMES = {"12-miesiecy":"Pierwsze 12 miesięcy po zakupie (symulacja inwestowania)", "prawda-czy-pulapka":"Swipe the Scam (oszustwa – przesuń kartę)", sortowanie:"sortowanie (jeszcze nie ma)", budzet:"budzet (jeszcze nie ma)", wydatki:"wydatki (jeszcze nie ma)", inna:"inna (jeszcze nie ma)"};
 const BLOCKS = {heading:"Tytuł", text:"Tekst", image:"Obrazek", video:"Filmik", callout:"Ważne", list:"Lista", table:"Tabelka", offers:"Karta ofert", divider:"Linia", space:"Odstęp"};
 const POLL_MS = 3000;
 
@@ -1130,7 +1130,7 @@ function levelForm(){
         <label>Nadawca / nagłówek <span class="hint">np. BANK-INFO, Nieznany numer – bez prawdziwych numerów i linków</span></label>${one(`${mg}.cards.${i}.from`, c.from, "Nadawca")}
         <label>Treść karty</label>${multi(`${mg}.cards.${i}.text`, c.text, "Treść wiadomości / oferty")}
         <label>Wyjaśnienie po decyzji <span class="hint">1–2 zdania</span></label>${multi(`${mg}.cards.${i}.explain`, c.explain, "Dlaczego to pułapka / dlaczego bezpieczne")}
-        <label>Czerwone flagi <span class="hint">po przecinku, opcjonalnie</span></label>${listIn(`${mg}.cards.${i}.flags`, c.flags, "np. presja czasu, skrócony link")}
+        <label>Czerwone flagi <span class="hint">po przecinku, opcjonalnie – metki pod kartą; flaga wpisana dosłownie jak w treści zostanie tam podświetlona</span></label>${listIn(`${mg}.cards.${i}.flags`, c.flags, "np. presja czasu, skrócony link")}
       </div>`).join("")
       + `<div class="btns"><button class="btn small" data-act="add-scam-card">+ karta</button><button class="btn small" data-act="scam-defaults">Wstaw 6 przykładowych</button>
         <label style="margin:0 0 0 12px;display:flex;gap:6px;align-items:center"><input type="checkbox" data-check="${mg}.shuffle" ${l.minigame.shuffle?"checked":""}> losowa kolejność</label></div>`;

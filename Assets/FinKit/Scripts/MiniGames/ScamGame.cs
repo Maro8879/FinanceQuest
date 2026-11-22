@@ -7,16 +7,18 @@ using UnityEngine.UI;
 
 namespace FinanceQuest
 {
-    // Mini gra „Prawda czy Pułapka?” – ekran. Logika (punkty, kolejność, gwiazdki) jest w ScamRound (assembly Sim, z testami).
-    // Karta jak „Tinder dla ofert”: przeciągnij w LEWO = PUŁAPKA, w PRAWO = BEZPIECZNE. Do tego dwa duże przyciski
-    // i klawisze strzałek (Enter = Dalej). Po decyzji: błysk koloru, karta wyjaśnienia od dołu, „DALEJ” bez limitu czasu.
-    // Karty pochodzą z edytora treści (Mini gra → „Prawda czy Pułapka?”); bez własnych kart gra bierze 6 domyślnych.
+    // Mini gra „Swipe the Scam” – ekran. Logika (punkty, kolejność, gwiazdki) jest w ScamRound (assembly Sim, z testami).
+    // Karta jak „Tinder dla ofert”: przeciągnij w LEWO = SCAM, w PRAWO = SAFE. Do tego dwa duże przyciski
+    // i klawisze strzałek (Enter = Next). Po decyzji: błysk koloru, czerwone flagi w treści, wyjaśnienie od dołu.
+    // Karta = ilustracja typu u góry + treść wyglądająca jak w telefonie; zza karty zerka Detektyw Moneta (ScamArt.cs).
+    // Id zostaje stare („prawda-czy-pulapka”), bo jest zapisane w plikach treści i w postępach graczy.
     public class ScamGame
     {
         public const string Id = "prawda-czy-pulapka";
 
         const float ButtonH = 58f, DecideH = 64f, DragLimit = 110f;
-        const string Disclaimer = "To jest symulacja edukacyjna, nie stanowi doradztwa inwestycyjnego. Karty to fikcyjne przykłady.";
+        const string Disclaimer = "Educational simulation, not investment advice. All cards are fictional examples.";
+        const float HeadH = 96f, PhotoMinH = 130f;
 
         // Kolory z ikoną i tekstem – nigdy sam kolor (czytelne też przy zaburzeniach widzenia barw).
         static readonly Color Safe = Palette.Hex("2F7D51"), SafeFill = Palette.Hex("E7F3EB"), SafeLip = Palette.Hex("235E3D");
@@ -42,6 +44,7 @@ namespace FinanceQuest
         RectTransform holder;          // obracany „uchwyt” bieżącej karty (punkt zaczepienia na środku)
         Vector2 holderBase;
         CanvasGroup stampTrap, stampSafe;
+        bool reactPending;             // metki flag wskakują raz – zaraz po decyzji, nie przy każdej przebudowie
 
         public static void Build(RectTransform screen, FinanceQuestApp app, MiniGameDef def, Action<int> onComplete, Action onFinish)
         {
@@ -74,6 +77,7 @@ namespace FinanceQuest
                         Answer = c.answer == "safe" ? ScamAnswer.Safe : ScamAnswer.Trap,
                         Explain = c.explain ?? "",
                         Flags = c.flags ?? new List<string>(),
+                        Marks = c.flags ?? new List<string>(),   // z edytora: podświetlamy flagi, które dosłownie są w treści
                     });
                 }
             return list.Count > 0 ? list : ScamDeck.Default();
@@ -103,8 +107,8 @@ namespace FinanceQuest
             float y = 8f, barH;
             switch (stage)
             {
-                case Stage.Intro: y = Intro(content, y); barH = Bar(bar, "ZACZYNAMY", Start); break;
-                case Stage.Play: y = Play(content, y, appear); barH = round.Answered ? FeedbackBar(bar) : Bar(bar, null, null); break;
+                case Stage.Intro: y = Intro(content, y); barH = Bar(bar, "START SWIPING", Start); break;
+                case Stage.Play: y = Play(content, y, appear); barH = round.Answered ? FeedbackBar(bar) : DecideBar(bar); break;
                 default: y = Summary(content, y); barH = SummaryBar(bar); break;
             }
             bar.sizeDelta = new Vector2(0f, barH);
@@ -152,15 +156,138 @@ namespace FinanceQuest
 
         // ---------------- intro ----------------
 
+        // Strona startowa: panel z trzema kartami (środkowa duża, boczne mniejsze, lekko schowane pod nią), krótki haczyk
+        // i dwie metki z kierunkami tuż nad START SWIPING – panel rośnie tak, żeby wypełnić ekran.
+        // Animacje spokojne: karty wjeżdżają od dołu, środkowa kołysze się, a pieczątka SCAM / SAFE pojawia się
+        // dopiero przy przechyleniu w daną stronę – tak jak w samej grze.
         float Intro(RectTransform c, float y)
         {
-            y += 6f;
-            y += Para(c, "Oceń 6 przykładowych wiadomości i ofert. Która jest uczciwa, a która to pułapka oszustów?", m, y, cw, 17f, Palette.Text) + 18f;
-            y += Hint(c, y, false, "Przesuń w <b>PRAWO</b>, jeśli oferta jest bezpieczna.") + 10f;
-            y += Hint(c, y, true, "Przesuń w <b>LEWO</b>, jeśli widzisz czerwoną flagę!") + 16f;
-            y += Para(c, "Możesz też użyć dużych przycisków pod kartą albo strzałek na klawiaturze. Nie ma limitu czasu ani przegranej – po każdej karcie dowiesz się, dlaczego.",
-                m, y, cw, 15f, Palette.TextMuted);
-            return y;
+            // Najpierw teksty pod panelem (mierzymy je), potem panel dostaje całą resztę wysokości.
+            var title = Ui.Text("Title", c, "Would you fall\n<color=#B8432D>for a scam?</color>", 28f, Palette.Text, FontWeight.ExtraBold);
+            title.richText = true;
+            title.lineSpacing = -4f;
+            float th = Ui.TextHeight(title, cw);
+            const string lead = "Real-looking texts, ads and calls. Spot the red flags before they spot you.";
+            var probe = Ui.Text("Probe", c, lead, 15.5f, Palette.TextMuted, FontWeight.Regular);
+            probe.lineSpacing = 4f;
+            float sh = Ui.TextHeight(probe, cw);
+            UnityEngine.Object.DestroyImmediate(probe.gameObject);
+            const float pillH = 40f, noteH = 18f;
+            float below = 20f + th + 8f + sh + 16f + pillH + 10f + noteH + 6f;
+            float avail = app.ScreenHeight - AppHeader.Height - BarHeight(ButtonH) - y - 4f;
+            float ph = Mathf.Max(240f, avail - below);
+
+            var hero = Ui.Rounded("Hero", c, Palette.Petrol, 24f);
+            Ui.Place(hero.rectTransform, m, y, cw, ph);
+            hero.transform.SetAsFirstSibling();
+            // Środkowa karta tak duża, jak pozwala panel; boczne o 20 % mniejsze i wsunięte pod nią.
+            const float top = 22f, capH = 44f, tuck = 22f;
+            float mh = ph - top - capH, mw = mh / 1.42f;
+            float sw = mw * 0.8f, shh = mh * 0.8f;
+            float need = mw + 2 * sw - 2 * tuck + 20f;
+            if (need > cw) { float k = cw / need; mw *= k; mh *= k; sw *= k; shh *= k; }
+            float mid = cw * 0.5f, sy = top + (mh - shh) * 0.5f;
+            CanvasGroup scam, safe;
+            MiniCard(hero.transform, "photo_sms", mid - mw * 0.5f - sw + tuck, sy, sw, shh, 6f, 0.10f, out scam, out safe);
+            MiniCard(hero.transform, "photo_bank", mid + mw * 0.5f - tuck, sy, sw, shh, -6f, 0.22f, out scam, out safe);
+            var center = MiniCard(hero.transform, "photo_social", mid - mw * 0.5f, top, mw, mh, 0f, 0.34f, out scam, out safe);
+            var sway = center.gameObject.AddComponent<ScamSway>();
+            sway.Delay = 1.6f;
+            sway.Amp = 10f;
+            sway.Left = scam;
+            sway.Right = safe;
+            var cap = Ui.Text("Caption", hero.transform, "6 cards · 1 swipe each", 13.5f, Palette.Hex("BFD3D8"), FontWeight.ExtraBold, TextAlignmentOptions.Center);
+            Ui.Place(cap.rectTransform, 0f, ph - 30f, cw, 20f);
+            FadeUp(cap.rectTransform, 0.8f);
+            y += ph + 20f;
+
+            Ui.Place(title.rectTransform, m, y, cw, th);
+            FadeUp(title.rectTransform, 0.55f);
+            y += th + 8f;
+            Para(c, lead, m, y, cw, 15.5f, Palette.TextMuted);
+            FadeUp((RectTransform)c.GetChild(c.childCount - 1), 0.75f);
+            y += sh + 16f;
+
+            float half = (cw - 8f) * 0.5f;
+            Pill(c, m, y, half, "← SCAM", Trap, TrapFill, 0.95f);
+            Pill(c, m + half + 8f, y, half, "SAFE →", Safe, SafeFill, 1.05f);
+            y += pillH + 10f;
+            var note = Ui.Text("Note", c, "No time limit · learn why after every card", 12f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
+            Ui.Place(note.rectTransform, m, y, cw, noteH);
+            return y + noteH;
+        }
+
+        // Mała karta na stronie startowej: zdjęcie u góry, dwie „linijki tekstu” i dwie ukryte pieczątki
+        // (pokazuje je kołysanie – ScamSway – zależnie od strony przechylenia).
+        RectTransform MiniCard(Transform parent, string photo, float x, float y, float w, float h, float rot, float delay,
+            out CanvasGroup scamStamp, out CanvasGroup safeStamp)
+        {
+            var lc = LipCard.Create(parent, "Mini", x, y, w, h, Palette.CardFill, Palette.CardEdge, Palette.CardLip, 14f, 4f, 2f);
+            ScamArt.Photo("Photo", lc.Content, ScamArt.Get(photo), 6f, 6f, w - 12f, h * 0.6f, 10f);
+            var l1 = Ui.Rounded("Line", lc.Content, Palette.Hex("D8D2C6"), 4f);
+            Ui.Place(l1.rectTransform, 12f, h * 0.6f + 16f, w * 0.6f, 8f);
+            var l2 = Ui.Rounded("Line", lc.Content, Palette.Hex("E4DFD5"), 4f);
+            Ui.Place(l2.rectTransform, 12f, h * 0.6f + 30f, w * 0.75f, 8f);
+            scamStamp = MiniStamp(lc.Content, w, h, true);
+            safeStamp = MiniStamp(lc.Content, w, h, false);
+            var rt = (RectTransform)lc.transform;
+            ScamArt.SetPivot(rt, new Vector2(0.5f, 0.5f));
+            rt.localRotation = Quaternion.Euler(0f, 0f, rot);
+            // Wjazd od dołu, spokojnie (bez podskoku).
+            var end = rt.anchoredPosition;
+            var g = rt.gameObject.AddComponent<CanvasGroup>();
+            g.alpha = 0f;
+            rt.anchoredPosition = end - new Vector2(0f, 160f);
+            Fx().Add(delay, 0.5f, p =>
+            {
+                float k = QuizFx.EaseOut(p);
+                rt.anchoredPosition = end - new Vector2(0f, 160f * (1f - k));
+                g.alpha = Mathf.Clamp01(p * 2f);
+            }, null);
+            return rt;
+        }
+
+        CanvasGroup MiniStamp(Transform parent, float w, float h, bool trap)
+        {
+            string label = trap ? "SCAM" : "SAFE";
+            float sw = Mathf.Min(74f, w - 10f);
+            var st = Ui.Rounded("Stamp", parent, trap ? Trap : Safe, 8f);
+            var stt = Ui.Text("Label", st.transform, label, 13f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+            stt.characterSpacing = 2f;
+            Ui.Stretch(stt.rectTransform);
+            Ui.Place(st.rectTransform, (w - sw) * 0.5f, h * 0.3f - 13f, sw, 26f);
+            ScamArt.SetPivot(st.rectTransform, new Vector2(0.5f, 0.5f));
+            st.rectTransform.localRotation = Quaternion.Euler(0f, 0f, trap ? 12f : -12f);
+            var g = st.gameObject.AddComponent<CanvasGroup>();
+            g.alpha = 0f;
+            g.blocksRaycasts = false;
+            return g;
+        }
+
+        void Pill(RectTransform c, float x, float y, float w, string text, Color col, Color fill, float delay)
+        {
+            var p = Ui.Rounded("Pill", c, fill, 20f);
+            Ui.Place(p.rectTransform, x, y, w, 40f);
+            var t = Ui.Text("Label", p.transform, text, 14f, col, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+            t.characterSpacing = 2f;
+            Ui.Stretch(t.rectTransform);
+            FadeUp(p.rectTransform, delay);
+        }
+
+        // Napis „wyłania się” z lekkiego przesunięcia w dół.
+        void FadeUp(RectTransform rt, float delay)
+        {
+            var g = rt.gameObject.GetComponent<CanvasGroup>();
+            if (g == null) g = rt.gameObject.AddComponent<CanvasGroup>();
+            g.alpha = 0f;
+            var end = rt.anchoredPosition;
+            rt.anchoredPosition = end - new Vector2(0f, 14f);
+            Fx().Add(delay, 0.35f, p =>
+            {
+                float k = QuizFx.EaseOut(p);
+                rt.anchoredPosition = end - new Vector2(0f, 14f * (1f - k));
+                g.alpha = k;
+            }, null);
         }
 
         float Hint(RectTransform c, float y, bool trap, string text)
@@ -198,6 +325,7 @@ namespace FinanceQuest
             completed = false;
             stage = Stage.Play;
             Haptics.Tap();
+            Sfx.Play(Sfx.Id.Whoosh);
             Rebuild(true);
         }
 
@@ -206,34 +334,41 @@ namespace FinanceQuest
         float Play(RectTransform c, float y, bool appear)
         {
             var card = round.Current;
-            // Pasek postępu: „Karta 2 z 6” i licznik trafień.
-            var k = Ui.Text("Kicker", c, "KARTA " + (round.Index + 1) + " Z " + round.Count, 11.5f, Palette.TextMuted);
-            k.characterSpacing = 6f;
-            Ui.Place(k.rectTransform, m, y, cw * 0.6f, 16f);
-            var s = Ui.Text("Score", c, "Trafienia: " + round.Score, 13f, Palette.Text, FontWeight.ExtraBold, TextAlignmentOptions.TopRight);
-            Ui.Place(s.rectTransform, m + cw * 0.4f, y - 1f, cw * 0.6f, 18f);
-            y += 22f;
-            ProgressBar.Create(c, m, y, cw, 12f, Palette.Track, (round.Index + (round.Answered ? 1f : 0f)) / round.Count);
-            y += 12f + 18f;
-
-            y += OfferCard(c, y, card, appear) + 18f;
-
-            if (!round.Answered)
-            {
-                // Dwa duże przyciski: czerwony PUŁAPKA po lewej, zielony BEZPIECZNE po prawej (jak kierunek przeciągania).
-                float half = (cw - 12f) * 0.5f;
-                DecideButton(c, m, y, half, true);
-                DecideButton(c, m + half + 12f, y, half, false);
-                y += DecideH + 6f;
-            }
+            // W trakcie gry nad kartą nic – bez wyniku i lupy; wynik dopiero w podsumowaniu.
+            // Karta wypełnia ekran aż do przycisków SCAM / SAFE (rośnie zdjęcie). Liczymy z wysokości paska z przyciskami,
+            // także po decyzji – dzięki temu karta nie zmienia rozmiaru, gdy pojawia się wyjaśnienie.
+            float fill = app.ScreenHeight - AppHeader.Height - DecideBarHeight() - y - 14f;
+            y += OfferCard(c, y, card, appear, fill) + 18f;
+            reactPending = false;
             return y;
+        }
+
+        float DecideBarHeight() { return BarHeight(DecideH); }
+
+        // Wysokość dolnego paska z jednym rzędem przycisków o danej wysokości + informacją o symulacji.
+        float BarHeight(float buttonH)
+        {
+            var probe = Ui.Text("Probe", screen, Disclaimer, 10.5f, Palette.TextMuted, FontWeight.SemiBold, TextAlignmentOptions.Center);
+            float h = Ui.TextHeight(probe, cw);
+            UnityEngine.Object.DestroyImmediate(probe.gameObject);
+            return 8f + buttonH + 10f + h + 10f;
+        }
+
+        // Dolny pasek w trakcie gry: przyciski SCAM / SAFE zawsze widoczne (nie przewijają się z kartą).
+        float DecideBar(RectTransform bar)
+        {
+            float y = 8f, half = (cw - 12f) * 0.5f;
+            DecideButton(bar, m, y, half, true);
+            DecideButton(bar, m + half + 12f, y, half, false);
+            y += DecideH + 10f;
+            return y + Disclaim(bar, y) + 10f;
         }
 
         void DecideButton(RectTransform c, float x, float y, float w, bool trap)
         {
             var b = LipCard.Create(c, trap ? "TrapButton" : "SafeButton", x, y, w, DecideH, trap ? Trap : Safe, trap ? Trap : Safe, trap ? TrapLip : SafeLip, 16f, 5f, 0f);
             float iconS = 26f;
-            string label = trap ? "PUŁAPKA" : "BEZPIECZNE";
+            string label = trap ? "SCAM" : "SAFE";
             var t = Ui.Text("Label", b.Content, label, 15.5f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.MidlineLeft);
             float tw = t.GetPreferredValues(label, 1000f, 0f).x;
             float total = iconS + 8f + tw, x0 = (w - total) * 0.5f;
@@ -244,21 +379,36 @@ namespace FinanceQuest
             b.SetClickable(() => Decide(trap ? ScamAnswer.Trap : ScamAnswer.Safe));
         }
 
-        // Karta oferty: kolorowy pasek z rodzajem wiadomości, nadawca, treść. Leży w „uchwycie” obracanym przy przeciąganiu.
-        float OfferCard(RectTransform c, float y, ScamCard card, bool appear)
+        // Karta oferty: u góry ilustracja typu (telefon, gazeta…), niżej treść wyglądająca jak w telefonie
+        // (nadawca z awatarem, dymek SMS-a, link). Po decyzji: czerwone flagi podświetlone w treści + metki pod spodem.
+        // Leży w „uchwycie” obracanym przy przeciąganiu.
+        float OfferCard(RectTransform c, float y, ScamCard card, bool appear, float fill)
         {
-            const float pad = 18f, strip = 44f;
-            string label; IconId icon; Color col;
-            Look(card.Type, out label, out icon, out col);
+            const float pad = 18f, inset = 8f, avatar = 38f;
+            var look = Look(card.Type);
+            bool answered = round.Answered;
+            bool bubble = card.Type == "sms" || card.Type == "call";
+            string name, sub;
+            SplitFrom(card, look, out name, out sub);
 
-            bool bubble = card.Type == "sms";
-            string body = card.Type == "call" ? "„" + card.Text + "”" : card.Text;
+            string body = Body(card, answered);
             float tw = cw - 2 * pad - (bubble ? 24f : 0f);
-            var probe = Ui.Text("Probe", c, body, 17f, Palette.Text, FontWeight.SemiBold);
+            var probe = Ui.Text("Probe", c, body, 16f, Palette.Text, FontWeight.Regular);
+            probe.richText = true;
             float th = Ui.TextHeight(probe, tw);
             UnityEngine.Object.DestroyImmediate(probe.gameObject);
-            float fromH = string.IsNullOrEmpty(card.From) ? 0f : 24f;
-            float h = Mathf.Max(230f, strip + 16f + fromH + th + (bubble ? 24f : 0f) + pad);
+
+            // Zdjęcie typu karty (photo_*.jpg) zajmuje większość karty; bez zdjęcia – mała ilustracja jak wcześniej.
+            var photo = ScamArt.Get("photo_" + look.Art);
+            float rest = inset + 14f + avatar + 10f + th + (bubble ? 24f : 0f) + 12f + 4f + ScreenKit.Lip;
+            float headH = photo != null ? Mathf.Clamp(fill - rest, PhotoMinH, (cw - 2 * inset) * 1.15f) : HeadH - inset;
+            float ay = inset + headH + 14f;               // rząd z awatarem
+            float ty = ay + avatar + 10f;                 // treść
+            float bodyH = th + (bubble ? 24f : 0f);
+            float fy = ty + bodyH + 12f;                  // stopka: pytanie albo metki flag
+            var chips = answered ? ChipLabels(card) : null;
+            float fh = answered ? ChipsHeight(c, chips, cw - 2 * pad) : 0f;
+            float h = answered ? fy + fh + 16f : fy + 4f;
 
             holder = Ui.Rect("CardHolder", c);
             Ui.Place(holder, m, y, cw, h + ScreenKit.Lip);
@@ -270,42 +420,72 @@ namespace FinanceQuest
             holderBase = holder.anchoredPosition;
 
             var lc = LipCard.Create(holder, "Offer", 0f, 0f, cw, h + ScreenKit.Lip, Palette.CardFill, Palette.CardEdge, Palette.CardLip, ScreenKit.CardRadius, ScreenKit.Lip, 2f);
-            var top = Ui.Rounded("Strip", lc.Content, col, 14f);
-            Ui.Place(top.rectTransform, 8f, 8f, cw - 16f, strip - 8f);
-            var ic = Ui.Icon("Icon", top.transform, icon, Color.white, 20f);
-            Ui.Place(ic.rectTransform, 12f, (strip - 8f - 20f) * 0.5f, 20f, 20f);
-            var lt = Ui.Text("Type", top.transform, label.ToUpperInvariant(), 12f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.MidlineLeft);
-            lt.characterSpacing = 4f;
-            Ui.Place(lt.rectTransform, 40f, 0f, cw - 70f, strip - 8f);
 
-            float cy = strip + 14f;
-            if (fromH > 0f)
+            // Nagłówek: zdjęcie przycięte maską do zaokrąglonych rogów (wysokość z proporcji zdjęcia – bez rozciągania).
+            // Bez zdjęcia – ilustracja na jasnym tle w kolorze typu.
+            Image head;
+            if (photo != null) head = ScamArt.Photo("Head", lc.Content, photo, inset, inset, cw - 2 * inset, headH, 14f);
+            else
             {
-                var f = Ui.Text("From", lc.Content, card.From, 14f, Palette.TextMuted, FontWeight.ExtraBold);
-                f.overflowMode = TextOverflowModes.Ellipsis;
-                f.textWrappingMode = TextWrappingModes.NoWrap;
-                Ui.Place(f.rectTransform, pad, cy, cw - 2 * pad, 20f);
-                cy += fromH;
+                head = Ui.Rounded("Head", lc.Content, look.Tint, 14f);
+                Ui.Place(head.rectTransform, inset, inset, cw - 2 * inset, headH);
+                var ill = ScamArt.Picture("Illustration", head.transform, "card_" + look.Art);
+                float iw = Mathf.Min(ScamArt.IllW, cw - 2 * inset - 8f), ih = iw * ScamArt.IllH / ScamArt.IllW;
+                Ui.Place(ill.rectTransform, (cw - 2 * inset - iw) * 0.5f, (headH - ih) * 0.5f, iw, ih);
             }
+            var chip = Ui.Rounded("Type", head.transform, look.Color, 11f);
+            var ct = Ui.Text("Label", chip.transform, look.Short, 10.5f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+            ct.characterSpacing = 3f;
+            float cwid = ct.GetPreferredValues(look.Short, 1000f, 0f).x + 20f;
+            Ui.Place(chip.rectTransform, 10f, 10f, cwid, 22f);
+            Ui.Stretch(ct.rectTransform);
+
+            // Nadawca: kółko z literą (albo słuchawką przy telefonie), nazwa i dopisek.
+            var av = Ui.Rounded("Avatar", lc.Content, look.Color, avatar * 0.5f);
+            Ui.Place(av.rectTransform, pad, ay, avatar, avatar);
+            if (card.Type == "call")
+            {
+                var ic = Ui.Icon("Icon", av.transform, IconId.Phone, Color.white, 20f);
+                Ui.Place(ic.rectTransform, (avatar - 20f) * 0.5f, (avatar - 20f) * 0.5f, 20f, 20f);
+            }
+            else
+            {
+                var at = Ui.Text("Letter", av.transform, Initial(name), 17f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
+                Ui.Stretch(at.rectTransform);
+            }
+            float nx = pad + avatar + 10f;
+            var nt = Ui.Text("From", lc.Content, name, 15f, Palette.Text, FontWeight.ExtraBold);
+            nt.overflowMode = TextOverflowModes.Ellipsis;
+            nt.textWrappingMode = TextWrappingModes.NoWrap;
+            Ui.Place(nt.rectTransform, nx, ay + 1f, cw - nx - pad, 20f);
+            var st = Ui.Text("Sub", lc.Content, sub, 12f, Palette.TextMuted, FontWeight.SemiBold);
+            st.overflowMode = TextOverflowModes.Ellipsis;
+            st.textWrappingMode = TextWrappingModes.NoWrap;
+            Ui.Place(st.rectTransform, nx, ay + 21f, cw - nx - pad, 16f);
+
             if (bubble)
             {
-                // SMS jako dymek wiadomości (link jest zwykłym tekstem – nic tu nie jest klikalne).
+                // SMS i rozmowa jako dymek wiadomości (link jest zwykłym tekstem – nic tu nie jest klikalne).
                 var bub = Ui.Rounded("Bubble", lc.Content, Bubble, 16f);
-                Ui.Place(bub.rectTransform, pad, cy, tw + 24f, th + 24f);
-                var bt = Ui.Text("Text", bub.transform, body, 17f, Palette.Text, FontWeight.SemiBold);
+                Ui.Place(bub.rectTransform, pad, ty, tw + 24f, th + 24f);
+                var bt = Ui.Text("Text", bub.transform, body, 16f, Palette.Text, FontWeight.Regular);
+                bt.richText = true;
                 Ui.Place(bt.rectTransform, 12f, 12f, tw, th);
             }
             else
             {
-                var bt = Ui.Text("Text", lc.Content, body, 17f, Palette.Text, FontWeight.SemiBold);
-                Ui.Place(bt.rectTransform, pad, cy, tw, th);
+                var bt = Ui.Text("Text", lc.Content, body, 16f, Palette.Text, FontWeight.Regular);
+                bt.richText = true;
+                Ui.Place(bt.rectTransform, pad, ty, tw, th);
             }
+
+            if (answered) Chips(lc.Content, chips, pad, fy, cw - 2 * pad, card.Answer == ScamAnswer.Trap, reactPending);
 
             // Pieczątki decyzji – pojawiają się przy przeciąganiu (i zostają po decyzji).
             stampTrap = Stamp(lc.Content, true);
             stampSafe = Stamp(lc.Content, false);
 
-            if (round.Answered)
+            if (answered)
             {
                 // Po decyzji karta lekko odchylona w stronę wyboru, z widoczną pieczątką.
                 Pose(decidedDir * 26f);
@@ -323,8 +503,8 @@ namespace FinanceQuest
                     var hr = holder;
                     Fx().Add(0.02f, 0.32f, t =>
                     {
-                        float e = QuizFx.BackOut(t);
-                        float k = 0.9f + 0.1f * e;
+                        float e = QuizFx.EaseOut(t);
+                        float k = 0.96f + 0.04f * e;
                         hr.localScale = new Vector3(k, k, 1f);
                         g.alpha = Mathf.Clamp01(t * 2.5f);
                     }, null);
@@ -333,28 +513,136 @@ namespace FinanceQuest
             return h + ScreenKit.Lip;
         }
 
-        static void Look(string type, out string label, out IconId icon, out Color col)
+        struct CardLook { public string Label, Short, Sub, Art; public Color Color, Tint; }
+
+        static CardLook Look(string type)
         {
             switch (type)
             {
-                case "social": label = "Reklama w social mediach"; icon = IconId.Spark; col = Palette.Hex("6B4A6E"); break;
-                case "bank": label = "Aplikacja bankowa"; icon = IconId.Wallet; col = Palette.Petrol; break;
-                case "article": label = "Artykuł sponsorowany"; icon = IconId.Book; col = Palette.Mustard; break;
-                case "product": label = "Karta produktu"; icon = IconId.Chart; col = Palette.Moss; break;
-                case "call": label = "Połączenie telefoniczne"; icon = IconId.Phone; col = Palette.Brick; break;
-                default: label = "SMS"; icon = IconId.Phone; col = Palette.Slate; break;
+                case "social": return new CardLook { Label = "Social media ad", Short = "AD", Sub = "Sponsored", Art = "social", Color = Palette.Hex("6B4A6E"), Tint = Palette.Hex("E6DCE8") };
+                case "bank": return new CardLook { Label = "Banking app", Short = "BANK", Sub = "Banking app", Art = "bank", Color = Palette.Petrol, Tint = Palette.Hex("D7E6E8") };
+                case "article": return new CardLook { Label = "Sponsored article", Short = "ARTICLE", Sub = "Sponsored article", Art = "article", Color = Palette.Mustard, Tint = Palette.Hex("EFE6D2") };
+                case "product": return new CardLook { Label = "Product sheet", Short = "PRODUCT", Sub = "Product sheet", Art = "product", Color = Palette.Moss, Tint = Palette.Hex("DDE8E1") };
+                case "call": return new CardLook { Label = "Phone call", Short = "CALL", Sub = "Incoming call", Art = "call", Color = Palette.Brick, Tint = Palette.Hex("F1DED8") };
+                default: return new CardLook { Label = "SMS", Short = "SMS", Sub = "Text message · now", Art = "sms", Color = Palette.Slate, Tint = Palette.Hex("DCE4E8") };
+            }
+        }
+
+        // „InvestAI · Sponsored” → nazwa „InvestAI”, dopisek „Sponsored”. Bez kropki – dopisek z typu karty.
+        static void SplitFrom(ScamCard card, CardLook look, out string name, out string sub)
+        {
+            string from = string.IsNullOrEmpty(card.From) ? look.Label : card.From;
+            int i = from.IndexOf(" · ", StringComparison.Ordinal);
+            if (i > 0) { name = from.Substring(0, i); sub = from.Substring(i + 3); }
+            else { name = from; sub = look.Sub; }
+        }
+
+        static string Initial(string name)
+        {
+            foreach (char ch in name) if (char.IsLetterOrDigit(ch)) return char.ToUpperInvariant(ch).ToString();
+            return "?";
+        }
+
+        static readonly System.Text.RegularExpressions.Regex Link = new System.Text.RegularExpressions.Regex(
+            @"(https?://\S+|www\.\S+|\b[a-z0-9-]+\.(ly|com|net|org|io|pl|eu|info)/\S*)",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        // Treść z formatowaniem: przed decyzją link wygląda jak link (niebieski, podkreślony),
+        // po decyzji czerwone flagi są podświetlone – gracz widzi, po czym rozpoznać oszustwo.
+        static string Body(ScamCard card, bool answered)
+        {
+            string s = card.Type == "call" ? "“" + card.Text + "”" : card.Text;
+            if (!answered) return Link.Replace(s, "<color=#2B6CB0><u>$0</u></color>");
+            if (card.Answer != ScamAnswer.Trap || card.Marks == null) return s;
+            foreach (var mark in card.Marks)
+            {
+                if (string.IsNullOrEmpty(mark)) continue;
+                int i = s.IndexOf(mark, StringComparison.OrdinalIgnoreCase);
+                if (i < 0) continue;
+                s = s.Substring(0, i) + "<mark=#B8432D2E><color=#B8432D><b>" + s.Substring(i, mark.Length) + "</b></color></mark>" + s.Substring(i + mark.Length);
+            }
+            return s;
+        }
+
+        // Metki pod kartą po decyzji: nazwy czerwonych flag (oszustwo) albo jedna zielona „bez czerwonych flag”.
+        static List<string> ChipLabels(ScamCard card)
+        {
+            if (card.Answer == ScamAnswer.Trap && card.Flags != null && card.Flags.Count > 0) return card.Flags;
+            return new List<string> { card.Answer == ScamAnswer.Trap ? "Red flag" : "No red flags" };
+        }
+
+        const float ChipH = 26f, ChipGap = 8f, ChipIcon = 14f;
+
+        static float ChipWidth(TextMeshProUGUI probe, string label)
+        {
+            return probe.GetPreferredValues(label, 1000f, 0f).x + ChipIcon + 26f;
+        }
+
+        // Wysokość stopki z metkami (metki zawijają się do kolejnego rzędu, gdy się nie mieszczą).
+        float ChipsHeight(RectTransform c, List<string> labels, float w)
+        {
+            var probe = Ui.Text("Probe", c, "", 12.5f, Color.white, FontWeight.ExtraBold);
+            float x = 0f, rows = 1f;
+            foreach (var l in labels)
+            {
+                float cwid = Mathf.Min(w, ChipWidth(probe, l));
+                if (x > 0f && x + cwid > w) { rows++; x = 0f; }
+                x += cwid + ChipGap;
+            }
+            UnityEngine.Object.DestroyImmediate(probe.gameObject);
+            return rows * ChipH + (rows - 1f) * ChipGap;
+        }
+
+        void Chips(Transform parent, List<string> labels, float x0, float y0, float w, bool trap, bool pop)
+        {
+            float x = 0f, y = 0f;
+            for (int i = 0; i < labels.Count; i++)
+            {
+                var chip = Ui.Rounded("Flag", parent, trap ? Trap : Safe, ChipH * 0.5f);
+                var t = Ui.Text("Label", chip.transform, labels[i], 12.5f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.MidlineLeft);
+                float cwid = Mathf.Min(w, ChipWidth(t, labels[i]));
+                if (x > 0f && x + cwid > w) { x = 0f; y += ChipH + ChipGap; }
+                Ui.Place(chip.rectTransform, x0 + x, y0 + y, cwid, ChipH);
+                if (trap)
+                {
+                    var ic = Ui.Icon("Icon", chip.transform, IconId.Exclaim, Color.white, ChipIcon);
+                    Ui.Place(ic.rectTransform, 9f, (ChipH - ChipIcon) * 0.5f, ChipIcon, ChipIcon);
+                }
+                else
+                {
+                    var ic = Ui.Icon("Icon", chip.transform, IconId.Check, Color.white, ChipIcon);
+                    Ui.Place(ic.rectTransform, 9f, (ChipH - ChipIcon) * 0.5f, ChipIcon, ChipIcon);
+                }
+                Ui.Place(t.rectTransform, 9f + ChipIcon + 5f, 0f, cwid - ChipIcon - 22f, ChipH);
+                t.overflowMode = TextOverflowModes.Ellipsis;
+                t.textWrappingMode = TextWrappingModes.NoWrap;
+                x += cwid + ChipGap;
+
+                if (pop)
+                {
+                    // Metki wskakują po kolei, zaraz po decyzji (skala od środka metki).
+                    var rt = chip.rectTransform;
+                    rt.pivot = new Vector2(0.5f, 0.5f);
+                    rt.anchoredPosition += new Vector2(cwid * 0.5f, -ChipH * 0.5f);
+                    rt.localScale = Vector3.zero;
+                    Fx().Add(0.25f + i * 0.15f, 0.3f, p =>
+                    {
+                        float k = QuizFx.EaseOut(p);
+                        rt.localScale = new Vector3(k, k, 1f);
+                    }, null);
+                }
             }
         }
 
         CanvasGroup Stamp(Transform parent, bool trap)
         {
-            string text = trap ? "PUŁAPKA" : "BEZPIECZNE";
+            string text = trap ? "SCAM" : "SAFE";
             var pill = Ui.Rounded(trap ? "StampTrap" : "StampSafe", parent, trap ? Trap : Safe, 10f);
             var t = Ui.Text("Label", pill.transform, text, 17f, Color.white, FontWeight.ExtraBold, TextAlignmentOptions.Center);
             t.characterSpacing = 4f;
             float w = t.GetPreferredValues(text, 1000f, 0f).x + 28f;
-            // Pułapka w prawym górnym rogu (karta jedzie w lewo), bezpieczne w lewym – pieczątka „wychodzi” zza krawędzi.
-            Ui.Place(pill.rectTransform, trap ? cw - w - 18f : 18f, 58f, w, 36f);
+            // SCAM w prawym górnym rogu (karta jedzie w lewo), SAFE w lewym – na ilustracji, żeby nie zasłaniać treści.
+            Ui.Place(pill.rectTransform, trap ? cw - w - 18f : 18f, 44f, w, 36f);
             Ui.Stretch(t.rectTransform);
             pill.rectTransform.localRotation = Quaternion.Euler(0f, 0f, trap ? 10f : -10f);
             var g = pill.gameObject.AddComponent<CanvasGroup>();
@@ -392,6 +680,7 @@ namespace FinanceQuest
             if (busy || round == null || round.Finished || round.Answered || stage != Stage.Play) return;
             bool ok = round.Answer(a);
             decidedDir = a == ScamAnswer.Trap ? -1 : 1;
+            reactPending = true;
             Haptics.Tap();
             Sfx.Play(ok ? Sfx.Id.Correct : Sfx.Id.Wrong);
             Rebuild(false);
@@ -412,7 +701,7 @@ namespace FinanceQuest
             var img = Ui.Rect("Flash", screen).gameObject.AddComponent<Image>();
             img.raycastTarget = false;
             Ui.Stretch(img.rectTransform);
-            Fx().Add(0f, 0.55f, t => img.color = new Color(col.r, col.g, col.b, 0.22f * (1f - t)),
+            Fx().Add(0f, 0.55f, t => img.color = new Color(col.r, col.g, col.b, 0.12f * (1f - t)),
                 () => { if (img != null) UnityEngine.Object.Destroy(img.gameObject); });
         }
 
@@ -422,8 +711,8 @@ namespace FinanceQuest
             var card = round.Current;
             bool ok = round.LastCorrect;
             bool trap = card.Answer == ScamAnswer.Trap;
-            string head = ok ? (trap ? "Dobrze! To pułapka." : "Dobrze! To bezpieczne.")
-                             : (trap ? "Uwaga – to była pułapka" : "To akurat było bezpieczne");
+            string head = ok ? (trap ? "Correct! It's a scam." : "Correct! It's safe.")
+                             : (trap ? "Careful – it was a scam." : "Actually, this one was safe.");
             const float pad = 16f;
             float tw = cw - 2 * pad;
 
@@ -440,7 +729,7 @@ namespace FinanceQuest
 
             float y = 8f + ph + 4f + 10f;
             bool last = round.Index == round.Count - 1;
-            Button(bar, m, y, cw, last ? "ZOBACZ WYNIK" : "DALEJ", true, Next);
+            Button(bar, m, y, cw, last ? "SEE RESULT" : "NEXT", true, Next);
             y += ButtonH + 10f;
             return y + Disclaim(bar, y) + 10f;
         }
@@ -450,6 +739,7 @@ namespace FinanceQuest
             if (busy || round == null || !round.Answered) return;
             busy = true;
             Haptics.Tap();
+            Sfx.Play(Sfx.Id.Whoosh);
             // Oceniona karta odlatuje w stronę decyzji, potem następna.
             var hr = holder;
             float from = decidedDir * 26f;
@@ -504,9 +794,9 @@ namespace FinanceQuest
             var badge = LipCard.Create(c, "Badge", m, y, cw, bh, Palette.Brand, Palette.Brand, Palette.Darker(Palette.Brand, 0.7f), 16f, 4f, 0f);
             var bi = Ui.Icon("Star", badge.Content, IconId.Star, Palette.Accent, icon);
             Ui.Place(bi.rectTransform, 14f, (bh - 4f - icon) * 0.5f, icon, icon);
-            var bt = Ui.Text("Title", badge.Content, "Odznaka: " + ScamDeck.BadgeName, 16f, Color.white, FontWeight.ExtraBold);
+            var bt = Ui.Text("Title", badge.Content, "Badge: " + ScamDeck.BadgeName, 16f, Color.white, FontWeight.ExtraBold);
             Ui.Place(bt.rectTransform, 64f, 11f, cw - 76f, 22f);
-            var bd = Ui.Text("Desc", badge.Content, "Za przejście wszystkich kart", 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
+            var bd = Ui.Text("Desc", badge.Content, "For finishing all the cards", 12.5f, Palette.WhiteSoft, FontWeight.SemiBold);
             Ui.Place(bd.rectTransform, 64f, 33f, cw - 76f, 18f);
             y += bh + 20f;
 
@@ -514,13 +804,13 @@ namespace FinanceQuest
             var wrong = round.Mistakes();
             if (wrong.Count > 0)
             {
-                y += Para(c, "Do powtórki", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
+                y += Para(c, "To review", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
                 foreach (var w in wrong) y += Mistake(c, y, w) + 10f;
                 y += 8f;
             }
 
             // Ściągawka czerwonych flag.
-            y += Para(c, "Ściągawka – czerwone flagi", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
+            y += Para(c, "Cheat sheet – red flags", m, y, cw, 17f, Palette.Text, FontWeight.ExtraBold) + 8f;
             foreach (var f in ScamDeck.CheatSheet)
             {
                 var dot = Ui.Rounded("Dot", c, Trap, 4f);
@@ -530,16 +820,16 @@ namespace FinanceQuest
             y += 12f;
 
             // Most do działania.
-            y += Para(c, "Teraz, gdy wiesz, jak unikać pułapek, sprawdź bezpieczne sposoby na pomnażanie oszczędności.", m, y, cw, 15.5f, Palette.TextMuted);
+            y += Para(c, "Now that you know how to avoid traps, check out safe ways to grow your savings.", m, y, cw, 15.5f, Palette.TextMuted);
             return y;
         }
 
         float Mistake(RectTransform c, float y, ScamCard card)
         {
             const float pad = 14f;
-            string label; IconId icon; Color col;
-            Look(card.Type, out label, out icon, out col);
-            string head = label + " – " + (card.Answer == ScamAnswer.Trap ? "pułapka" : "bezpieczne");
+            var look = Look(card.Type);
+            Color col = look.Color;
+            string head = look.Label + " – " + (card.Answer == ScamAnswer.Trap ? "scam" : "safe");
             var probe = Ui.Text("Probe", c, card.Explain, 14f, Palette.Text);
             float eh = Ui.TextHeight(probe, cw - 2 * pad);
             UnityEngine.Object.DestroyImmediate(probe.gameObject);
@@ -554,9 +844,9 @@ namespace FinanceQuest
         float SummaryBar(RectTransform bar)
         {
             float y = 8f;
-            Button(bar, m, y, cw, "ZOBACZ BEZPIECZNE OSZCZĘDZANIE", true, () => { if (onFinish != null) onFinish(); });
+            Button(bar, m, y, cw, "CONTINUE", true, () => { if (onFinish != null) onFinish(); });
             y += ButtonH + 10f;
-            Button(bar, m, y, cw, "ZAGRAJ PONOWNIE", false, Start);
+            Button(bar, m, y, cw, "PLAY AGAIN", false, Start);
             y += ButtonH + 10f;
             return y + Disclaim(bar, y) + 10f;
         }
